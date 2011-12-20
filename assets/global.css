@@ -1,0 +1,11 @@
+body { text-align: center }
+
+#canvas { border: 1px solid #111 }
+
+.box { position: absolute; border:1px solid #111 }
+.login { right: 200px; width: 100px }
+.register { right: 0; width: 100px }
+
+#details { position: absolute; right: 0; top: 0 }
+
+#top { width: 1200px; margin: auto; position: relative }
