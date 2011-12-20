@@ -48,6 +48,35 @@ function drawBoard() {
 	ctx.putImageData(imgdata, 0, 0);
 }
 
+/**
+* Draw the board at a certain zoom level
+*/
+function drawZoom(startX, startY, level) {
+	var endX = startX + canvasWidth / level;
+	var endY = startY + canvasHeight / level;
+	console.log(endX, endY);
+	var x, y, pixel, index;
+	
+	//clear canvas
+	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+	
+	for(x = startX; x < endX; ++x) {
+		for(y = startY; y < endY; ++y) {
+			pixel = board[x + "," + y];
+			if(!pixel) continue;
+			
+			console.log(pixel, x, y);
+			ctx.fillStyle = "#" + pixel.color;
+			ctx.fillRect(
+				(x - startX) * level, 
+				(y - startY) * level, 
+				level, 
+				level
+			);
+		}
+	}
+}
+
 function showError(msg) {
 	console.error(msg);
 }

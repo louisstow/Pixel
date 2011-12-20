@@ -3,9 +3,10 @@ body { text-align: center }
 #canvas { border: 1px solid #111 }
 
 .box { position: absolute; border:1px solid #111 }
-.login { right: 200px; width: 100px }
-.register { right: 0; width: 100px }
+.login { right: 0; width: 200px }
+.register { right: 0; width: 200px }
 
 #details { position: absolute; right: 0; top: 0 }
 
 #top { width: 1200px; margin: auto; position: relative }
+#top h1 { margin: 0; padding: 0 }
