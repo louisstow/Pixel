@@ -12,9 +12,11 @@ body { text-align: center }
 #top { width: 1200px; margin: auto; position: relative; text-align: left; z-index: 100 }
 #top h1 { margin: 0; padding: 0; text-align: center }
 
-#top li { display: inline }
-#top li ul { position: absolute; display: none }
+#top ul { padding: 0; margin: 0 }
+#top li { display: inline; margin: 0 10px; border: 1px solid #ccc }
+#top li a { padding: 5px 10px }
+#top li ul { position: absolute; display: none; margin: -2px 0 0 0; padding: 0; }
 #top li li { display: block;  }
-#top ul:hover ul { display: block }
+#top li:hover ul { display: block }
 
 .zoomer { border:1px solid #ccc; position: absolute; cursor: zoom }

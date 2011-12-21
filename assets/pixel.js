@@ -50,14 +50,17 @@ $(function() {
 });
 
 function startZoomer(level) {
+	//reset to 1
+	if(zoomLevel !== 1) drawBoard();
+	
 	selected = "zoom";
 	var w = canvasWidth / level,
 		h = canvasHeight / level;
 		
-	$(zoomer).show().css({
+	$(zoomer).css({
 		width: w,
 		height: h
-	});
+	}).show();
 	
 	$("#stage").mousemove(function(e) {
 		$(zoomer).css({
@@ -67,14 +70,26 @@ function startZoomer(level) {
 	}).click(function(e) {
 		console.log(e, stagePos);
 		drawZoom(
-			(e.clientX - stagePos.left) - w / 2,
-			(e.clientY - stagePos.top) - h / 2,
+			((e.clientX - stagePos.left) - w / 2),
+			((e.clientY - stagePos.top) - h / 2),
 			level
 		);
-	});;
+		
+		stopZoomer();
+	});
+}
+
+function stopZoomer() {
+	$(zoomer).hide();
+	$("#stage").unbind("mousemove").unbind("click")
+		.click(function() {
+			drawBoard();
+		});
+	
 }
 
 function drawBoard() {
+	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 	var imgdata = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
 	var color;
 	var pixel;
