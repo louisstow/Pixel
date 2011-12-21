@@ -62,12 +62,12 @@ function NOW() {
 * Send an error to the client
 */
 function error($msg) {
-	echo "{error: '{$msg}'}";
+	echo "{\"error\": \"{$msg}\"}";
 	exit;
 }
 
 function ok() {
-	echo "{status: 'ok'}";
+	echo "{\"status\": \"ok\"}";
 	exit;
 }
 

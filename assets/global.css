@@ -1,22 +1,26 @@
 body { text-align: center }
 
 #canvas { border: 1px solid #111; margin: auto }
-#stage { width: 1200px; height: 1000px; margin: auto; overflow: hidden; position: relative; }
+#stage { width: 1202px; height: 1002px; margin: auto; overflow: hidden; position: relative; }
 
 .box { position: absolute; border:1px solid #111 }
-.login { right: 0; width: 200px }
-.register { right: 0; width: 200px }
+.login { right: 0; width: 200px; display: none }
+.register { right: 0; width: 200px; display: none }
 
 #details { position: absolute; right: 0; top: 0 }
+#details a, #details span { display: none }
 
 #top { width: 1200px; margin: auto; position: relative; text-align: left; z-index: 100 }
 #top h1 { margin: 0; padding: 0; text-align: center }
 
 #top ul { padding: 0; margin: 0 }
-#top li { display: inline; margin: 0 10px; border: 1px solid #ccc }
-#top li a { padding: 5px 10px }
+#top li { display: inline; margin: 0 10px; background: white; position: relative }
+#top li a { padding: 5px 10px; cursor: pointer; border: 1px solid #ccc; }
 #top li ul { position: absolute; display: none; margin: -2px 0 0 0; padding: 0; }
-#top li li { display: block;  }
+#top li li { display: block; border: 1px solid #ccc }
+#top li ul a { border: 0 }
 #top li:hover ul { display: block }
 
-.zoomer { border:1px solid #ccc; position: absolute; cursor: zoom }
+.zoomer { border: 1px solid #ccc; position: absolute; cursor: crosshair }
+
+.active { background: #222; color: #eee }
