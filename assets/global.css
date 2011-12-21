@@ -1,6 +1,7 @@
 body { text-align: center }
 
-#canvas { border: 1px solid #111 }
+#canvas { border: 1px solid #111; margin: auto }
+#stage { width: 1200px; height: 1000px; margin: auto; overflow: hidden; position: relative; }
 
 .box { position: absolute; border:1px solid #111 }
 .login { right: 0; width: 200px }
@@ -8,5 +9,12 @@ body { text-align: center }
 
 #details { position: absolute; right: 0; top: 0 }
 
-#top { width: 1200px; margin: auto; position: relative }
-#top h1 { margin: 0; padding: 0 }
+#top { width: 1200px; margin: auto; position: relative; text-align: left; z-index: 100 }
+#top h1 { margin: 0; padding: 0; text-align: center }
+
+#top li { display: inline }
+#top li ul { position: absolute; display: none }
+#top li li { display: block;  }
+#top ul:hover ul { display: block }
+
+.zoomer { border:1px solid #ccc; position: absolute; cursor: zoom }

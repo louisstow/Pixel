@@ -1,9 +1,24 @@
-var canvas, ctx, board, owners, canvasWidth, canvasHeight;
+var canvas, 
+	ctx, 
+	board, 
+	owners, 
+	canvasWidth, 
+	canvasHeight,
+	stagePos,
+	zoomLevel = 1,
+	zoomer,
+	selected;
 
 $(function() {
+	zoomer = document.createElement("div");
+	$("#stage").append(zoomer);
+	zoomer.setAttribute("class", "zoomer");
+	stagePos = $("#stage").offset();
+	
 	//init canvases
 	canvas = $("#canvas")[0];
 	ctx = canvas.getContext("2d");
+	
 	canvasWidth = canvas.width;
 	canvasHeight = canvas.height;
 	
@@ -24,7 +39,40 @@ $(function() {
 	$(".register button").click(function() {
 		
 	});
+	
+	$(".x2, .x4, .x8, .x16").click(function() {
+		var level = parseInt($(this).attr("class").substr(1), 10);
+		console.log(level);
+
+		startZoomer(level);
+		
+	});
 });
+
+function startZoomer(level) {
+	selected = "zoom";
+	var w = canvasWidth / level,
+		h = canvasHeight / level;
+		
+	$(zoomer).show().css({
+		width: w,
+		height: h
+	});
+	
+	$("#stage").mousemove(function(e) {
+		$(zoomer).css({
+			left: (e.clientX - stagePos.left) - w / 2,
+			top: (e.clientY - stagePos.top) - h / 2
+		});
+	}).click(function(e) {
+		console.log(e, stagePos);
+		drawZoom(
+			(e.clientX - stagePos.left) - w / 2,
+			(e.clientY - stagePos.top) - h / 2,
+			level
+		);
+	});;
+}
 
 function drawBoard() {
 	var imgdata = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
@@ -45,6 +93,7 @@ function drawBoard() {
 		data[++index] = 255;
 	}
 	
+	zoomLevel = 1;
 	ctx.putImageData(imgdata, 0, 0);
 }
 
@@ -54,14 +103,14 @@ function drawBoard() {
 function drawZoom(startX, startY, level) {
 	var endX = startX + canvasWidth / level;
 	var endY = startY + canvasHeight / level;
-	console.log(endX, endY);
+	console.log(startX, startY, endX, endY);
 	var x, y, pixel, index;
 	
 	//clear canvas
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 	
-	for(x = startX; x < endX; ++x) {
-		for(y = startY; y < endY; ++y) {
+	for(x = ~~startX; x < endX; ++x) {
+		for(y = ~~startY; y < endY; ++y) {
 			pixel = board[x + "," + y];
 			if(!pixel) continue;
 			
@@ -75,6 +124,8 @@ function drawZoom(startX, startY, level) {
 			);
 		}
 	}
+	
+	zoomLevel = level;
 }
 
 function showError(msg) {
