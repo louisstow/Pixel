@@ -20,6 +20,8 @@ $(function() {
 	$("#stage").append(zoomer);
 	zoomer.setAttribute("class", "zoomer");
 	stagePos = $("#stage").offset();
+	stagePos.left++;
+	stagePos.top++;
 	
 	//init canvases
 	canvas = $("#canvas")[0];
@@ -124,7 +126,7 @@ $(function() {
 		$("#stage").click(function(e) {
 			var xpos = (e.clientX - stagePos.left + body.scrollLeft) / zoomLevel + zoomPos.left,
 				ypos = (e.clientY - stagePos.top + body.scrollTop) / zoomLevel + zoomPos.top;
-			console.log("CLICK AT", ~~xpos, ~~ypos);
+			console.log("CLICK AT", xpos, ypos);
 		});
 	});
 });
@@ -207,8 +209,8 @@ function drawZoom(startX, startY, level, owner) {
 	console.log(startX, startY, endX, endY);
 	var x, y, pixel, index;
 	
-	zoomPos.left = ~~startX;
-	zoomPos.top = ~~startY;
+	zoomPos.left = startX;
+	zoomPos.top = startY;
 	
 	//clear canvas
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
