@@ -76,6 +76,7 @@ $(function() {
 	
 	$("a.zoomin").click(function() {
 		drawBoard(selected === "mypixels" && me.userID);
+		$(this).text("Zoom In");
 	});
 	
 	$(".x2, .x4, .x8, .x16").click(function() {
@@ -83,7 +84,6 @@ $(function() {
 		console.log(level);
 
 		startZoomer(level);
-		
 	});
 	
 	$("a.mypixels").click(function() {
@@ -142,6 +142,7 @@ function startZoomer(level) {
 			level
 		);
 		
+		$("a.zoomin").text("Zoom Out");
 		stopZoomer();
 	});
 }
