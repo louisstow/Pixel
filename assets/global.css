@@ -22,10 +22,16 @@ label { display: block }
 #top li ul a { border: 0 }
 #top li:hover ul { display: block }
 
-#tools { margin: -30px 0 10px 0; }
+#controls { margin: -30px 0 10px 0; }
 #tools a { padding: 2px; }
 #tools li { margin: 0 }
 
 .zoomer { border: 1px solid #ccc; position: absolute; cursor: crosshair }
 
 .active { background: #222; color: #eee }
+
+span.green { color: green; font-weight: bold }
+span.red { color: red; font-weight: bold; }
+span.blue { color: blue; font-weight: bold }
+
+#hint { position: absolute; right: 0; top: 30px }

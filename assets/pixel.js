@@ -4,12 +4,15 @@ var canvas,
 	owners, 
 	canvasWidth, 
 	canvasHeight,
+	body,
 	me,
 	stagePos,
 	zoomPos = {left: 0, top: 0},
 	zoomLevel = 1,
 	zoomer,
-	selected,
+	selected, //which tool is selected
+	tab, //which tab is selected
+	mypixelsSelected = false,
 	shadowColor = "#222222";
 
 $(function() {
@@ -24,6 +27,7 @@ $(function() {
 	
 	canvasWidth = canvas.width;
 	canvasHeight = canvas.height;
+	body = document.body;
 	
 	//check if the user is logged in
 	api("IsLogged", function(resp) {
@@ -75,14 +79,16 @@ $(function() {
 	});
 	
 	$("a.zoomin").click(function() {
-		drawBoard(selected === "mypixels" && me.userID);
+		clearSelection();
+		drawBoard(mypixelsSelected && me.userID);
 		$(this).text("Zoom In");
 	});
 	
 	$(".x2, .x4, .x8, .x16").click(function() {
+		clearSelection();
+		$("a.zoomin").addClass("active");
+		
 		var level = parseInt($(this).attr("class").substr(1), 10);
-		console.log(level);
-
 		startZoomer(level);
 	});
 	
@@ -91,16 +97,15 @@ $(function() {
 			showError("Please login");
 			return;
 		}
-		clearSelection();
 		
-		if(selected === "mypixels") {
+		if(mypixelsSelected) {
 			$(this).removeClass("active");
 			$("#stage").css("background", "transparent");
-			selected = null;
+			mypixelsSelected = false;
 		} else {
 			$(this).addClass("active");
 			$("#stage").css("background", shadowColor);
-			selected = "mypixels";
+			mypixelsSelected = true;
 		}
 		
 		if(zoomLevel === 1) {
@@ -109,11 +114,23 @@ $(function() {
 			drawZoom(zoomPos.left, zoomPos.top, zoomLevel, me.userID);
 		}
 	});
+	
+	$("a.select").click(function() {
+		clearSelection();
+		selected = "select";
+		$("#stage").unbind();
+		$(this).addClass("active");
+		
+		$("#stage").click(function(e) {
+			var xpos = (e.clientX - stagePos.left + body.scrollLeft) / zoomLevel + zoomPos.left,
+				ypos = (e.clientY - stagePos.top + body.scrollTop) / zoomLevel + zoomPos.top;
+			console.log("CLICK AT", ~~xpos, ~~ypos);
+		});
+	});
 });
 
 function clearSelection() {
-	$("#stage").unbind().css("background", "transparent");
-	$("#controls a").removeClass("active");
+	$("#tools a").removeClass("active");
 }
 
 function startZoomer(level) {
@@ -131,14 +148,14 @@ function startZoomer(level) {
 	
 	$("#stage").mousemove(function(e) {
 		$(zoomer).css({
-			left: (e.clientX - stagePos.left) - w / 2,
-			top: (e.clientY - stagePos.top) - h / 2
+			left: (e.clientX - stagePos.left + body.scrollLeft) - w / 2,
+			top: (e.clientY - stagePos.top + body.scrollTop) - h / 2
 		});
 	}).click(function(e) {
 		console.log(e, stagePos);
 		drawZoom(
-			((e.clientX - stagePos.left) - w / 2),
-			((e.clientY - stagePos.top) - h / 2),
+			((e.clientX - stagePos.left + body.scrollLeft) - w / 2),
+			((e.clientY - stagePos.top + body.scrollTop) - h / 2),
 			level
 		);
 		
@@ -190,8 +207,8 @@ function drawZoom(startX, startY, level, owner) {
 	console.log(startX, startY, endX, endY);
 	var x, y, pixel, index;
 	
-	zoomPos.left = startX;
-	zoomPos.top = startY;
+	zoomPos.left = ~~startX;
+	zoomPos.top = ~~startY;
 	
 	//clear canvas
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
