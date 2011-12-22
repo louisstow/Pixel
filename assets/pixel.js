@@ -6,6 +6,7 @@ var canvas,
 	canvasHeight,
 	body,
 	me,
+	pixels = {length: 0},
 	stagePos,
 	zoomPos = {left: 0, top: 0},
 	zoomLevel = 1,
@@ -13,7 +14,8 @@ var canvas,
 	selected, //which tool is selected
 	tab, //which tab is selected
 	mypixelsSelected = false,
-	shadowColor = "#222222";
+	shadowColor = "#222222",
+	selectColor = "00C8FF";
 
 $(function() {
 	zoomer = document.createElement("div");
@@ -110,11 +112,7 @@ $(function() {
 			mypixelsSelected = true;
 		}
 		
-		if(zoomLevel === 1) {
-			drawBoard(me.userID);
-		} else {
-			drawZoom(zoomPos.left, zoomPos.top, zoomLevel, me.userID);
-		}
+		redraw();
 	});
 	
 	$("a.select").click(function() {
@@ -127,12 +125,30 @@ $(function() {
 			var xpos = (e.clientX - stagePos.left + body.scrollLeft) / zoomLevel + zoomPos.left,
 				ypos = (e.clientY - stagePos.top + body.scrollTop) / zoomLevel + zoomPos.top;
 			console.log("CLICK AT", xpos, ypos);
+			
+			selectPixel(~~xpos, ~~ypos);
 		});
 	});
 });
 
 function clearSelection() {
 	$("#tools a").removeClass("active");
+	selected = null;
+	stopZoomer();
+}
+
+function selectPixel(x, y) {
+	var key = x + "," + y;
+	console.log(key);
+	if(pixels[key]) {
+		delete pixels[key];
+		pixels.length--;
+	} else {
+		pixels[key] = true;
+		pixels.length++;
+	}
+	
+	redraw();
 }
 
 function startZoomer(level) {
@@ -187,10 +203,24 @@ function drawBoard(owner) {
 		
 		pos = pos.split(",");
 		index = (pos[1] * canvasWidth + (+pos[0])) * 4;
+		color = pixels[pos] ? selectColor : pixel.color;
 		
-		data[index] = parseInt(pixel.color.substr(0, 2), 16);   //red
-		data[++index] = parseInt(pixel.color.substr(2, 2), 16); // green
-		data[++index] = parseInt(pixel.color.substr(4, 2), 16); // blue
+		data[index] = parseInt(color.substr(0, 2), 16);   //red
+		data[++index] = parseInt(color.substr(2, 2), 16); // green
+		data[++index] = parseInt(color.substr(4, 2), 16); // blue
+		data[++index] = 255;
+	}
+	
+	//loop over selected pixels
+	for(var pos in pixels) {
+		pixel = board[pos];
+
+		pos = pos.split(",");
+		index = (pos[1] * canvasWidth + (+pos[0])) * 4;
+	
+		data[index] = parseInt(selectColor.substr(0, 2), 16);   //red
+		data[++index] = parseInt(selectColor.substr(2, 2), 16); // green
+		data[++index] = parseInt(selectColor.substr(4, 2), 16); // blue
 		data[++index] = 255;
 	}
 	
@@ -220,7 +250,7 @@ function drawZoom(startX, startY, level, owner) {
 			pixel = board[x + "," + y];
 			
 			//if no pixel found, don't draw
-			if(!pixel) continue;
+			if(!pixel && !pixels[x + "," + y]) continue;
 			//if only draw the specified owner
 			if(owner && pixel.owner != owner) {
 				console.log(owner, pixel.owner);
@@ -228,7 +258,7 @@ function drawZoom(startX, startY, level, owner) {
 			}
 			
 			console.log(pixel, x, y);
-			ctx.fillStyle = "#" + pixel.color;
+			ctx.fillStyle = "#" + (pixels[x + "," + y] ? selectColor : pixel.color);
 			ctx.fillRect(
 				(x - startX) * level, 
 				(y - startY) * level, 
@@ -239,6 +269,14 @@ function drawZoom(startX, startY, level, owner) {
 	}
 	
 	zoomLevel = level;
+}
+
+function redraw() {
+	if(zoomLevel === 1) {
+		drawBoard(mypixelsSelected && me.userID);
+	} else {
+		drawZoom(zoomPos.left, zoomPos.top, zoomLevel, mypixelsSelected && me.userID);
+	}
 }
 
 function showError(msg) {
