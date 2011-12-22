@@ -144,6 +144,21 @@ $(function() {
 		pixels = {length: 0 };
 		redraw();
 	});
+	
+	$("a.selectmypixels").click(function() {
+		if(!me) {
+			showError("Please login");
+			return;
+		}
+		
+		pixels = {length: 0};
+		for(var pos in board) {
+			pixels[pos] = true;
+			pixels.length++;
+		}
+		
+		redraw();
+	});
 });
 
 function clearSelection() {
