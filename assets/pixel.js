@@ -139,6 +139,11 @@ $(function() {
 			selectPixel(~~xpos, ~~ypos);
 		});
 	});
+	
+	$("a.clearselection").click(function() {
+		pixels = {length: 0 };
+		redraw();
+	});
 });
 
 function clearSelection() {
