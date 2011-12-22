@@ -33,6 +33,16 @@ $(function() {
 	canvasHeight = canvas.height;
 	body = document.body;
 	
+	$(".color").each(function() {
+		var self = $(this);
+		
+		self.ColorPicker({
+			onChange: function(hsb, hex, rgb) {
+				self.val(hex);
+			}
+		});
+	});
+	
 	//check if the user is logged in
 	api("IsLogged", function(resp) {
 		console.log(resp);
@@ -138,6 +148,11 @@ function clearSelection() {
 }
 
 function selectPixel(x, y) {
+	if(x < 0 || y < 0) {
+		showError("Pixel out of bounds");
+		return;
+	}
+		
 	var key = x + "," + y;
 	console.log(key);
 	if(pixels[key]) {
