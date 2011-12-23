@@ -137,9 +137,32 @@ $(function() {
 			pos.x = ~~pos.x;
 			pos.y = ~~pos.y;
 			
+			var startZoomPos = {
+				left: (e.clientX - stagePos.left + body.scrollLeft),
+				top: (e.clientY - stagePos.top + body.scrollTop)
+			};
+			
+			//user the zoomer div preview
+			$(zoomer).show().css({
+				left: startZoomPos.left,
+				top: startZoomPos.top,
+				width: 1,
+				height: 1
+			});
+			
 			//end pixel
 			$(this).mousemove(function(d) {
+				var currentPos = {
+					left: (d.clientX - stagePos.left + body.scrollLeft),
+					top: (d.clientY - stagePos.top + body.scrollTop)
+				};
 				
+				$(zoomer).show().css({
+					left: Math.min(currentPos.left, startZoomPos.left),
+					top: Math.min(currentPos.top, startZoomPos.top),
+					width: Math.abs(currentPos.left - startZoomPos.left),
+					height: Math.abs(currentPos.top - startZoomPos.top)
+				});
 			}).mouseup(function(d) {
 				var pos2 = translate(d.clientX, d.clientY);
 				pos2.x = ~~pos2.x;
@@ -147,6 +170,8 @@ $(function() {
 				var diffx = pos2.x < pos.x ? -1 : 1;
 				var diffy = pos2.y < pos.y ? -1 : 1;
 				var x = pos.x, y;
+				
+				$(zoomer).hide();
 				
 				//if the mouseup is the same position as down, it was a click
 				if(~~pos.x === ~~pos2.x && ~~pos.y === ~~pos2.y) {
