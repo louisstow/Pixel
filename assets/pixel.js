@@ -428,6 +428,12 @@ function drawZoom(startX, startY, level, owner) {
 			
 			//if no pixel found, don't draw
 			if(!pixel && !pixels[x + "," + y]) continue;
+			
+			//only show existing pixels
+			if(owner && !pixel) {
+				continue;
+			}
+			
 			//if only draw the specified owner
 			if(owner && pixel.owner != owner) {
 				console.log(owner, pixel.owner);
