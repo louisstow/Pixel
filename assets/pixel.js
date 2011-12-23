@@ -131,12 +131,51 @@ $(function() {
 		$("#stage").unbind();
 		$(this).addClass("active");
 		
-		$("#stage").click(function(e) {
-			var xpos = (e.clientX - stagePos.left + body.scrollLeft) / zoomLevel + zoomPos.left,
-				ypos = (e.clientY - stagePos.top + body.scrollTop) / zoomLevel + zoomPos.top;
-			console.log("CLICK AT", xpos, ypos);
+		$("#stage").mousedown(function(e) {
+			//start pixel
+			var pos = translate(e.clientX, e.clientY);
+			pos.x = ~~pos.x;
+			pos.y = ~~pos.y;
 			
-			selectPixel(~~xpos, ~~ypos);
+			//end pixel
+			$(this).mousemove(function(d) {
+				
+			}).mouseup(function(d) {
+				var pos2 = translate(d.clientX, d.clientY);
+				pos2.x = ~~pos2.x;
+				pos2.y = ~~pos2.y;
+				var diffx = pos2.x < pos.x ? -1 : 1;
+				var diffy = pos2.y < pos.y ? -1 : 1;
+				var x = pos.x, y;
+				
+				//if the mouseup is the same position as down, it was a click
+				if(~~pos.x === ~~pos2.x && ~~pos.y === ~~pos2.y) {
+					console.log("click");
+					$(this).unbind("mousemove").unbind("mouseup");
+					selectPixel(~~pos.x, ~~pos.y);
+					return;
+				}
+				console.log(pos, pos2, diffx, diffy);
+				//loop over the x difference
+				while(x !== pos2.x) {
+					y = pos.y;
+					
+					//loop over the y difference
+					while(y !== pos2.y) {
+						if(!pixels[x + "," + y]) {
+							pixels[x + "," + y] = true;
+							pixels.length++;
+						}
+						y += diffy;
+					}
+					
+					x += diffx;
+				}
+				
+				redraw();
+			
+				$(this).unbind("mousemove").unbind("mouseup");
+			});
 		});
 	});
 	
@@ -165,6 +204,7 @@ function clearSelection() {
 	$("#tools a").removeClass("active");
 	selected = null;
 	stopZoomer();
+	$("#stage").unbind("mousedown");
 }
 
 function selectPixel(x, y) {
@@ -292,7 +332,6 @@ function drawZoom(startX, startY, level, owner) {
 				continue;
 			}
 			
-			console.log(pixel, x, y);
 			ctx.fillStyle = "#" + (pixels[x + "," + y] ? selectColor : pixel.color);
 			ctx.fillRect(
 				(x - startX) * level, 
@@ -311,6 +350,13 @@ function redraw() {
 		drawBoard(mypixelsSelected && me.userID);
 	} else {
 		drawZoom(zoomPos.left, zoomPos.top, zoomLevel, mypixelsSelected && me.userID);
+	}
+}
+
+function translate(x, y) {
+	return {
+		x: (x - stagePos.left + body.scrollLeft) / zoomLevel + zoomPos.left,
+		y: (y - stagePos.top + body.scrollTop) / zoomLevel + zoomPos.top
 	}
 }
 
