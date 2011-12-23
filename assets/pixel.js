@@ -1,7 +1,7 @@
 var canvas, 
 	ctx, 
-	board, 
-	owners, 
+	board = {}, 
+	owners = {}, 
 	canvasWidth, 
 	canvasHeight,
 	body,
@@ -89,8 +89,81 @@ $(function() {
 	
 	//user registered
 	$(".register button").click(function() {
+		var data = {}
+		data.username = $("div.register .user").val();
+		data.password = $("div.register .pass").val();
+		data.email = $("div.register .email").val();
+		data.url = $("div.register .url").val();
+		data.message = $("div.register .message").val();
+		data.color = $("div.register .color").val();
 		
+		//player must choose a pixel
+		if(pixels.length === 0) {
+			showError("Select a free pixel with the select tool.");
+			return;
+		}
+		
+		//loop over selected pixels
+		for(var pix in pixels) { 
+			//don't confuse pixels with proto or length
+			if(pix === "length" || !pixels.hasOwnProperty(pix)) continue;
+			
+			if(board[pix]) continue;
+			
+			//as long as none of the above 
+			break;
+		}
+		
+		//check again
+		if(pix === "length" || !pixels.hasOwnProperty(pix) || board[pix]) {
+			showError("Select a free pixel with the select tool.");
+			return;
+		}
+		
+		data.pixel = pix;
+		
+		api("Register", data, function(resp) {
+			me = resp;
+			$("div.register").hide();
+			$("div.login").hide();
+			$("#login,#register").hide();
+			$("#welcome").text("Here be " + resp.userName).show();
+		});
 	});
+	
+	$("a.default").click(function() {
+		clearSelection();
+		selected = "default";
+		$(this).addClass("active");
+		
+		$("#stage").mousemove(function(e) {
+			var pos = translate(e.clientX, e.clientY);
+			var pixel = board[~~pos.x + ',' + ~~pos.y];
+			
+			if(!pixel) {
+				$("#tooltip").hide().text("");
+				return;
+			}
+			
+			var info = owners[pixel.owner];
+			var globalPos = translateGlobal(e.clientX, e.clientY);
+			$("#tooltip").text(info.message).show().css({
+				left: globalPos.left + 15,
+				top: globalPos.top
+			});
+			
+		}).click(function(e) {
+			var pos = translate(e.clientX, e.clientY);
+			var pixel = board[~~pos.x + ',' + ~~pos.y];
+			
+			if(!pixel) {
+				showError("This pixel is available");
+			} else {
+				var info = owners[pixel.owner];
+				window.open(info.url);
+			}
+		});
+	}).trigger("click");
 	
 	$("a.zoomin").click(function() {
 		clearSelection();
@@ -137,25 +210,26 @@ $(function() {
 			pos.x = ~~pos.x;
 			pos.y = ~~pos.y;
 			
-			var startZoomPos = {
-				left: (e.clientX - stagePos.left + body.scrollLeft),
-				top: (e.clientY - stagePos.top + body.scrollTop)
-			};
+			var startZoomPos = translateGlobal(e.clientX, e.clientY);;
 			
-			//user the zoomer div preview
-			$(zoomer).show().css({
-				left: startZoomPos.left,
-				top: startZoomPos.top,
-				width: 1,
-				height: 1
-			});
+			var zoomOff = true;
 			
 			//end pixel
 			$(this).mousemove(function(d) {
-				var currentPos = {
-					left: (d.clientX - stagePos.left + body.scrollLeft),
-					top: (d.clientY - stagePos.top + body.scrollTop)
-				};
+				
+				if(zoomOff) {
+					//user the zoomer div preview
+					$(zoomer).show().css({
+						left: startZoomPos.left,
+						top: startZoomPos.top,
+						width: 1,
+						height: 1
+					});
+					
+					zoomOff = false;
+				}
+			
+				var currentPos = translateGlobal(d.clientX, d.clientY);
 				
 				$(zoomer).show().css({
 					left: Math.min(currentPos.left, startZoomPos.left),
@@ -182,11 +256,11 @@ $(function() {
 				}
 				console.log(pos, pos2, diffx, diffy);
 				//loop over the x difference
-				while(x !== pos2.x) {
+				while(x !== pos2.x + diffx) {
 					y = pos.y;
 					
 					//loop over the y difference
-					while(y !== pos2.y) {
+					while(y !== pos2.y + diffy) {
 						if(!pixels[x + "," + y]) {
 							pixels[x + "," + y] = true;
 							pixels.length++;
@@ -217,6 +291,9 @@ $(function() {
 		
 		pixels = {length: 0};
 		for(var pos in board) {
+			var pix = board[pos];
+			if(pix.owner != me.userID) continue;
+		
 			pixels[pos] = true;
 			pixels.length++;
 		}
@@ -382,6 +459,13 @@ function translate(x, y) {
 	return {
 		x: (x - stagePos.left + body.scrollLeft) / zoomLevel + zoomPos.left,
 		y: (y - stagePos.top + body.scrollTop) / zoomLevel + zoomPos.top
+	}
+}
+
+function translateGlobal(x, y) {
+	return {
+		left: (x - stagePos.left + body.scrollLeft),
+		top: (y - stagePos.top + body.scrollTop)
 	}
 }
 

@@ -38,3 +38,5 @@ span.blue { color: blue; font-weight: bold }
 #hint { position: absolute; right: 0; top: 30px }
 
 .colorpicker { z-index: 1000 }
+
+#tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000 }
