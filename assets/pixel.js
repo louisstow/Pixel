@@ -391,7 +391,9 @@ function drawBoard(owner) {
 	//loop over selected pixels
 	for(var pos in pixels) {
 		pixel = board[pos];
-
+		if(owner && !pixel) continue;
+		if(owner && pixel.owner != owner) continue;
+		
 		pos = pos.split(",");
 		index = (pos[1] * canvasWidth + (+pos[0])) * 4;
 	
