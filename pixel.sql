@@ -55,6 +55,12 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
--- Dumping data for table `users`
+-- Table structure for table `transaction`
 --
 
+CREATE TABLE IF NOT EXISTS `transaction` (
+  `buyerID` int(10) unsigned NOT NULL,
+  `sellerID` int(10) unsigned NOT NULL,
+  `pixelLocation` varchar(200) NOT NULL,
+  `price` int(10) unsigned NOT NULL
+);
