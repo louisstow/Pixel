@@ -18,7 +18,7 @@ var canvas,
 	shadowColor = "#222222",
 	selectColor = "00C8FF",
 	
-	nextCycle;
+	nextCycle = unixtime(new Date());
 
 var $hours,
 	$minutes,
@@ -66,13 +66,7 @@ $(function() {
 	}, false);
 	
 	//retrieve the current board
-	api("GetBoard", function(data) {
-		board = data.pixels;
-		owners = data.owners;
-		nextCycle = ~~(Date.parse(data.cycle.cycleTime) / 1000);
-		
-		drawBoard();
-	});
+	api("GetBoard", updateBoard);
 	
 	$("#login").click(function() {
 		$("div.login").show();
@@ -334,14 +328,32 @@ $(function() {
 		}
 	});
 	
+	tick();
 	setInterval(tick, 1000);
+	setInterval(status, 1000 * 60);
 });
+
+function status() {
+	api("GetBoard", updateBoard);
+}
+
+function updateBoard(data) {
+	board = data.pixels;
+	owners = data.owners;
+	nextCycle = ~~(Date.parse(data.cycle.cycleTime) / 1000);
+	
+	$("span.hinttype").text(data.cycle.hint);
+	$("span.hintcolor")
+		.text(data.cycle[data.cycle.hint])
+		.css("color", data.cycle[data.cycle.hint]);
+	
+	drawBoard();
+}
 
 function tick() {
 	//convert current time to UTC+0
-	var date = new Date();
-	date = ~~(((+date) + date.getTimezoneOffset() * 60000) / 1000);
-	
+	var date = unixtime(new Date());
+
 	var diff = nextCycle - date;
 	console.log(+date, nextCycle);
 	
@@ -349,7 +361,16 @@ function tick() {
 	var minutes = ~~(diff / 60) % 60;
 	var seconds = diff % 60;
 	
+	$hours.text(hours + " hour" + (hours === 1 ? "" : "s"));
+	$minutes.text(minutes + " minute" + (minutes === 1 ? "" : "s"));
+	$seconds.text(seconds + " second" + (seconds === 1 ? "" : "s"));
 	console.log(hours, minutes, seconds);
+}
+
+function unixtime(time) {
+	var newtime = +time;
+	newtime = ~~((newtime + time.getTimezoneOffset() * 60000) / 1000);
+	return newtime;
 }
 
 function clearSelection() {

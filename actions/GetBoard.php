@@ -30,7 +30,7 @@ switch($cycle['hint']) {
 		break;
 }
 
-$cycle['cycleTime'] .= date(" eP");
+$cycle['cycleTime'] .= " UTC+10:00";
 
 echo json_encode(
 	array(

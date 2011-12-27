@@ -42,4 +42,7 @@ span.blue { color: blue; font-weight: bold }
 
 .colorpicker { z-index: 1000 }
 
+span.hinttype { text-transform: capitalize; font-weight: bold }
+span.hintcolor { font-weight: bold }
+
 #tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000 }
