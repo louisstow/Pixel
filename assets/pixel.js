@@ -16,8 +16,14 @@ var canvas,
 	swatch = "000000",
 	mypixelsSelected = false,
 	shadowColor = "#222222",
-	selectColor = "00C8FF";
+	selectColor = "00C8FF",
+	
+	nextCycle;
 
+var $hours,
+	$minutes,
+	$seconds;
+	
 $(function() {
 	zoomer = document.createElement("div");
 	$("#stage").append(zoomer);
@@ -33,6 +39,10 @@ $(function() {
 	canvasWidth = canvas.width;
 	canvasHeight = canvas.height;
 	body = document.body;
+	
+	$hours = $("span.hours");
+	$minutes = $("span.minutes");
+	$seconds = $("span.seconds");
 	
 	$(".color").each(function() {
 		var self = $(this);
@@ -59,6 +69,7 @@ $(function() {
 	api("GetBoard", function(data) {
 		board = data.pixels;
 		owners = data.owners;
+		nextCycle = ~~(Date.parse(data.cycle.cycleTime) / 1000);
 		
 		drawBoard();
 	});
@@ -322,7 +333,24 @@ $(function() {
 			$(this).ColorPickerSetColor(swatch);
 		}
 	});
+	
+	setInterval(tick, 1000);
 });
+
+function tick() {
+	//convert current time to UTC+0
+	var date = new Date();
+	date = ~~(((+date) + date.getTimezoneOffset() * 60000) / 1000);
+	
+	var diff = nextCycle - date;
+	console.log(+date, nextCycle);
+	
+	var hours = ~~(diff / 60 / 60);
+	var minutes = ~~(diff / 60) % 60;
+	var seconds = diff % 60;
+	
+	console.log(hours, minutes, seconds);
+}
 
 function clearSelection() {
 	$("#tools a").removeClass("active");

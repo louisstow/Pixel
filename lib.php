@@ -52,13 +52,6 @@ function encrypt($str) {
 }
 
 /**
-* Get the current Date
-*/
-function NOW() {
-	return date('Y-m-d H:i:s');
-}
-
-/**
 * Send an error to the client
 */
 function error($msg) {

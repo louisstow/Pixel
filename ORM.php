@@ -7,6 +7,13 @@ function I($model) {
 	return ORM::load($model);
 }
 
+/**
+* Get the current Date
+*/
+function NOW() {
+	return date('Y-m-d H:i:s');
+}
+
 /* DB types */
 define("INT", 0);
 define("STRING", 1);
@@ -26,6 +33,8 @@ class ORM {
 	private static $refl = array();
 	/* last error from PDO */
 	private static $error;
+	/* last executed query */
+	private static $SQL;
 	/* if the Model should be inserted first */
 	public $_updateFlag = false;
 	
@@ -37,6 +46,7 @@ class ORM {
 			 self::$db = new PDO("mysql:host=localhost; dbname=pixel","root","");
 		}
 		
+		$SQL = $sql;
 		$statement = self::$db->prepare($sql);
 		$statement->execute($vars);
 
@@ -103,6 +113,13 @@ class ORM {
 		}
 		
 		return self::$refl[$model]->getStaticProperties();
+	}
+	
+	/**
+	* Get last SQL executed
+	*/
+	static function getLastSQL() {
+		return self::$SQL;
 	}
 	
 	/**
@@ -285,7 +302,6 @@ class CRUD {
 		}
 		
 		$sql = substr($sql, 0, strlen($sql) - 1) . ")";
-		
 		$q = ORM::query($sql, $params);
 		
 		//if error
