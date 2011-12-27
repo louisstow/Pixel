@@ -13,6 +13,7 @@ var canvas,
 	zoomer,
 	selected, //which tool is selected
 	tab, //which tab is selected
+	swatch = "000000",
 	mypixelsSelected = false,
 	shadowColor = "#222222",
 	selectColor = "00C8FF";
@@ -160,7 +161,13 @@ $(function() {
 				showError("This pixel is available");
 			} else {
 				var info = owners[pixel.owner];
-				window.open(info.url);
+				var url = info.url;
+				
+				if(url.substr(0, 7) !== "http://" && url.substr(0, 8) !== "https://") {
+					url = "http://" + url;
+				}
+				
+				window.open(url);
 			}
 		});
 	}).trigger("click");
@@ -300,6 +307,21 @@ $(function() {
 		
 		redraw();
 	});
+	
+	$("a.swatch").ColorPicker({
+		onChange: function(a, hex, c) {
+			$("a.swatch span").css("background", "#" + hex);
+			swatch = hex;
+		},
+		
+		onHide: function() {
+			updateColors();
+		},
+		
+		onBeforeShow: function() {
+			$(this).ColorPickerSetColor(swatch);
+		}
+	});
 });
 
 function clearSelection() {
@@ -362,6 +384,30 @@ function startZoomer(level) {
 function stopZoomer() {
 	$(zoomer).hide();
 	$("#stage").unbind("mousemove").unbind("click");
+}
+
+function updateColors() {
+	if(!me) {
+		return;
+	}
+	
+	var data = {};
+	data.color = swatch;
+	data.pixels = [];
+	
+	//loop selected pixels
+	for(var pix in pixels) {
+		var pixel = board[pix];
+		if(!pixel || pixel.owner != me.userID) continue;
+		
+		pixel.color = swatch;
+		data.pixels.push(pix);
+	}
+	
+	if(data.pixels.length === 0) return;
+	
+	api("ChangeColor", data);
+	redraw();
 }
 
 function drawBoard(owner) {
@@ -481,17 +527,17 @@ function showError(msg) {
 	console.error(msg);
 }
 
-function api(action, data, callback, showError) {
+function api(action, data, callback, showErrorFlag) {
 	//allow empty data
 	if(typeof data === "function") {
-		showError = callback;
+		showErrorFlag = callback;
 		callback = data;
 		data = null;
 	}
 	
 	//default to show error
-	if(showError === undefined) {
-		showError = true;
+	if(showErrorFlag === undefined) {
+		showErrorFlag = true;
 	}
 	
 	$.ajax("api.php?action=" + action, {
@@ -499,7 +545,7 @@ function api(action, data, callback, showError) {
 		data: data,
 		success: function(data) {
 			//if there is an error, automatically display
-			if(showError && data.error) {
+			if(showErrorFlag && data.error) {
 				showError(data.error);
 				return;
 			}
