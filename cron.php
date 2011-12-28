@@ -140,6 +140,6 @@ $ti = rand(0, 2);
 $hint = $type[$ti];
 
 //when the cycle starts
-$time = time() + (4 * 60 * 60);
+$time = time() + (2 * 60 * 60);
 I("Cycle")->create(D, $pos, $neu, $neg, $hint, date('Y-m-d H:i:s', $time));
 ?>

@@ -11,7 +11,7 @@ input { outline: none }
 .register { right: 0; width: 300px; display: none }
 
 #details { position: absolute; right: 0; top: 0 }
-#details a, #details span { display: none }
+#details a, #details span { display: none; margin:0 5px }
 
 #top { width: 1200px; margin: auto; position: relative; text-align: left; z-index: 100 }
 #top h1 { margin: 0; padding: 0; text-align: center }
@@ -44,5 +44,8 @@ span.blue { color: blue; font-weight: bold }
 
 span.hinttype { text-transform: capitalize; font-weight: bold }
 span.hintcolor { font-weight: bold }
+
+#welcome { font-style: italic; color: #aaa; margin-right: 20px }
+#welcome b { color: #888 }
 
 #tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000 }

@@ -60,7 +60,8 @@ $(function() {
 		if(resp.error) {
 			$("#login,#register").show();
 		} else {
-			$("#welcome").text("Here be " + resp.userName).show();
+			$("#welcome").html("Here be <b>" + resp.userName + "</b>").show();
+			$("#events,#logout").show();
 			me = resp;
 		}
 	}, false);
@@ -89,7 +90,8 @@ $(function() {
 			$("div.register").hide();
 			$("div.login").hide();
 			$("#login,#register").hide();
-			$("#welcome").text("Here be " + resp.userName).show();
+			$("#welcome").html("Here be <b>" + resp.userName + "</b>").show();
+			$("#events,#logout").show();
 		});
 	});
 	
@@ -133,7 +135,8 @@ $(function() {
 			$("div.register").hide();
 			$("div.login").hide();
 			$("#login,#register").hide();
-			$("#welcome").text("Here be " + resp.userName).show();
+			$("#welcome").html("Here be <b>" + resp.userName + "</b>").show();
+			$("#events,#logout").show();
 		});
 	});
 	
