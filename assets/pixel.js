@@ -346,8 +346,12 @@ function updateBoard(data) {
 	$("span.hintcolor")
 		.text(data.cycle[data.cycle.hint])
 		.css("color", data.cycle[data.cycle.hint]);
+		
+	if(data.events) {
+		updateEvents(data.events);
+	}
 	
-	drawBoard();
+	redraw();
 }
 
 function tick() {
@@ -361,10 +365,18 @@ function tick() {
 	var minutes = ~~(diff / 60) % 60;
 	var seconds = diff % 60;
 	
+	if(hours < 0) hours = 0;
+	if(minutes < 0) minutes = 0;
+	if(seconds < 0) seconds = 0;
+	
 	$hours.text(hours + " hour" + (hours === 1 ? "" : "s"));
 	$minutes.text(minutes + " minute" + (minutes === 1 ? "" : "s"));
 	$seconds.text(seconds + " second" + (seconds === 1 ? "" : "s"));
 	console.log(hours, minutes, seconds);
+}
+
+function updateEvents(data) {
+	console.log(data);
 }
 
 function unixtime(time) {

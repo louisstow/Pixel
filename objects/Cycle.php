@@ -11,4 +11,9 @@ class Cycle extends ORM {
 		"hint" => STRING,
 		"cycleTime" => DATE
 	);
+	
+	public static function getCurrent() {
+		$q = ORM::query("SELECT * FROM cycles WHERE cycleID = (SELECT MAX(cycleID) FROM cycles)");
+		return $q->fetch(PDO::FETCH_ASSOC);
+	}
 }
