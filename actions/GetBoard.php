@@ -1,5 +1,5 @@
 <?php
-load("Pixel");
+load("Pixel, Event");
 
 $data = Pixel::getAll();
 
@@ -32,11 +32,22 @@ switch($cycle['hint']) {
 
 $cycle['cycleTime'] .= " UTC+10:00";
 
-echo json_encode(
-	array(
-		"pixels" => $results, 
-		"owners" => $owners, 
-		"cycle" => $cycle
-	)
+$json = array(
+    "pixels" => $results, 
+    "owners" => $owners, 
+    "cycle" => $cycle
 );
+
+//if logged in, list event data
+if(isset($_SESSION['id'])) {
+    $q = Event::getLatest(USER);
+    $events = array();
+    while($row = $q->fetch(PDO::FETCH_ASSOC)) {
+        $events[] = $row['event'];
+    }
+
+    $json['events'] = $events;
+}
+
+echo json_encode($json);
 ?>

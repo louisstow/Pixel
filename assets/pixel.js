@@ -78,13 +78,26 @@ $(function() {
 		$("div.login").hide();
 		$("div.register").show();
 	});
+
+    $("#logout").click(function() {
+        if(me) {
+            api("Logout", function() {
+                $("#login, #register").show();
+                $("#welcome").text("").hide();
+                $("#logout, #events, div.events").hide();
+            });
+        }
+    });
+
+    $("#events").click(function() {
+        $("div.events").toggle();
+    });
 	
 	//user logged in
 	$(".login button").click(function() {
 		var user = $("div.login .user").val(),
 			pass = $("div.login .pass").val();
 			
-		console.log(user, pass);
 		api("Login", {username: user, password: pass}, function(resp) {
 			me = resp;
 			$("div.register").hide();
@@ -264,12 +277,10 @@ $(function() {
 				
 				//if the mouseup is the same position as down, it was a click
 				if(~~pos.x === ~~pos2.x && ~~pos.y === ~~pos2.y) {
-					console.log("click");
 					$(this).unbind("mousemove").unbind("mouseup");
 					selectPixel(~~pos.x, ~~pos.y);
 					return;
 				}
-				console.log(pos, pos2, diffx, diffy);
 				//loop over the x difference
 				while(x !== pos2.x + diffx) {
 					y = pos.y;
@@ -362,7 +373,6 @@ function tick() {
 	var date = unixtime(new Date());
 
 	var diff = nextCycle - date;
-	console.log(+date, nextCycle);
 	
 	var hours = ~~(diff / 60 / 60);
 	var minutes = ~~(diff / 60) % 60;
@@ -375,11 +385,18 @@ function tick() {
 	$hours.text(hours + " hour" + (hours === 1 ? "" : "s"));
 	$minutes.text(minutes + " minute" + (minutes === 1 ? "" : "s"));
 	$seconds.text(seconds + " second" + (seconds === 1 ? "" : "s"));
-	console.log(hours, minutes, seconds);
 }
 
 function updateEvents(data) {
 	console.log(data);
+    //loop over all events and create html
+    var i = 0, len = data.length;
+    var html = "";
+    for(; i < len; ++i) {
+        html += "<li>"+data[i]+"</li>";
+    }
+
+    $("div.events ul").html(html);
 }
 
 function unixtime(time) {

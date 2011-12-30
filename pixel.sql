@@ -16,6 +16,12 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
+DROP TABLE IF EXISTS cycles;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS pixels;
+DROP TABLE IF EXISTS events;
+DROP TABLE IF EXISTS transaction;
+
 --
 -- Database: `pixel`
 --
