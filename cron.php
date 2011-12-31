@@ -53,7 +53,12 @@ foreach($pixel as $xy=>$pix) {
 	
 	//calculate the score for this pixel
 	$value = $color[$cycle['positive']] - $color[$cycle['negative']];
-	
+    
+    //handicap for bought pixels
+	if($pix['sold'] > 0) {
+        $value += $color[$cycle['neutral']];
+    }
+
 	foreach($circle as $dir) {
 		$key = ($location[0] + $dir[0]) . "," . ($location[1] + $dir[1]);
 
@@ -74,7 +79,12 @@ foreach($pixel as $xy=>$pix) {
 		
 		//calculate the opponent score
 		$ovalue = $ocolor[$cycle['positive']] - $ocolor[$cycle['negative']];
-		
+
+        //handicap for bought pixels
+	    if($opponent['sold']) > 0) {
+            $ovalue += $ocolor[$cycle['neutral']];
+        }
+
 		//opponent wins
 		if($ovalue > $value) {
 			$modified[$xy] = $opponent;
@@ -101,7 +111,7 @@ foreach($modified as $xy => $pix) {
 	
 	//append values for sql
 	$rsql .= "'" . $xy . "', ";
-	$isql .= "('{$xy}', {$pix['ownerID']}, 0, '{$pix['color']}'),";
+	$isql .= "('{$xy}', {$pix['ownerID']}, 0, '{$pix['color']}', 0),";
 }
 
 //clean up sql
