@@ -18,26 +18,28 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) $result[] = $row;
 
 //loop over pixels
 $cost = 0;
-$usql = "UPDATE SET ownerID = ? WHERE pixelLocation IN('";
+$dsql = "DELETE FROM pixels WHERE pixelLocation IN('";
+$isql = "INSERT INTO pixels VALUES ";
 $inloc = array();
-
-$len = 0;
 
 //loop over every specified pixel and double check
 foreach($result as $pixel) {
     //skip if not for sale
     if($pixel['cost'] === 0) continue;
     
-    $len++;
-    
     $cost += $pixel['cost'];
     $inloc[] = $pixel['pixelLocation'];
+    $isql .= "('{$pixel['pixelLocation']}', {USER}, 0, 'ffffff')";
 }
 
-$usql .= implode($inloc, "','") . "')";
+$dsql .= implode($inloc, "','") . "')";
+$isql .= ;
+$cost += (count($pixels) - count($results)) * 100;
 
 echo $usql;
 echo $cost;
+
+
 
 //check price of every pixel, if not for sale skip, if not exists 1
 //add up total
