@@ -26,14 +26,15 @@ $isql = "INSERT INTO pixels VALUES ";
 $iprep = array();
 
 foreach($pixel as $pix) {
-	$isql .= "(?, ?, 0, ?),"
+	$isql .= "(?, ?, 0, ?, 0),";
 	
 	$iprep[] = $pix;
 	$iprep[] = $player->userID;
 	$iprep[] = $color;
 }
 
-$isql = substring($isql, 0, strlen($isql) - 1);
+$isql = substr($isql, 0, strlen($isql) - 1);
+
 ORM::query($isql, $iprep);
 
 unset($player->userPass);

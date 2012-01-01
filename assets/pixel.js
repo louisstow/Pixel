@@ -94,6 +94,7 @@ $(function() {
                 $("#login, #register").show();
                 $("#welcome").text("").hide();
                 $("#logout, #events, div.events").hide();
+				me = null;
             });
         }
     });
