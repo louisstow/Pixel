@@ -6,7 +6,7 @@ var canvas,
 	canvasHeight,
 	body,
 	me,
-	pixels = {length: 0},
+	pixels = {length: 0}, //selected pixes
 	stagePos,
 	zoomPos = {left: 0, top: 0},
 	zoomLevel = 1,
@@ -340,6 +340,52 @@ $(function() {
 		onBeforeShow: function() {
 			$(this).ColorPickerSetColor(swatch);
 		}
+	});
+	
+	$("a.buypixel").click(function() {
+		if(!me) {
+			showError("Please login");
+			return;
+		}
+		
+		//hide if opened
+		if($("div.buy").is(":visible")) {
+			$("div.buy").hide();
+			$(this).removeClass("active");
+			return;
+		}
+		
+		$(this).addClass("active");
+		
+		var total = 0;
+		var html = "";
+		for(var pix in pixels) {
+			if(pix === "length") continue;
+			
+			var pixel = board[pix];
+			var cost;
+			if(pixel) {
+				//if pixel for sale, add to total, else deselect
+				if(pixel.cost) cost = +pixel.cost;
+				else {
+					delete pixels[pix];
+					continue;
+				}
+			} else {
+				//add one dollar to the price
+				cost = 0.1;
+			}
+			
+			total += cost;
+			
+			if(pixels.length < 10000) html += "<li>" + pix + "<i>$" + cost.toFixed(2) + "</i><a class='remove'>remove</a></li>";
+		}
+		
+		$("div.buy div.list ul").html(html);
+		$("div.buy span.total").text(total.toFixed(2));
+		$("div.buy input.amount").val(total.toFixed(2));
+		$("div.buy").show();
+		redraw();
 	});
 	
 	tick();

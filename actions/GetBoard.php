@@ -9,6 +9,9 @@ $owners = array();
 //loop over every pixel and convert to JSON
 while($row = $data->fetch(PDO::FETCH_ASSOC)) {
 	$results[$row['pixelLocation']] = array("color" => $row['color'], "owner" => $row['ownerID']);
+	if($row['cost'] > 0) {
+		$results[$row['pixelLocation']]['cost'] = $row['cost'];
+	}
 	$owners[$row['ownerID']] = array("message" => $row['message'], "url" => $row['url']);
 }
 

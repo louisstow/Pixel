@@ -22,8 +22,8 @@ $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 $header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 
 //If testing on Sandbox use:
-//$fp = fsockopen('ssl://www.sandbox.paypal.com', 443, $errno, $errstr, 30);
-$fp = fsockopen('ssl://ipnpb.paypal.com', 443, $errno, $errstr, 30);
+$fp = fsockopen('ssl://www.sandbox.paypal.com', 443, $errno, $errstr, 30);
+//$fp = fsockopen('ssl://ipnpb.paypal.com', 443, $errno, $errstr, 30);
 
 if (!$fp) {
     // HTTP ERROR
@@ -33,7 +33,7 @@ if (!$fp) {
 fputs($fp, $header . $req);
 while(!feof($fp)) $res = fgets($fp, 1024);
 
-print_r($_POST);
+file_put_contents("log.txt", $res . "\n\n\n\n" . print_r($_POST, true));
 
 echo "The response from IPN was: <b>" .$res ."</b><br><br>";
 ?>

@@ -25,16 +25,16 @@ Next cycle in <span class="hours"></span> <span class="minutes"></span> <span cl
 <span class="hinttype"></span> color is <span class="hintcolor"></span>
 </div>
 
-<div id="controls">
+<div id="controls" class="menu">
 <ul>
-	<li><a class="buy">Buy</a></li>
-	<li><a class="sell">Sell</a></li>
+	<li><a class="buypixel">Buy</a></li>
+	<li><a class="sellpixel">Sell</a></li>
 	<li><a class="mypixels">My Pixels</a></li>
 	<li><a class="instructions">Instructions</a></li>
 </ul>
 </div>
 
-<div id="tools">
+<div id="tools" class="menu">
 <ul>
 	<li><a class="default">Default</a></li>
 	<li><a class="select">Select</a>
@@ -79,9 +79,21 @@ Next cycle in <span class="hours"></span> <span class="minutes"></span> <span cl
 </div>
 
 <div class="box buy">
+
+<h2>Buy pixels</h2>
+
+<div class="list">
+<ul></ul>
+</div>
+
+<p>Total: $<span class="total"></span></p>
+
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="LPCL5GN7EVB7E">
+<input type="hidden" name="cmd" value="_xclick" />
+<input type="hidden" name="business" value="louisstow@gmail.com" />
+<input type="hidden" name="amount" class="amount" value="3.00" />
+<input type="hidden" name="currency_code" id="currency_code" value="AUD" />
+<input type="hidden" name="return" value="http://pixenomics.com/payment.html" />
 <input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
 <img alt="" border="0" src="https://www.paypalobjects.com/en_AU/i/scr/pixel.gif" width="1" height="1">
 </form>
