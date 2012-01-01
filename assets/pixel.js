@@ -35,6 +35,12 @@ $(function() {
 	stagePos.left++;
 	stagePos.top++;
 	
+	$(window).resize(function() {
+		stagePos = $("#stage").offset();
+		stagePos.left++;
+		stagePos.top++;
+	});
+	
 	//init canvases
 	canvas = $("#canvas")[0];
 	ctx = canvas.getContext("2d");
@@ -421,6 +427,9 @@ $(function() {
 				$("div.buy input.amount").val(total.toFixed(2));
 				$("input.item").val(buyList.join(' '));
 				$(this).parent().remove();
+				
+				delete pixels[id];
+				redraw();
 			});
 		}
 		
