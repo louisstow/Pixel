@@ -92,6 +92,9 @@ foreach($pixel as $xy=>$pix) {
 $rsql = "DELETE FROM pixels WHERE pixelLocation IN(";
 $isql = "INSERT INTO pixels VALUES ";
 
+$rprep = array();
+$iprep = array();
+
 //determine who lost pixels and gained pixels after cycle
 //generate the sql data
 foreach($modified as $xy => $pix) {
@@ -100,24 +103,34 @@ foreach($modified as $xy => $pix) {
 	$pixelcount[$pixel[$xy]['ownerID']]['lose']++;
 	
 	//append values for sql
-	$rsql .= "'" . $xy . "', ";
-	$isql .= "('{$xy}', {$pix['ownerID']}, 0, '{$pix['color']}', 0),";
+	$rsql .= "?,";
+	$rprep[] = $xy;
+	
+	$isql .= "(?, ?, 0, ?, 0),";
+	$isql[] = $xy;
+	$isql[] = $pix['ownerID'];
+	$isql[] = $pix['color'];
 }
 
 //clean up sql
-$rsql .= "'none')";
+$rsql = substr($rsql, 0, strlen($rsql) - 1) .  ")";
 $isql = substr($isql, 0, strlen($isql) - 1);
 
 $esql = "INSERT INTO events VALUES ";
 foreach($pixelcount as $owner => $pix) {
 	$text = "You won {$pix['win']} and lost {$pix['lose']}";
-	$esql .= "({$owner}, '" . NOW() . "', '{$text}'),";
+	$esql .= "(?, ?, ?),";
+	
+	$eprep[] = $owner;
+	$eprep[] = NOW();
+	$eprep[] = $text;
 }
+
 $esql = substr($esql, 0, strlen($esql) - 1);
 
-ORM::query($rsql);
-ORM::query($isql);
-ORM::query($esql);
+ORM::query($rsql, $rprep);
+ORM::query($isql, $iprep);
+ORM::query($esql, $eprep);
 
 $enum = array("red", "green", "blue");
 $type = array("positive", "neutral", "negative");

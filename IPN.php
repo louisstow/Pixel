@@ -44,8 +44,12 @@ if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
 $list = implode($pixels, "','");
 
 //grab all the pixels
-$sql = "SELECT * FROM pixels WHERE pixelLocation IN('{$list}')";
-$q = ORM::query($sql);
+$sql = "SELECT * FROM pixels WHERE pixelLocation IN(";
+$sql .= str_repeat("?,", count($pixels));
+$sql = substr($sql, 0, strlen($sql) - 1) . ")";
+
+$q = ORM::query($sql, $pixels);
+
 $result = array();
 
 while($row = $q->fetch(PDO::FETCH_ASSOC)) $result[$row['pixelLocation']] = $row;

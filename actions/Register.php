@@ -23,11 +23,18 @@ if(!$player) {
 $_SESSION['id'] = $player->userID;
 
 $isql = "INSERT INTO pixels VALUES ";
+$iprep = array();
+
 foreach($pixel as $pix) {
-	$isql .= "('{$pix}', {$player->userID}), 0, '{$color}'),"
+	$isql .= "(?, ?, 0, ?),"
+	
+	$iprep[] = $pix;
+	$iprep[] = $player->userID;
+	$iprep[] = $color;
 }
 
 $isql = substring($isql, 0, strlen($isql) - 1);
+ORM::query($isql, $iprep);
 
 unset($player->userPass);
 unset($player->_updateFlag);

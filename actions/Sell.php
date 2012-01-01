@@ -15,8 +15,14 @@ if($cost < 0 || $cost > 10000) {
 
 $list = implode($pixels, "','");
 
-ORM::query("UPDATE pixels SET cost = ? WHERE ownerID = ? AND pixelLocation IN('{$list}')",
-    array($cost, USER));
+$sql = "UPDATE pixels SET cost = ? WHERE ownerID = ? AND pixelLocation IN(";
+$sql .= str_repeat("?,", count($pixels));
+$sql = substr($sql, 0, strlen($sql) - 1) . ")";
+
+$prep = array($cost, USER);
+$prep = array_merge($prep, $pixels);
+
+ORM::query($sql, $prep);
 
 ok();
 ?>
