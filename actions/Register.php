@@ -2,8 +2,9 @@
 load("User, Pixel");
 data("username, email, password, url, message, pixel, color");
 
-if(I("Pixel")->get($pixel)) {
-	error("Pixel taken");
+//detect SQL injection 
+if(preg_match("/[^0-9,]/i", implode($pixel, ""))) {
+    error("Invalid pixels");
 }
 
 $password = encrypt($password);
@@ -21,7 +22,12 @@ if(!$player) {
 
 $_SESSION['id'] = $player->userID;
 
-I("Pixel")->create($pixel, $player->userID, 0, $color);
+$isql = "INSERT INTO pixels VALUES ";
+foreach($pixel as $pix) {
+	$isql .= "('{$pix}', {$player->userID}), 0, '{$color}'),"
+}
+
+$isql = substring($isql, 0, strlen($isql) - 1);
 
 unset($player->userPass);
 unset($player->_updateFlag);

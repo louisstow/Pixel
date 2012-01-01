@@ -57,4 +57,5 @@ span.hintcolor { font-weight: bold }
 .list  i { font-style: normal; color: #666; float:right; margin-left: 15px; }
 .list a { float: right }
 
+.slider { width: 290px; }
 .clearer { clear: both }

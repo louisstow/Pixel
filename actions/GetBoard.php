@@ -10,7 +10,7 @@ $owners = array();
 while($row = $data->fetch(PDO::FETCH_ASSOC)) {
 	$results[$row['pixelLocation']] = array("color" => $row['color'], "owner" => $row['ownerID']);
 	if($row['cost'] > 0) {
-		$results[$row['pixelLocation']]['cost'] = $row['cost'];
+		$results[$row['pixelLocation']]['cost'] = $row['cost'] / 100;
 	}
 	$owners[$row['ownerID']] = array("message" => $row['message'], "url" => $row['url']);
 }

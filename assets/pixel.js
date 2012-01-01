@@ -18,6 +18,7 @@ var canvas,
 	shadowColor = "#222222",
 	selectColor = "00C8FF",
 	
+	sellList,
 	buyList,
 	total,
 	nextCycle = unixtime(new Date());
@@ -121,11 +122,13 @@ $(function() {
 		data.color = $("div.register .color").val();
 		
 		//player must choose a pixel
-		if(pixels.length === 0) {
-			showError("Select a free pixel with the select tool.");
+		if(pixels.length < 10) {
+			showError("Select 10 free pixels with the select tool.");
 			return;
 		}
 		
+		var count = 0;
+		var list = [];
 		//loop over selected pixels
 		for(var pix in pixels) { 
 			//don't confuse pixels with proto or length
@@ -133,17 +136,14 @@ $(function() {
 			
 			if(board[pix]) continue;
 			
-			//as long as none of the above 
-			break;
+			list.push(pix);
+			
+			//as long as none of the above
+			count++;
+			if(count >= 9) break;
 		}
 		
-		//check again
-		if(pix === "length" || !pixels.hasOwnProperty(pix) || board[pix]) {
-			showError("Select a free pixel with the select tool.");
-			return;
-		}
-		
-		data.pixel = pix;
+		data.pixel = list;
 		
 		api("Register", data, function(resp) {
 			me = resp;
@@ -431,6 +431,84 @@ $(function() {
 		$("input.payeremail").val(me.userEmail);
 		$("div.buy").show();
 		redraw();
+	});
+	
+	$("a.sellpixel").click(function() {
+		if(!me) {
+			showError("Please login");
+			return;
+		}
+		
+		//hide if opened
+		if($("div.sell").is(":visible")) {
+			$("div.sell").hide();
+			$(this).removeClass("active");
+			return;
+		}
+		
+		if(pixels.length === 0) {
+			showError("Select some pixels to sell");
+			return;
+		}
+		
+		sellList = []
+		for(var pix in pixels) {
+			var pixel = board[pix];
+			
+			if(!pixel || pixel.owner != me.userID) {
+				delete pixels[pix];
+				continue;
+			}
+			
+			sellList.push(pix);
+		}
+		
+		if(sellList.length === 0) {
+			showError("Select your own pixels to sell");
+			return;
+		}
+		
+		$(this).addClass("active");
+		$("div.sell").show();
+		redraw();
+	});
+	
+	$("input.slider").change(function() {
+		var value = (+$(this).val()).toFixed(2);
+		$("input.display").val(value);
+	});
+	
+	$("input.display").change(function() {
+		var value = +$(this).val();
+		
+		if(value < 0.1 || value > 100.0 || isNaN(value)) {
+			showError("Value must be between $0.10 and $100.00");
+			value = 0.1;
+		}
+		
+		$("input.slider").val(value.toFixed(2));
+		$(this).val(value.toFixed(2));
+	});
+	
+	$("button.sellb").click(function() {
+		var value = $("input.display").val();
+		var data = {pixels: sellList, cost: value};
+		
+		api("Sell", data, function() {
+			showError("Your pixels are now on the market");
+			$("div.sell").hide();
+			$("a.sellpixel").removeClass("active");
+		});
+	});
+	
+	$("button.dsellb").click(function() {
+		var data = {pixels: sellList, cost: 0};
+		
+		api("Sell", data, function() {
+			showError("Your pixels are now off the market");
+			$("div.sell").hide();
+			$("a.sellpixel").removeClass("active");
+		});
 	});
 	
 	tick();

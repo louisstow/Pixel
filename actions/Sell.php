@@ -8,9 +8,9 @@ if(preg_match("/[^0-9,]/i", implode($pixels, ""))) {
 }
 
 //ensure cost is a number between 1,00 and 100,00
-$cost = intval($cost, 10);
-if($cost < 100 || $cost > 10000) {
-    error("Price must be less between $1 and $100");
+$cost = ((float) $cost) * 100;
+if($cost < 0 || $cost > 10000) {
+    error("Price must be less between $0.00 and $100");
 }
 
 $list = implode($pixels, "','");
