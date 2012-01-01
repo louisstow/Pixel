@@ -3,7 +3,7 @@ load("User, Pixel");
 data("username, email, password, url, message, pixel, color");
 
 //detect SQL injection 
-if(preg_match("/[^0-9,]/i", implode($pixel, ""))) {
+if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
     error("Invalid pixels");
 }
 

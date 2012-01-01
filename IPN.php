@@ -1,13 +1,9 @@
 <?php
-// Revision Notes
-// 11/04/11 - changed post back url from https://www.paypal.com/cgi-bin/webscr to https://ipnpb.paypal.com/cgi-bin/webscr
-// For more info see below:
-// https://www.x.com/content/bulletin-ip-address-expansion-paypal-services
-// "ACTION REQUIRED: if you are using IPN (Instant Payment Notification) for Order Management and your IPN listener script is behind a firewall that uses ACL (Access Control List) rules which restrict outbound traffic to a limited number of IP addresses, then you may need to do one of the following: 
-// To continue posting back to https://www.paypal.com  to perform IPN validation you will need to update your firewall ACL to allow outbound access to *any* IP address for the servers that host your IPN script
-// OR Alternatively, you will need to modify  your IPN script to post back IPNs to the newly created URL https://ipnpb.paypal.com using HTTPS (port 443) and update firewall ACL rules to allow outbound access to the ipnpb.paypal.com IP ranges (see end of message)."
+include 'lib.php';
+include 'ORM.php';
+load("User, Event, Transaction");
 
-
+$_POST = $_GET;
 // read the post from PayPal system and add 'cmd'
 $req = 'cmd=_notify-validate';
 
@@ -22,9 +18,8 @@ $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 $header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 
 //If testing on Sandbox use:
-$fp = fsockopen('ssl://www.sandbox.paypal.com', 443, $errno, $errstr, 30);
+/*$fp = fsockopen('ssl://www.sandbox.paypal.com', 443, $errno, $errstr, 30);
 //$fp = fsockopen('ssl://ipnpb.paypal.com', 443, $errno, $errstr, 30);
-
 if (!$fp) {
     // HTTP ERROR
     die("HTTP ERROR");
@@ -33,7 +28,99 @@ if (!$fp) {
 fputs($fp, $header . $req);
 while(!feof($fp)) $res = fgets($fp, 1024);
 
-file_put_contents("log.txt", $res . "\n\n\n\n" . print_r($_POST, true));
+//$res should be "VERIFIED" else explode
+if($res != "VERIFIED") {
+	//log error
+	exit;
+}*/
 
-echo "The response from IPN was: <b>" .$res ."</b><br><br>";
+$pixels = explode(' ', $_POST['item_number']);
+
+//check for sql injection
+if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
+    error("Invalid pixels");
+}
+
+$list = implode($pixels, "','");
+
+//grab all the pixels
+$sql = "SELECT * FROM pixels WHERE pixelLocation IN('{$list}')";
+$q = ORM::query($sql);
+$result = array();
+
+while($row = $q->fetch(PDO::FETCH_ASSOC)) $result[$row['pixelLocation']] = $row;
+
+//loop over pixels
+$cost = 0;
+$dsql = "DELETE FROM pixels WHERE pixelLocation IN(";
+$isql = "INSERT INTO pixels VALUES ";
+
+//prepared statement values
+$iprep = array();
+$dprep = array();
+
+$owners = array();
+
+//loop over every specified pixel and double check
+foreach($pixels as $pix) {
+    //skip if not for sale
+	if(isset($result[$pix])) {
+		$pixel = $result[$pix];
+		
+		//increase the total cost
+		if($pixel['cost'] === 0) continue;
+		$cost += $pixel['cost'];
+		$p = $pixel['cost'];
+		
+		//map of owners to sold for event data
+		if(!isset($owners[$pixel['ownerID']])) {
+			$owners[$pixel['ownerID']] = 0;
+		}
+		
+		$owners[$pixel['ownerID']]++;
+		
+		//update the creddit
+		User::updateCredit($pixel['ownerID'], $p);
+	} else {
+		$cost += 10;
+		$p = 10;
+    }
+	
+    $isql .= "(?, ?, 0, 'ffffff', ?),";
+	$dsql .= "?,";
+	
+	$dprep[] = $pix;
+	$iprep[] = $pix;
+	$iprep[] = $_POST['payer_id'];
+	$iprep[] = $p;
+}
+
+//if the price was incorrect
+if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
+	//log this
+	echo "PRICE IM HIGH" . $cost . "|" . $_POST['mc_gross'];
+	exit;
+}
+
+
+$dsql = substr($dsql, 0, strlen($dsql) - 1) . ")";
+$isql = substr($isql, 0, strlen($isql) - 1);
+
+ORM::query($dsql, $dprep);
+ORM::query($isql, $iprep);
+
+//log as events
+$count = count($dprep);
+I("Event")->create($_POST['payer_id'], NOW(), "You bought {$count} pixels");
+
+foreach($owners as $id => $count) {
+	I("Event")->create($id, NOW(), "You bought {$count} pixels");
+}
+
+echo $isql;
+echo "<br>";
+echo $dsql;
+echo "<br>";
+echo $cost;
+
 ?>

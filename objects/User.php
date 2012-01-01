@@ -11,5 +11,9 @@ class User extends ORM {
 		"url" => STRING,
 		"message" => STRING
 	);
+	
+	public static function updateCredit($user, $amount) {
+		ORM::query("UPDATE users SET money = money + ? WHERE userID = ?", array($amount, $user));
+	}
 }
 ?>
