@@ -381,7 +381,7 @@ $(function() {
 			var cost;
 			if(pixel) {
 				//if pixel for sale, add to total, else deselect
-				if(pixel.cost) cost = +pixel.cost;
+				if(pixel.cost && pixel.owner != me.userID) cost = +pixel.cost;
 				else {
 					delete pixels[pix];
 					continue;
@@ -633,7 +633,8 @@ function startZoomer(level) {
 		drawZoom(
 			((e.clientX - stagePos.left + body.scrollLeft) - w / 2),
 			((e.clientY - stagePos.top + body.scrollTop) - h / 2),
-			level
+			level,
+			mypixelsSelected && me.userID
 		);
 		
 		$("a.zoomin").text("Zoom Out");

@@ -107,10 +107,12 @@ foreach($modified as $xy => $pix) {
 	$rprep[] = $xy;
 	
 	$isql .= "(?, ?, 0, ?, 0),";
-	$isql[] = $xy;
-	$isql[] = $pix['ownerID'];
-	$isql[] = $pix['color'];
+	$iprep[] = $xy;
+	$iprep[] = $pix['ownerID'];
+	$iprep[] = $pix['color'];
 }
+
+print_r($modified);
 
 //clean up sql
 $rsql = substr($rsql, 0, strlen($rsql) - 1) .  ")";
