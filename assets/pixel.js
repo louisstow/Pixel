@@ -18,6 +18,8 @@ var canvas,
 	shadowColor = "#222222",
 	selectColor = "00C8FF",
 	
+	buyList,
+	total,
 	nextCycle = unixtime(new Date());
 
 var $hours,
@@ -355,10 +357,16 @@ $(function() {
 			return;
 		}
 		
+		if(pixels.length === 0) {
+			showError("Select some pixels to buy");
+			return;
+		}
+		
 		$(this).addClass("active");
 		
-		var total = 0;
+		total = 0;
 		var html = "";
+		buyList = [];
 		for(var pix in pixels) {
 			if(pix === "length") continue;
 			
@@ -377,13 +385,50 @@ $(function() {
 			}
 			
 			total += cost;
+			buyList.push(pix);
 			
-			if(pixels.length < 10000) html += "<li>" + pix + "<i>$" + cost.toFixed(2) + "</i><a class='remove'>remove</a></li>";
+			if(pixels.length < 10000) html += "<li><b>" + pix + "</b><i>$" + cost.toFixed(2) + "</i><a class='remove'>remove</a></li>";
+		}
+		
+		if(total == 0) {
+			showError("Select some pixels to buy");
+			$(this).removeClass("active");
+			return;
 		}
 		
 		$("div.buy div.list ul").html(html);
+		
+		if(pixels.length < 10000) {
+			$("div.list a.remove").click(function() {
+				var id = $(this).parent().find("b").text();
+				var pixel = board[id];
+				console.log(id);
+				
+				//loop over list
+				for(var i = 0; i < buyList.length; ++i) {
+					if(buyList[i] === id) {
+						buyList.splice(i, 1);
+					}
+				}
+				
+				if(pixel) {
+					total -= pixel.cost;
+				} else {
+					total -= 0.1;
+				}
+				
+				$("div.buy span.total").text(total.toFixed(2));
+				$("div.buy input.amount").val(total.toFixed(2));
+				$("input.item").val(buyList.join(' '));
+				$(this).parent().remove();
+			});
+		}
+		
 		$("div.buy span.total").text(total.toFixed(2));
 		$("div.buy input.amount").val(total.toFixed(2));
+		$("input.item").val(buyList.join(' '));
+		$("input.payer").val(me.userID);
+		$("input.payeremail").val(me.userEmail);
 		$("div.buy").show();
 		redraw();
 	});

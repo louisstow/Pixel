@@ -19,7 +19,7 @@ input { outline: none }
 div.menu ul { padding: 0; margin: 0; list-style: none }
 div.menu li { display: inline; margin: 0 20px 0 0; position: relative }
 div.menu li a { padding: 2px 10px; cursor: pointer; border: 1px solid #ccc; background: white; }
-div.menu li ul { position: absolute; display: none; margin: 0 0 0 0; padding: 0; }
+div.menu li ul { position: absolute; display: none; margin: 0 0 0 0; padding: 0; left: 0 }
 div.menu li li a { display: block; border: 1px solid #ccc; width: 140px; padding: 2px 10px; position: relative; z-index: 1000; }
 div.menu li li a:hover { background: #eee }
 div.menu li:hover ul { display: block }
@@ -50,9 +50,11 @@ span.hintcolor { font-weight: bold }
 
 #tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000 }
 
-.list { height: 100px; overflow: auto; }
+.list { max-height: 100px; overflow: auto; }
 .list ul { padding: 0; margin: 0; list-style: none }
 .list li { padding: 5px }
 .list li:nth-child(odd) { background: #eee }
 .list  i { font-style: normal; color: #666; float:right; margin-left: 15px; }
 .list a { float: right }
+
+.clearer { clear: both }
