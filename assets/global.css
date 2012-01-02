@@ -1,4 +1,4 @@
-body { text-align: center; font-family: Verdana; font-size: 14px }
+body { text-align: center; font-family: Verdana; font-size: 14px; cursor: default }
 
 label { display: block }
 input { outline: none }
@@ -59,3 +59,5 @@ span.hintcolor { font-weight: bold }
 
 .slider { width: 290px; }
 .clearer { clear: both }
+
+#money { border-bottom: 1px dashed #0022FF }
