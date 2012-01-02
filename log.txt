@@ -1,5 +1,0 @@
-INSERT INTO pixels VALUES (?, ?, 0, 'ffffff', ?),(?, ?, 0, 'ffffff', ?)
-
-DELETE FROM pixels WHERE pixelLocation IN(?,?)
-
-20

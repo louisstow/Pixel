@@ -1,0 +1,15 @@
+body {
+	padding: 20px;
+	font-family: Verdana;
+	line-height: 25px
+}
+
+li {
+	font-weight: bold
+}
+
+li li { font-weight: normal }
+
+li ol {
+	list-style: lower-alpha
+}
