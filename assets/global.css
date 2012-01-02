@@ -7,7 +7,7 @@ input { outline: none }
 #stage { width: 1202px; height: 1002px; margin: auto; overflow: hidden; position: relative; }
 
 .box { position: absolute; border:1px solid #111; background: #fff; padding: 5px }
-.login, .register, .events { right: 0; width: 300px; display: none }
+.login, .register, .events { right: 0; width: 320px; display: none }
 .buy, .sell, .instr { left: 0; width: 300px; display: none }
 
 #details { position: absolute; right: 0; top: 0 }

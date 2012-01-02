@@ -1,6 +1,17 @@
 <?php
 load("User, Pixel");
-data("email, password, url, message, pixel, color");
+data("email, password, url, message, pixel, color, respfield, chafield");
+
+require_once('recaptchalib.php');
+$privatekey = "6Ldq1ssSAAAAAAjIAHb9K0OkYlac5AKFO77pD3Cr";
+$resp = recaptcha_check_answer ($privatekey,
+		$_SERVER["REMOTE_ADDR"],
+		$chafield,
+		$respfield);
+
+if(!$resp->is_valid) {
+	error("Invalid CAPTCHA. Please try again.");
+}
 
 //detect SQL injection 
 if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
