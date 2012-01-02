@@ -2,8 +2,8 @@
 include 'lib.php';
 include 'ORM.php';
 load("User, Event, Transaction");
+$TO = "louisstow+pixenomics@gmail.com";
 
-$_POST = $_GET;
 // read the post from PayPal system and add 'cmd'
 $req = 'cmd=_notify-validate';
 
@@ -18,10 +18,15 @@ $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 $header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 
 //If testing on Sandbox use:
-/*$fp = fsockopen('ssl://www.sandbox.paypal.com', 443, $errno, $errstr, 30);
+$fp = fsockopen('ssl://www.sandbox.paypal.com', 443, $errno, $errstr, 30);
 //$fp = fsockopen('ssl://ipnpb.paypal.com', 443, $errno, $errstr, 30);
+
 if (!$fp) {
     // HTTP ERROR
+	$message = $header . "\r\n\r\n";
+	$message .= print_r($_POST, true) . "\r\n";
+	
+	mail($TO, "HTTP Error", $message);
     die("HTTP ERROR");
 }
 
@@ -31,8 +36,12 @@ while(!feof($fp)) $res = fgets($fp, 1024);
 //$res should be "VERIFIED" else explode
 if($res != "VERIFIED") {
 	//log error
+	$message = $res . "\r\n";
+	$message .= print_r($_POST, true) . "\r\n";
+	
+	mail($TO, "Invalid request", $message);
 	exit;
-}*/
+}
 
 $pixels = explode(' ', $_POST['item_number']);
 
@@ -100,9 +109,11 @@ foreach($pixels as $pix) {
 
 //if the price was incorrect
 if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
-	//log this
-	echo "PRICE IM HIGH" . $cost . "|" . $_POST['mc_gross'];
-	mail();
+	$message = "";
+	$message .= print_r($_POST, true) . "\r\n";
+	$message .= $cost;
+	
+	mail($TO, "Incorrect price", $message);
 	exit;
 }
 
@@ -122,11 +133,4 @@ foreach($owners as $id => $data) {
 	//update the credit
 	User::updateCredit($pixel['ownerID'], $data['credit']);
 }
-
-echo $isql;
-echo "<br>";
-echo $dsql;
-echo "<br>";
-echo $cost;
-
 ?>
