@@ -18,6 +18,8 @@ var canvas,
 	shadowColor = "#222222",
 	selectColor = "00C8FF",
 	
+	hasFocus = true,
+	
 	sellList,
 	buyList,
 	total,
@@ -48,6 +50,8 @@ $(function() {
 	
 	//shortcut keys
 	$(document).keydown(function(e) {
+		if(!hasFocus) return;
+		
 		switch(e.which) {
 			//B
 			case 66: $("a.buypixel").click(); break;
@@ -88,6 +92,13 @@ $(function() {
 			//8
 			case 56: $("a.x8").click(); break;
 		}
+	});
+	
+	//stop key shortcuts in a textbox
+	$("input").focus(function() {
+		hasFocus = false;
+	}).blur(function() {
+		hasFocus = true;
 	});
 	
 	//init canvases
