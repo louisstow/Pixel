@@ -115,7 +115,7 @@ foreach($pixel as $xy=>$pix) {
 		}
 		
 		//better odds if big difference between channel colors
-		$odds += floor((abs($color[$dominant] - $color['red']) + abs($color[$dominant] - $color['green']) + abs($color[$dominant] - $color['blue'])) / 2) ;
+		$odds += floor((abs($color[$dominant] - $color['red']) + abs($color[$dominant] - $color['green']) + abs($color[$dominant] - $color['blue'])) / 4) ;
 		
 		//player wins if beat odds, else draw
 		if(rand(0, 1000) < $odds) {

@@ -1,9 +1,9 @@
 <?php
 load("User");
-data("username, password");
+data("email, password");
 
 $password = encrypt($password);
-$result = I("User")->getMany(array("userName" => $username, "userPass" => $password));
+$result = I("User")->getMany(array("userEmail" => $email, "userPass" => $password));
 
 if($result->count()) {
 	//get the first user

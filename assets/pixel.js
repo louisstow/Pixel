@@ -68,10 +68,9 @@ $(function() {
 		console.log(resp);
 		if(resp.error) {
 			$("#login,#register").show();
+			$("a.instructions").trigger("click");
 		} else {
-			$("#welcome").html("Here be <b>" + resp.userName + "</b>").show();
-			$("#events,#logout").show();
-			me = resp;
+			updateUser(resp);
 		}
 	}, false);
 	
@@ -92,7 +91,7 @@ $(function() {
         if(me) {
             api("Logout", function() {
                 $("#login, #register").show();
-                $("#welcome").text("").hide();
+                $("#welcome, #money").text("").hide();
                 $("#logout, #events, div.events").hide();
 				me = null;
             });
@@ -105,23 +104,17 @@ $(function() {
 	
 	//user logged in
 	$(".login button").click(function() {
-		var user = $("div.login .user").val(),
+		var email = $("div.login .email").val(),
 			pass = $("div.login .pass").val();
 			
-		api("Login", {username: user, password: pass}, function(resp) {
-			me = resp;
-			$("div.register").hide();
-			$("div.login").hide();
-			$("#login,#register").hide();
-			$("#welcome").html("Here be <b>" + resp.userName + "</b>").show();
-			$("#events,#logout").show();
+		api("Login", {email: email, password: pass}, function(resp) {
+			updateUser(resp);
 		});
 	});
 	
 	//user registered
 	$(".register button").click(function() {
 		var data = {}
-		data.username = $("div.register .user").val();
 		data.password = $("div.register .pass").val();
 		data.email = $("div.register .email").val();
 		data.url = $("div.register .url").val();
@@ -153,12 +146,7 @@ $(function() {
 		data.pixel = list;
 		
 		api("Register", data, function(resp) {
-			me = resp;
-			$("div.register").hide();
-			$("div.login").hide();
-			$("#login,#register").hide();
-			$("#welcome").html("Here be <b>" + resp.userName + "</b>").show();
-			$("#events,#logout").show();
+			updateUser(resp);
 		});
 	});
 	
@@ -201,6 +189,17 @@ $(function() {
 			}
 		});
 	}).trigger("click");
+	
+	$("a.instructions").click(function() {
+		if($("div.instr").is(":visible")) {
+			$("div.instr").hide();
+			$(this).removeClass("active");
+			return;
+		}
+		
+		$(this).addClass("active");
+		$("div.instr").show();
+	});
 	
 	$("a.zoomin").click(function() {
 		clearSelection();
@@ -371,6 +370,7 @@ $(function() {
 		}
 		
 		$(this).addClass("active");
+		
 		
 		total = 0;
 		var html = "";
@@ -560,6 +560,16 @@ function tick() {
 	$hours.text(hours + " hour" + (hours === 1 ? "" : "s"));
 	$minutes.text(minutes + " minute" + (minutes === 1 ? "" : "s"));
 	$seconds.text(seconds + " second" + (seconds === 1 ? "" : "s"));
+}
+
+function updateUser(user) {
+	me = user;
+	$("div.register").hide();
+	$("div.login").hide();
+	$("#login,#register").hide();
+	$("#welcome").html("Here be <b>" + user.userEmail + "</b>").show();
+	$("#money").text("$" + (+user.money).toFixed(2)).show();
+	$("#events,#logout").show();
 }
 
 function updateEvents(data) {

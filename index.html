@@ -16,6 +16,7 @@
 	<a id="login">Login</a>
 	<a id="register">Register</a>
 	<span id="welcome"></span>
+	<span id="money"></span>
 	<a id="events">Events</a>
 	<a id="logout">Logout</a>
 </div>
@@ -58,15 +59,14 @@ Next cycle in <span class="hours"></span> <span class="minutes"></span> <span cl
 </div>
 
 <div class="box login">
-<label>Username: <input type="text" class="user" /></label>
+<label>Email: <input type="text" class="email" /></label>
 <label>Password: <input type="password" class="pass" /></label>
 <button>Login</button>
 </div>
 
 <div class="box register">
-<label>Username: <input type="text" class="user" /></label>
-<label>Password: <input type="password" class="pass" /></label>
 <label>Email: <input type="text" class="email" /></label>
+<label>Password: <input type="password" class="pass" /></label>
 <label>URL: <input type="text" class="url" /></label>
 <label>Hover Text: <input type="text" class="message" /></label>
 <label>Color: <input type="text" class="color" /></label>
@@ -115,11 +115,21 @@ Next cycle in <span class="hours"></span> <span class="minutes"></span> <span cl
 <div class="box instr">
 <h2>Instructions</h2>
 
-<p>Pixenomics is the game of pixel ownership, by force or by wealth. Start your empire with 10 free pixels and take over neighbouring pixels by strategically choosing a
+<p>Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with 10 free pixels and take over neighbouring pixels by strategically choosing a
 color.</p>
 
-<p>A countdown above displays the time until the next cycle where your pixels fight it out against others. After a cycle you will recieve a summary of how many pixels you
-won or lost.</p>
+<p>The countdown displays the time until the next cycle where your pixels fight it out against others. After a cycle you will recieve a summary of how many pixels you
+won or lost under 'Events'.</p>
+
+<p>To invade a neighbouring pixel you need to increase your odds by choosing a dominant color channel that can beat the opponent's dominant color channel. 
+Each color is made up of different amounts of Red, Green and Blue (we call these color channels). If your color is mostly Red, it's dominant color channel
+will be Red.</p>
+
+<p><span class="red">Red</span> beats <span class="green">Green</span>, <span class="blue">Blue</span> beats <span class="red">Red</span> and 
+<span class="green">Green</span> beats <span class="blue">Blue</span> (similar to Paper, Scissors, Rock).</p>
+
+<p>Your odds will be increased by having a large difference between the dominant color channel and the other channels.</p>
+
 </div>
 
 </div>

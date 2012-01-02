@@ -1,6 +1,6 @@
 <?php
 load("User, Pixel");
-data("username, email, password, url, message, pixel, color");
+data("email, password, url, message, pixel, color");
 
 //detect SQL injection 
 if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
@@ -8,13 +8,13 @@ if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
 }
 
 $password = encrypt($password);
-$player = I("User")->create(D, $username, $password, $email, $url, $message);
+$player = I("User")->create(D, $password, $email, $url, $message);
 
 if(!$player) {
 	//if username taken
 	$err = ORM::error();
 	if($err[0] == "23000") {
-		error("Username taken");
+		error("Email taken");
 	}
 	
 	error("Error registering");
