@@ -19,6 +19,33 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
 	}
 }
 
+function chooseDominant($color) {
+	//find the dominant pixel
+	if($color['red'] > $color['green'] && $color['red'] > $color['blue']) {
+		$dominant = "red";
+	} else if($color['green'] > $color['red'] && $color['green'] > $color['blue']) {
+		$dominant = "green";
+	} else if($color['blue'] > $color['red'] && $color['blue'] > $color['green']) {
+		$dominant = "blue";
+	} else {
+		//no dominant color found, see if they are all the same
+		if($color['red'] == $color['green'] && $color['red'] == $color['blue']) {
+			$dominant = $color[rand(0, 2)];
+		} else if($color['red'] == $color['green']) {
+			$dominant = rand(0, 1) == 1 ? "red" : "green";
+		} else if($color['blue'] == $color['green']) {
+			$dominant = rand(0, 1) == 1 ? "blue" : "green";
+		} else if($color['red'] == $color['blue']) {
+			$dominant = rand(0, 1) == 1 ? "red" : "blue";
+		} else {
+			//will never get here, but what the hell
+			$dominant = "red";
+		}
+	}
+	
+	return $dominant;
+}
+
 //static list of directions in a circle
 $circle = array(
 	array(-1, -1),
@@ -29,6 +56,13 @@ $circle = array(
 	array(1, -1),
 	array(1, 0),
 	array(1, 1)
+);
+
+//which color beats which
+$order = array(
+	"red" => "green",
+	"green" => "blue",
+	"blue" => "red"
 );
 
 //list of pixels to be updated
@@ -51,9 +85,9 @@ foreach($pixel as $xy=>$pix) {
 		"blue" => hexdec(substr($pix['color'], 4, 2))
 	);
 	
-	//calculate the score for this pixel
-	$value = $color[$cycle['positive']] - $color[$cycle['negative']];
-
+	$dominant = chooseDominant($color);
+	$odds = 0; //start the odds at 0 out of 1000
+	
 	foreach($circle as $dir) {
 		$key = ($location[0] + $dir[0]) . "," . ($location[1] + $dir[1]);
 
@@ -73,17 +107,21 @@ foreach($pixel as $xy=>$pix) {
 		);
 		
 		//calculate the opponent score
-		$ovalue = $ocolor[$cycle['positive']] - $ocolor[$cycle['negative']];
-
-		//opponent wins
-		if($ovalue > $value) {
-			$modified[$xy] = $opponent;
-		} //draw
-		else if($ovalue === $value) {
-			continue;
-		} //player wins 
-		else {
+		$odominant = chooseDominant($ocolor);
+		
+		//if the players dominant color beats the opponent
+		if($order[$dominant] == $odominant) {
+			$odds += 600;
+		}
+		
+		//better odds if big difference between channel colors
+		$odds += floor((abs($color[$dominant] - $color['red']) + abs($color[$dominant] - $color['green']) + abs($color[$dominant] - $color['blue'])) / 2) ;
+		
+		//player wins if beat odds, else draw
+		if(rand(0, 1000) < $odds) {
 			$modified[$key] = $pix;
+		} else {
+			continue;
 		}
 	}
 }
@@ -134,27 +172,7 @@ ORM::query($rsql, $rprep);
 ORM::query($isql, $iprep);
 ORM::query($esql, $eprep);
 
-$enum = array("red", "green", "blue");
-$type = array("positive", "neutral", "negative");
-
-//choose positive
-$pi = rand(0, 2);
-$pos = $enum[$pi];
-array_splice($enum, $pi, 1);
-
-//choose neutral
-$ni = rand(0, 1);
-$neu = $enum[$ni];
-array_splice($enum, $ni, 1);
-
-//choose negative
-$neg = $enum[0];
-
-//choose which detail to hint
-$ti = rand(0, 2);
-$hint = $type[$ti];
-
 //when the cycle starts
 $time = time() + (2 * 60 * 60);
-I("Cycle")->create(D, $pos, $neu, $neg, $hint, date('Y-m-d H:i:s', $time));
+I("Cycle")->create(D, date('Y-m-d H:i:s', $time));
 ?>

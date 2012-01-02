@@ -18,21 +18,6 @@ while($row = $data->fetch(PDO::FETCH_ASSOC)) {
 $q = ORM::query("SELECT * FROM cycles WHERE cycleID = (SELECT MAX(cycleID) FROM cycles)");
 $cycle = $q->fetch(PDO::FETCH_ASSOC);
 
-switch($cycle['hint']) {
-	case "positive":
-		unset($cycle['neutral']);
-		unset($cycle['negative']);
-		break;
-	case "neutral":
-		unset($cycle['positive']);
-		unset($cycle['negative']);
-		break;
-	case "negative":
-		unset($cycle['neutral']);
-		unset($cycle['positive']);
-		break;
-}
-
 $cycle['cycleTime'] .= " UTC+10:00";
 
 $json = array(

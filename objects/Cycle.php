@@ -5,10 +5,6 @@ class Cycle extends ORM {
 	
 	public static $attr = array(
 		"cycleID" => INT,
-		"positive" => STRING,
-		"neutral" => STRING,
-		"negative" => STRING,
-		"hint" => STRING,
 		"cycleTime" => DATE
 	);
 	

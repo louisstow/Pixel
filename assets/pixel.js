@@ -206,6 +206,7 @@ $(function() {
 		clearSelection();
 		drawBoard(mypixelsSelected && me.userID);
 		$(this).text("Zoom In");
+		$("a.default").trigger("click");
 	});
 	
 	$(".x2, .x4, .x8, .x16").click(function() {
@@ -534,11 +535,6 @@ function updateBoard(data) {
 	board = data.pixels;
 	owners = data.owners;
 	nextCycle = ~~(Date.parse(data.cycle.cycleTime) / 1000);
-	
-	$("span.hinttype").text(data.cycle.hint);
-	$("span.hintcolor")
-		.text(data.cycle[data.cycle.hint])
-		.css("color", data.cycle[data.cycle.hint]);
 		
 	if(data.events) {
 		updateEvents(data.events);
@@ -639,6 +635,7 @@ function startZoomer(level) {
 		
 		$("a.zoomin").text("Zoom Out");
 		stopZoomer();
+		$("a.default").trigger("click");
 	});
 }
 
