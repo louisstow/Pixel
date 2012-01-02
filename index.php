@@ -2,6 +2,8 @@
 <head>
 <link href="assets/global.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" media="screen" type="text/css" href="assets/colorpicker/css/colorpicker.css" />
+<link href='http://fonts.googleapis.com/css?family=Geo' rel='stylesheet' type='text/css'>
+
 <script src="assets/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="assets/colorpicker/js/colorpicker.js"></script>
 <script src="assets/pixel.js" type="text/javascript"></script>
