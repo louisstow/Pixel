@@ -304,7 +304,7 @@ $(function() {
 		
 		if(mypixelsSelected) {
 			$(this).removeClass("active");
-			$("#stage").css("background", "transparent");
+			$("#stage").css("background", "#fff");
 			mypixelsSelected = false;
 		} else {
 			$(this).addClass("active");

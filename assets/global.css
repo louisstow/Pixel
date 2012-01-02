@@ -19,7 +19,7 @@ h2 { font-family: 'Geo'; font-size: 25px; margin: 0 0 -5px 0; }
 
 div.menu ul { padding: 0; margin: 0; list-style: none }
 div.menu li { display: inline; margin: 0 20px 0 0; position: relative }
-div.menu li a { padding: 3px 10px; cursor: pointer; border: 1px solid #ccc; background: white; }
+.menu a { padding: 3px 10px; cursor: pointer; border: 1px solid #ccc; background: white; }
 div.menu li ul { position: absolute; display: none; margin: 0 0 0 0; padding: 0; left: 0 }
 div.menu li li a { display: block; border: 1px solid #ccc; width: 140px; padding: 2px 10px; position: relative; z-index: 1000; }
 div.menu li li a:hover { background: #eee }
@@ -31,13 +31,20 @@ div.menu li:hover ul { display: block }
 
 #tools { margin-bottom: 8px; margin-left: 1px }
 #tools li { margin: 0 -3px; }
-a.default { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
-a.swatch { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+#tools a { padding-left: 25px; }
+
 
 .zoomer { border: 1px solid #ccc; position: absolute; cursor: crosshair }
 
-a.active { background: #222 !important; color: #eee; border-color: #444 }
-a.swatch span { background: black; border: 1px solid #111; width: 10px; height: 10px; display: inline-block; }
+a.active { background: #222; color: #eee; border-color: #444 }
+a.swatch span { background: black; border: 1px solid #111; width: 10px; height: 10px; display: inline-block; margin-top: 1px }
+
+a.default { border-top-left-radius: 6px; border-bottom-left-radius: 6px; background-image: url('images/cursor.png'); background-repeat: no-repeat;
+	background-position: 4px 3px }
+a.swatch { border-top-right-radius: 6px; border-bottom-right-radius: 6px; background-image: url('images/color_wheel.png'); background-repeat: no-repeat;
+	background-position: 4px 3px }
+a.select { background-image: url('images/shape_square.png'); background-repeat: no-repeat; background-position: 4px 3px }
+a.zoomin { background-image: url('images/zoom.png'); background-repeat: no-repeat; background-position: 4px 3px }
 
 span.green { color: green; font-weight: bold }
 span.red { color: red; font-weight: bold; }
@@ -50,8 +57,8 @@ span.blue { color: blue; font-weight: bold }
 span.hinttype { text-transform: capitalize; font-weight: bold }
 span.hintcolor { font-weight: bold }
 
-#welcome { font-style: italic; color: #aaa; margin-right: 20px }
-#welcome b { color: #888 }
+#welcome { font-style: italic; color: #666; margin-right: 20px }
+#welcome b { color: #333 }
 
 #tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000 }
 
