@@ -26,6 +26,15 @@ if(!$player) {
 	error("Email taken. Please choose one registered with PayPal to recieve payments.");
 }
 
+//ensure color is valid
+$icolor = intval($color, 16);
+if($icolor < 0 || $color > 16777215) {
+    error("Price must be less between $1 and $100");
+}
+
+$color = dechex($icolor);
+$color = str_repeat("0", 6 - strlen($color)) . $color;
+
 $_SESSION['id'] = $player->userID;
 
 $isql = "INSERT INTO pixels VALUES ";
