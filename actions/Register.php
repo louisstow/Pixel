@@ -8,16 +8,11 @@ if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
 }
 
 $password = encrypt($password);
-$player = I("User")->create(D, $password, $email, $url, $message);
+$player = I("User")->create(D, $password, $email, $url, $message, 0);
 
 if(!$player) {
 	//if username taken
-	$err = ORM::error();
-	if($err[0] == "23000") {
-		error("Email taken");
-	}
-	
-	error("Error registering");
+	error("Email taken. Please choose one registered with PayPal to recieve payments.");
 }
 
 $_SESSION['id'] = $player->userID;

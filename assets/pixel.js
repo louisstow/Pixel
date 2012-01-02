@@ -570,6 +570,7 @@ function updateUser(user) {
 	$("#welcome").html("Here be <b>" + user.userEmail + "</b>").show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
 	$("#events,#logout").show();
+	tick();
 }
 
 function updateEvents(data) {
@@ -793,6 +794,11 @@ function translateGlobal(x, y) {
 
 function showError(msg) {
 	console.error(msg);
+	var $d = $("#dialog");
+	$d.show().html(msg).animate({top: -4}, 150).delay(msg.length * 100)
+		.animate({top: -50}, 150, function() {
+			$(this).hide().html("");
+		});
 }
 
 function api(action, data, callback, showErrorFlag) {

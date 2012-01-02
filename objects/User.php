@@ -5,11 +5,11 @@ class User extends ORM {
 	
 	public static $attr = array(
 		"userID" => INT,
-		"userName" => STRING,
 		"userPass" => STRING,
 		"userEmail" => STRING,
 		"url" => STRING,
-		"message" => STRING
+		"message" => STRING,
+		"money" => INT
 	);
 	
 	public static function updateCredit($user, $amount) {

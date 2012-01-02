@@ -61,3 +61,22 @@ span.hintcolor { font-weight: bold }
 .clearer { clear: both }
 
 #money { border-bottom: 1px dashed #0022FF }
+
+#dialog {
+	width: 1200px;
+	margin: auto;
+	background: #111;
+	opacity: 0.9;
+	height: 30px;
+	border: 3px solid #666;
+	border-radius: 4px;
+	display: none;
+	position: absolute;
+	color: #eee;
+	padding:5px;
+	left: 100px;
+	top: -50px;
+	line-height: 25px;
+	text-align: center;
+	z-index: 1000;
+}
