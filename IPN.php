@@ -78,13 +78,12 @@ foreach($pixels as $pix) {
 		
 		//map of owners to sold for event data
 		if(!isset($owners[$pixel['ownerID']])) {
-			$owners[$pixel['ownerID']] = 0;
+			$owners[$pixel['ownerID']] = array("sold" => 0, "credit" => 0);
 		}
 		
-		$owners[$pixel['ownerID']]++;
+		$owners[$pixel['ownerID']]['sold']++;
+		$owners[$pixel['ownerID']]['credit'] += $p;
 		
-		//update the creddit
-		User::updateCredit($pixel['ownerID'], $p);
 	} else {
 		$cost += 10;
 		$p = 10;
@@ -103,6 +102,7 @@ foreach($pixels as $pix) {
 if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 	//log this
 	echo "PRICE IM HIGH" . $cost . "|" . $_POST['mc_gross'];
+	mail();
 	exit;
 }
 
@@ -117,8 +117,10 @@ ORM::query($isql, $iprep);
 $count = count($dprep);
 I("Event")->create($_POST['payer_id'], NOW(), "You bought {$count} pixels");
 
-foreach($owners as $id => $count) {
-	I("Event")->create($id, NOW(), "You bought {$count} pixels");
+foreach($owners as $id => $data) {
+	I("Event")->create($id, NOW(), "You bought {$data['sold']} pixels");
+	//update the credit
+	User::updateCredit($pixel['ownerID'], $data['credit']);
 }
 
 echo $isql;
