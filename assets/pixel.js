@@ -27,6 +27,10 @@ var $hours,
 	$minutes,
 	$seconds;
 	
+var RecaptchaOptions = {
+    theme : 'white'
+};
+	
 $(function() {
 	zoomer = document.createElement("div");
 	$("#stage").append(zoomer);
@@ -35,10 +39,55 @@ $(function() {
 	stagePos.left++;
 	stagePos.top++;
 	
+	//update the stage position
 	$(window).resize(function() {
 		stagePos = $("#stage").offset();
 		stagePos.left++;
 		stagePos.top++;
+	});
+	
+	//shortcut keys
+	$(document).keydown(function(e) {
+		switch(e.which) {
+			//B
+			case 66: $("a.buypixel").click(); break;
+			
+			//E
+			case 69: $("a.sellpixel").click(); break;
+			
+			//M
+			case 77: $("a.mypixels").click(); break;
+			
+			//I
+			case 73: $("a.instructions").click(); break;
+			
+			//D
+			case 68: $("a.default").click(); break;
+			
+			//S
+			case 83: $("a.select").click(); break;
+			
+			//X
+			case 88: $("a.selectmypixels").click(); break;
+			
+			//C
+			case 67: $("a.clearselection").click(); break;
+			
+			//Z
+			case 90: $("a.zoomin").click(); break;
+			
+			//1
+			case 49: $("a.x16").click(); break;
+			
+			//2
+			case 50: $("a.x2").click(); break;
+			
+			//4
+			case 52: $("a.x4").click(); break;
+			
+			//8
+			case 56: $("a.x8").click(); break;
+		}
 	});
 	
 	//init canvases
@@ -92,15 +141,33 @@ $(function() {
             api("Logout", function() {
                 $("#login, #register").show();
                 $("#welcome, #money").text("").hide();
-                $("#logout, #events, div.events").hide();
+                $("#logout, #events, div.events, #change, div.change").hide();
 				me = null;
             });
         }
     });
 
     $("#events").click(function() {
+		$("div.change").hide();
         $("div.events").toggle();
     });
+	
+	$("#change").click(function() {
+		$("div.events").hide();
+		$("div.change").toggle();
+	});
+	
+	$("div.change button").click(function() {
+		var data = {};
+		data.message = $("div.change input.message").val();
+		data.url = $("div.change input.url").val();
+		
+		api("Details", data, function() {
+			showError("Details updated");
+			$("div.change").hide();
+			status();
+		});
+	});
 	
 	//user logged in
 	$(".login button").click(function() {
@@ -571,8 +638,8 @@ function updateUser(user) {
 	$("#login,#register").hide();
 	$("#welcome").html("Here be <b>" + user.userEmail + "</b>").show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
-	$("#events,#logout").show();
-	tick();
+	$("#events,#logout,#change").show();
+	status();
 }
 
 function updateEvents(data) {
@@ -646,7 +713,7 @@ function startZoomer(level) {
 			mypixelsSelected && me.userID
 		);
 		
-		$("a.zoomin").text("Zoom Out");
+		$("a.zoomin").html("<u>Z</u>oom Out");
 		stopZoomer();
 		$("a.default").trigger("click");
 	});

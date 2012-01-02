@@ -20,6 +20,7 @@
 	<span id="welcome"></span>
 	<span id="money" title="You will be paid via PayPal once your money reaches $100 at the end of the month."></span>
 	<a id="events">Events</a>
+	<a id="change">Details</a>
 	<a id="logout">Logout</a>
 </div>
 
@@ -29,29 +30,29 @@ Next cycle in <span class="hours"></span> <span class="minutes"></span> <span cl
 
 <div id="controls" class="menu">
 <ul>
-	<li><a class="buypixel">Buy</a></li>
-	<li><a class="sellpixel">Sell</a></li>
-	<li><a class="mypixels">My Pixels</a></li>
-	<li><a class="instructions">Instructions</a></li>
+	<li><a class="buypixel"><u>B</u>uy</a></li>
+	<li><a class="sellpixel">S<u>e</u>ll</a></li>
+	<li><a class="mypixels"><u>M</u>y Pixels</a></li>
+	<li><a class="instructions"><u>I</u>nstructions</a></li>
 </ul>
 </div>
 
 
 <div id="tools" class="menu">
 <ul>
-	<li><a class="default">Default</a></li>
-	<li><a class="select">Select</a>
+	<li><a class="default"><u>D</u>efault</a></li>
+	<li><a class="select"><u>S</u>elect</a>
 		<ul>
-			<li><a class="selectmypixels">Select My Pixels</a></li>
-			<li><a class="clearselection">Clear Selection</a></li>
+			<li><a class="selectmypixels">Select My Pi<u>x</u>els</a></li>
+			<li><a class="clearselection"><u>C</u>lear Selection</a></li>
 		</ul>
 	</li>
 	<li><a class="zoomin">Zoom In</a>
 		<ul>
-			<li><a class="x2">2x</a></li>
-			<li><a class="x4">4x</a></li>
-			<li><a class="x8">8x</a></li>
-			<li><a class="x16">16x</a></li>
+			<li><a class="x2"><u>2</u>x</a></li>
+			<li><a class="x4"><u>4</u>x</a></li>
+			<li><a class="x8"><u>8</u>x</a></li>
+			<li><a class="x16"><u>1</u>6x</a></li>
 		</ul>
 	</li>
 	<li>
@@ -83,6 +84,12 @@ echo recaptcha_get_html($publickey);
 
 <div class="box events">
 <ul></ul>
+</div>
+
+<div class="box change">
+<label>URL: <input type="text" class="url" /></label>
+<label>Hover Text: <input type="text" class="message" /></label>
+<button>Change</button>
 </div>
 
 <div class="box sell">
