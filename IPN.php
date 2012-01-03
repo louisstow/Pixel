@@ -91,7 +91,7 @@ foreach($pixels as $pix) {
 		}
 		
 		$owners[$pixel['ownerID']]['sold']++;
-		$owners[$pixel['ownerID']]['credit'] += $p;
+		$owners[$pixel['ownerID']]['credit'] += $p * 0.8;
 		
 	} else {
 		$cost += 10;
@@ -133,4 +133,10 @@ foreach($owners as $id => $data) {
 	//update the credit
 	User::updateCredit($pixel['ownerID'], $data['credit']);
 }
+
+//send a payment email as a log of the transaction
+$message = $header . "\r\n\r\n";
+$message .= print_r($_POST, true) . "\r\n";
+
+mail($TO, "Pixels bought", $message);
 ?>
