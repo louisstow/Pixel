@@ -70,7 +70,7 @@ Next cycle in <span class="hours"></span> <span class="minutes"></span> <span cl
 </div>
 
 <div class="box register">
-<label>Email: <input type="text" class="email" /></label>
+<label>Email: <input type="text" class="email" /> <span class="important">This email address must be tied to PayPal to recieve payments.</label>
 <label>Password: <input type="password" class="pass" /></label>
 <label>URL: <input type="text" class="url" /></label>
 <label>Hover Text: <input type="text" class="message" /></label>
@@ -96,8 +96,8 @@ echo recaptcha_get_html($publickey);
 
 <div class="box sell">
 <h2>Sell pixels</h2>
-<input type="range" min="0.1" max="100.0" class="slider" value="0.1" step="0.1" /><br />$<input type="text" class="display" value="0.10" />
-<p><button class="sellb">Sell</button><button class="dsellb">Stop Selling</button></p>
+<input type="range" min="0.1" max="50.0" class="slider" value="0.1" step="0.1" /><br />$<input type="text" class="display" value="0.10" />
+<p><button class="sellb">Sell</button></p>
 </div>
 
 <div class="box buy">
@@ -120,7 +120,7 @@ echo recaptcha_get_html($publickey);
 <input type="hidden" name="item_name" value="Pixels at Pixenomics" />
 <input type="hidden" name="payer_id" class="payer" value="" />
 <input type="hidden" name="payer_email" class="payeremail" value="" />
-<input type="hidden" name="currency_code" id="currency_code" value="AUD" />
+<input type="hidden" name="currency_code" id="currency_code" value="USD" />
 <input type="hidden" name="return" value="http://pixenomics.com/payment.html" />
 <input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
 <img alt="" border="0" src="https://www.paypalobjects.com/en_AU/i/scr/pixel.gif" width="1" height="1">

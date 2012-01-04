@@ -10,14 +10,21 @@ if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
 //ensure color is valid
 $icolor = intval($color, 16);
 if($icolor < 0 || $color > 16777215) {
-    error("Price must be less between $1 and $100");
+    error("Invalid color provided.");
 }
 
 $color = dechex($icolor);
 $color = str_repeat("0", 6 - strlen($color)) . $color;
 
-ORM::query("UPDATE pixels SET color = ? WHERE pixelLocation IN('{$pix}') AND ownerID = ?", 
-	array($color, USER));
-	
+$sql = "UPDATE pixels SET color = ? WHERE pixelLocation IN(";
+$sql .= str_repeat("?,", count($pixels));
+$sql = substr($sql, 0, strlen($sql) - 1) . ")";
+$sql .= " AND ownerID = ?";
+
+$prep = array($color);
+$prep = array_merge($prep, $pixels);
+$prep[] = USER;
+
+ORM::query($sql, $prep);
 ok();
 ?>

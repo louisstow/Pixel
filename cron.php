@@ -71,6 +71,9 @@ $modified = array();
 //get the latest cycle information
 $cycle = Cycle::getCurrent();
 
+//take away immunity for these pixels
+$immune = array();
+
 //run algorithm
 foreach($pixel as $xy=>$pix) {
 	$location = explode(",", $xy);
@@ -94,10 +97,17 @@ foreach($pixel as $xy=>$pix) {
 		//skip if not in array
 		if(!isset($pixel[$key])) continue;
 		
+		//cache the current pixel or opponent
 		$opponent = $pixel[$key];
 		
 		//skip if the owners are the same
 		if($pix['ownerID'] == $opponent['ownerID']) continue;
+		
+		//if the opponent has immunity, skip but take away
+		if($opponent['immunity']) {
+			$immune[] = $key;
+			continue;
+		}
 		
 		//grab the opponent color values
 		$ocolor = array(
@@ -144,7 +154,7 @@ foreach($modified as $xy => $pix) {
 	$rsql .= "?,";
 	$rprep[] = $xy;
 	
-	$isql .= "(?, ?, 0, ?, 0),";
+	$isql .= "(?, ?, 5000, ?, 0),";
 	$iprep[] = $xy;
 	$iprep[] = $pix['ownerID'];
 	$iprep[] = $pix['color'];
@@ -156,6 +166,7 @@ print_r($modified);
 $rsql = substr($rsql, 0, strlen($rsql) - 1) .  ")";
 $isql = substr($isql, 0, strlen($isql) - 1);
 
+//generate event SQL
 $esql = "INSERT INTO events VALUES ";
 foreach($pixelcount as $owner => $pix) {
 	$text = "You won {$pix['win']} and lost {$pix['lose']}";
@@ -171,6 +182,13 @@ $esql = substr($esql, 0, strlen($esql) - 1);
 ORM::query($rsql, $rprep);
 ORM::query($isql, $iprep);
 ORM::query($esql, $eprep);
+
+//take away immunity for pixels that just used it
+$isql = "UPDATE pixels SET immunity = 'false' WHERE pixelLocation IN(";
+$isql .= str_repeat("?,", count($immune));
+$isql = substr($isql, 0, strlen($isql) - 1) . ")";
+
+ORM::query($isql, $immune);
 
 //when the cycle starts
 $time = time() + (2 * 60 * 60);

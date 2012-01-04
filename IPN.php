@@ -1,7 +1,7 @@
 <?php
 include 'lib.php';
 include 'ORM.php';
-load("User, Event, Transaction");
+load("User, Event, Stat");
 $TO = "louisstow+pixenomics@gmail.com";
 
 // read the post from PayPal system and add 'cmd'
@@ -73,6 +73,7 @@ $iprep = array();
 $dprep = array();
 
 $owners = array();
+$profit = 0;
 
 //loop over every specified pixel and double check
 foreach($pixels as $pix) {
@@ -81,7 +82,6 @@ foreach($pixels as $pix) {
 		$pixel = $result[$pix];
 		
 		//increase the total cost
-		if($pixel['cost'] === 0) continue;
 		$cost += $pixel['cost'];
 		$p = $pixel['cost'];
 		
@@ -91,14 +91,15 @@ foreach($pixels as $pix) {
 		}
 		
 		$owners[$pixel['ownerID']]['sold']++;
-		$owners[$pixel['ownerID']]['credit'] += $p * 0.8;
-		
+		$owners[$pixel['ownerID']]['credit'] += floor($p * 0.8);
+		$profit += ceil($p * 0.2);
 	} else {
 		$cost += 10;
 		$p = 10;
+		$profit += 10;
     }
 	
-    $isql .= "(?, ?, 0, 'ffffff', ?),";
+    $isql .= "(?, ?, 5000, 'aaaaaa', ?, 'true'),";
 	$dsql .= "?,";
 	
 	$dprep[] = $pix;
@@ -123,6 +124,7 @@ $isql = substr($isql, 0, strlen($isql) - 1);
 
 ORM::query($dsql, $dprep);
 ORM::query($isql, $iprep);
+Stat::updateProfit($profit);
 
 //log as events
 $count = count($dprep);

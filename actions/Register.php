@@ -29,7 +29,7 @@ if(!$player) {
 //ensure color is valid
 $icolor = intval($color, 16);
 if($icolor < 0 || $color > 16777215) {
-    error("Price must be less between $1 and $100");
+    error("Invalid color provided.");
 }
 
 $color = dechex($icolor);
@@ -41,7 +41,7 @@ $isql = "INSERT INTO pixels VALUES ";
 $iprep = array();
 
 foreach($pixel as $pix) {
-	$isql .= "(?, ?, 0, ?, 0),";
+	$isql .= "(?, ?, 5000, ?, 0),";
 	
 	$iprep[] = $pix;
 	$iprep[] = $player->userID;

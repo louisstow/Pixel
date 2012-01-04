@@ -298,7 +298,7 @@ $(function() {
 	
 	$("a.mypixels").click(function() {
 		if(!me) {
-			showError("Please login");
+			showError("Please login or register");
 			return;
 		}
 		
@@ -400,7 +400,7 @@ $(function() {
 	
 	$("a.selectmypixels").click(function() {
 		if(!me) {
-			showError("Please login");
+			showError("Please login or register");
 			return;
 		}
 		
@@ -433,7 +433,7 @@ $(function() {
 	
 	$("a.buypixel").click(function() {
 		if(!me) {
-			showError("Please login");
+			showError("Please login or register");
 			return;
 		}
 		
@@ -526,7 +526,7 @@ $(function() {
 	
 	$("a.sellpixel").click(function() {
 		if(!me) {
-			showError("Please login");
+			showError("Please login or register");
 			return;
 		}
 		
@@ -572,8 +572,8 @@ $(function() {
 	$("input.display").change(function() {
 		var value = +$(this).val();
 		
-		if(value < 0.1 || value > 100.0 || isNaN(value)) {
-			showError("Value must be between $0.10 and $100.00");
+		if(value < 0.1 || value > 50.0 || isNaN(value)) {
+			showError("Value must be between $0.10 and $50.00");
 			value = 0.1;
 		}
 		
@@ -587,16 +587,6 @@ $(function() {
 		
 		api("Sell", data, function() {
 			showError("Your pixels are now on the market");
-			$("div.sell").hide();
-			$("a.sellpixel").removeClass("active");
-		});
-	});
-	
-	$("button.dsellb").click(function() {
-		var data = {pixels: sellList, cost: 0};
-		
-		api("Sell", data, function() {
-			showError("Your pixels are now off the market");
 			$("div.sell").hide();
 			$("a.sellpixel").removeClass("active");
 		});
