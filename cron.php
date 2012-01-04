@@ -191,6 +191,6 @@ $isql = substr($isql, 0, strlen($isql) - 1) . ")";
 ORM::query($isql, $immune);
 
 //when the cycle starts
-$time = time() + (2 * 60 * 60);
+$time = time() + (3 * 60 * 60);
 I("Cycle")->create(D, date('Y-m-d H:i:s', $time));
 ?>
