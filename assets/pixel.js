@@ -82,8 +82,10 @@ $(function() {
 			case 90: $("a.zoomin").click(); break;
 			
 			//R
+			case 82: $("a.swatch").click(); break;
 			
 			//V
+			case 86: $("a.move").click(); break;
 			
 			//1
 			case 49: $("a.x16").click(); break;
@@ -431,6 +433,7 @@ $(function() {
 		selected = "move";
 		$("#stage").unbind();
 		$(this).addClass("active");
+		pixels = {length: 0};
 		
 		$("#stage").click(function(e) {
 			var pos = translate(e.clientX, e.clientY);
@@ -441,18 +444,28 @@ $(function() {
 			if(moveSelected) {
 				//if someone owns it
 				if(pixel) {
-					showError("That pixel is taken. You may purchase this pixel for $" + (pixel.cost / 100).toFixed(2));
+					showError("That pixel is taken. You may purchase this pixel for $" + (+pixel.cost).toFixed(2));
 					return;
 				}
 				
 				api("MovePixel", {from: moveSelected, to: key}, function() {
-					redraw();
+					status();
 				});
 				
+				pixels = {length: 0};
 				moveSelected = false;
 			} else {
+				if(!pixel || (pixel && pixel.owner != me.userID)) {
+					showError("You can only move your own pixels.");
+					console.log(pixel, me);
+					return;
+				}
+				
 				moveSelected = key;
+				pixels[key] = true;
 			}
+			
+			redraw();
 		});
 	});
 	
@@ -706,6 +719,7 @@ function clearSelection() {
 	selected = null;
 	stopZoomer();
 	$("#stage").unbind("mousedown");
+	moveSelected = false;
 }
 
 function selectPixel(x, y) {
