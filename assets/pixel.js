@@ -15,6 +15,7 @@ var canvas,
 	tab, //which tab is selected
 	swatch = "000000",
 	mypixelsSelected = false,
+	moveSelected = false,
 	shadowColor = "#222222",
 	selectColor = "00C8FF",
 	
@@ -79,6 +80,10 @@ $(function() {
 			
 			//Z
 			case 90: $("a.zoomin").click(); break;
+			
+			//R
+			
+			//V
 			
 			//1
 			case 49: $("a.x16").click(); break;
@@ -414,6 +419,41 @@ $(function() {
 		}
 		
 		redraw();
+	});
+	
+	$("a.move").click(function() {
+		if(!me) {
+			showError("Please login or register");
+			return;
+		}
+		
+		clearSelection();
+		selected = "move";
+		$("#stage").unbind();
+		$(this).addClass("active");
+		
+		$("#stage").click(function(e) {
+			var pos = translate(e.clientX, e.clientY);
+			var key = ~~pos.x + "," + ~~pos.y;
+			var pixel = board[key];
+			
+			//check if free pixel
+			if(moveSelected) {
+				//if someone owns it
+				if(pixel) {
+					showError("That pixel is taken. You may purchase this pixel for $" + (pixel.cost / 100).toFixed(2));
+					return;
+				}
+				
+				api("MovePixel", {from: moveSelected, to: key}, function() {
+					redraw();
+				});
+				
+				moveSelected = false;
+			} else {
+				moveSelected = key;
+			}
+		});
 	});
 	
 	$("a.swatch").ColorPicker({

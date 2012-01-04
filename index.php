@@ -57,8 +57,9 @@ Next cycle in <span class="hours"></span> <span class="minutes"></span> <span cl
 			<li><a class="x16"><u>1</u>6x</a></li>
 		</ul>
 	</li>
+	<li><a class="move">Mo<u>v</u>e</a></li>
 	<li>
-		<a class="swatch">Color <span></span></a>
+		<a class="swatch">Colo<u>r</u> <span></span></a>
 	</li>
 </ul>
 </div>
