@@ -97,7 +97,7 @@ echo recaptcha_get_html($publickey);
 
 <div class="box sell">
 <h2>Sell pixels</h2>
-<input type="range" min="0.1" max="50.0" class="slider" value="0.1" step="0.1" /><br />$<input type="text" class="display" value="0.10" />
+<input type="range" min="0.1" max="50.01" class="slider" value="0.1" step="0.1" /><br />$<input type="text" class="display" value="0.10" />
 <p><button class="sellb">Sell</button></p>
 </div>
 

@@ -60,7 +60,8 @@ span.hintcolor { font-weight: bold }
 #welcome { font-style: italic; color: #666; margin-right: 20px }
 #welcome b { color: #333 }
 
-#tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000 }
+#tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000; max-width: 200px;
+text-align: left; }
 
 .list { max-height: 100px; overflow: auto; }
 .list ul { padding: 0; margin: 0; list-style: none }

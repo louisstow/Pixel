@@ -38,15 +38,11 @@ $(function() {
 	zoomer = document.createElement("div");
 	$("#stage").append(zoomer);
 	zoomer.setAttribute("class", "zoomer");
-	stagePos = $("#stage").offset();
-	stagePos.left++;
-	stagePos.top++;
+	stagePos = $("#canvas").offset();
 	
 	//update the stage position
 	$(window).resize(function() {
-		stagePos = $("#stage").offset();
-		stagePos.left++;
-		stagePos.top++;
+		stagePos = $("#canvas").offset();
 	});
 	
 	//shortcut keys
