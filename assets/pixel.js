@@ -915,8 +915,8 @@ function translateGlobal(x, y) {
 function showError(msg) {
 	console.error(msg);
 	var $d = $("#dialog");
-	$d.show().html(msg).animate({top: -4}, 150).delay(msg.length * 100)
-		.animate({top: -50}, 150, function() {
+	$d.css("left", ($(window).width() - 1200) / 2).show().html(msg).animate({bottom: 0}, 150).delay(msg.length * 100)
+		.animate({bottom: -50}, 150, function() {
 			$(this).hide().html("");
 		});
 }
