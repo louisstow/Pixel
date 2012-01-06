@@ -1,21 +1,7 @@
 <?php
 session_start();
 
-/**
-* If a user is suspected of hacking attempts,
-* put a strike on their record and 3 attempts
-* means banned.
-*/
-define("LOW", 0);
-define("MEDIUM", 1);
-define("SEVERE", 2);
-
 define("SALT", "AND PEPPER");
-
-function hacking($level=LOW) {
-	//TODO: log this attempt
-	exit;
-}
 
 /**
 * Include the methods from this file
@@ -59,9 +45,24 @@ function error($msg) {
 	exit;
 }
 
+/**
+* Request was Okelydokely
+*/
 function ok() {
 	echo "{\"status\": \"ok\"}";
 	exit;
+}
+
+/**
+* Send PQL to reth's shitty daemon
+*/
+function queryDaemon($req) {
+	$fp = fsockopen("localhost", 5607);
+	fwrite($fp, $req);
+	
+	while(!feof($fp)) {
+		$str .= fread($fp, 1024);
+	}
 }
 
 if(isset($_SESSION['id'])) define("USER", $_SESSION['id']);

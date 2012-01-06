@@ -2,8 +2,15 @@
 load("Pixel");
 data("from, to");
 
-$sql = "UPDATE pixels SET pixelLocation = ? WHERE pixelLocation = ? AND ownerID = ?";
-ORM::query($sql, array($to, $from, USER));
+//get pixel data
+$f = queryDaemon($from . " g");
+$color = substr($f, 0, 6);
+$cents = substr($f, 6, 3);
+$owner = substr($f, 9, 4);
+
+//write to daemon
+queryDaemon("{$to} w {$color} {$cost} {$owner}");
+queryDaemon("{$from} d");
 
 ok();
 ?>
