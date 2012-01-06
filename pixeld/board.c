@@ -2,18 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define COLOUR_SIZE 	6
-#define COST_SIZE 	3
-#define OID_SIZE	4
+#include "board.h"
 
 #define ROWS		1000
 #define COLS		1200
-
-struct pixel {
-	char colour[COLOUR_SIZE];
-	char cost[COST_SIZE];
-	char oid[OID_SIZE];
-};
 
 struct pixel 
 **init_board(unsigned int rows, unsigned int cols)
