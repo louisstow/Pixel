@@ -6,7 +6,7 @@ input { outline: none }
 #canvas { margin: auto }
 #stage { width: 1202px; height: 1002px; margin: auto; overflow: hidden; position: relative; background: #fff; border: 1px solid #999; box-shadow: 0 0 5px #aaa }
 
-.box { position: absolute; border-color: #999; border-style: solid; background: #fff; padding: 15px; margin-top: 9px; }
+.box { position: absolute; border-color: #999; border-style: solid; background: #fff; padding: 10px 15px; margin-top: 9px; }
 .login, .register, .events, .change { right: -1px; width: 320px; border-width: 0 0 1px 1px; display: none; box-shadow: -1px 1px 2px #ddd }
 .buy, .sell, .instr { left: -1px; width: 300px; display: none; border-width: 0 1px 1px 0; box-shadow: 1px 1px 2px #ddd }
 
@@ -33,6 +33,7 @@ div.menu li:hover ul { display: block }
 #tools li { margin: 0 -3px; }
 #tools a { padding-left: 25px; }
 
+.events ul { list-style: none; padding: 0; margin: 0 }
 
 .zoomer { border: 1px solid #ccc; position: absolute; cursor: crosshair }
 
@@ -57,8 +58,7 @@ span.blue { color: blue; font-weight: bold }
 span.hinttype { text-transform: capitalize; font-weight: bold }
 span.hintcolor { font-weight: bold }
 
-#welcome { font-style: italic; color: #666; margin-right: 20px }
-#welcome b { color: #333 }
+#welcome { font-style: italic; color: #333; margin-right: 20px; font-weight: bold }
 
 #tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000; max-width: 200px;
 text-align: left; }
@@ -72,6 +72,12 @@ text-align: left; }
 
 .slider { width: 290px; }
 .clearer { clear: both }
+
+label { display: block; margin: 15px 0 }
+label input { float: right; margin: 0 }
+button { clear: both }
+
+.important { font-size: 10px; color: #cc1111; float: left }
 
 #money { border-bottom: 1px dashed #0022FF }
 

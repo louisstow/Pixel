@@ -10,10 +10,10 @@ class Event extends ORM {
     );
 
     public static function getLatest($user) {
-        $q = ORM::query("SELECT event 
+        $q = ORM::query("SELECT cycleID, event 
                         FROM events 
                         WHERE userID = ? 
-                        ORDER BY eventDate desc", array($user));
+                        ORDER BY cycleID desc", array($user));
         return $q;
     }
 }

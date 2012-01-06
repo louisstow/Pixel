@@ -688,7 +688,7 @@ function updateUser(user) {
 	$("div.register").hide();
 	$("div.login").hide();
 	$("#login,#register").hide();
-	$("#welcome").html("Here be <b>" + user.userEmail + "</b>").show();
+	$("#welcome").text(user.userEmail).show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
 	$("#events,#logout,#change").show();
 	status();
@@ -700,10 +700,14 @@ function updateEvents(data) {
     var i = 0, len = data.length;
     var html = "";
     for(; i < len; ++i) {
-        html += "<li>"+data[i]+"</li>";
+        html += "<li><b>Cycle "+data[i].cycleID+"</b> "+data[i].event+"</li>";
     }
 
-    $("div.events ul").html(html);
+	if(i === 0) {
+		$("div.events ul").html("<li>No events to show</li>")
+	} else {
+		$("div.events ul").html(html);
+	}
 }
 
 function unixtime(time) {
