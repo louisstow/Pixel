@@ -20,7 +20,7 @@
 	<a id="login">Login</a>
 	<a id="register">Register</a>
 	<span id="welcome"></span>
-	<span id="money" title="You will be paid via PayPal once your money reaches $100 at the end of the month."></span>
+	<span id="money" title="You will be paid via PayPal once your money reaches $20."></span>
 	<a id="events">Events</a>
 	<a id="change">Details</a>
 	<a id="logout">Logout</a>

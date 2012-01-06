@@ -45,6 +45,8 @@ $(function() {
 		stagePos = $("#canvas").offset();
 	});
 	
+	$(window).bind("selectstart", function() { return false; });
+	
 	//shortcut keys
 	$(document).keydown(function(e) {
 		if(!hasFocus) return;
@@ -686,7 +688,7 @@ function updateUser(user) {
 	$("div.register").hide();
 	$("div.login").hide();
 	$("#login,#register").hide();
-	$("#welcome").html("Here be <b>" + user.userEmail + "</b>").show();
+	$("#welcome").text(user.userEmail).show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
 	$("#events,#logout,#change").show();
 	status();
@@ -698,10 +700,14 @@ function updateEvents(data) {
     var i = 0, len = data.length;
     var html = "";
     for(; i < len; ++i) {
-        html += "<li>"+data[i]+"</li>";
+        html += "<li><b>Cycle "+data[i].cycleID+"</b> "+data[i].event+"</li>";
     }
 
-    $("div.events ul").html(html);
+	if(i === 0) {
+		$("div.events ul").html("<li>No events to show</li>")
+	} else {
+		$("div.events ul").html(html);
+	}
 }
 
 function unixtime(time) {
@@ -738,6 +744,7 @@ function selectPixel(x, y) {
 }
 
 function startZoomer(level) {
+	stagePos = $("#canvas").offset();
 	//reset to 1
 	if(zoomLevel !== 1) drawBoard();
 	
@@ -899,6 +906,7 @@ function redraw() {
 }
 
 function translate(x, y) {
+	stagePos = $("#canvas").offset();
 	return {
 		x: (x - stagePos.left + body.scrollLeft) / zoomLevel + zoomPos.left,
 		y: (y - stagePos.top + body.scrollTop) / zoomLevel + zoomPos.top
@@ -906,6 +914,7 @@ function translate(x, y) {
 }
 
 function translateGlobal(x, y) {
+	stagePos = $("#canvas").offset();
 	return {
 		left: (x - stagePos.left + body.scrollLeft),
 		top: (y - stagePos.top + body.scrollTop)

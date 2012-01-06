@@ -31,7 +31,7 @@ if(isset($_SESSION['id'])) {
     $q = Event::getLatest(USER);
     $events = array();
     while($row = $q->fetch(PDO::FETCH_ASSOC)) {
-        $events[] = $row['event'];
+        $events[] = $row;
     }
 
     $json['events'] = $events;
