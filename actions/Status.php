@@ -1,5 +1,6 @@
 <?php
-$logs = queryDaemon("l " . time());
+data("time");
+$logs = queryDaemon("l {$data}");
 
 //grab the latest cycle
 $q = ORM::query("SELECT * FROM cycles WHERE cycleID = (SELECT MAX(cycleID) FROM cycles)");
@@ -8,7 +9,8 @@ $cycle['cycleTime'] .= " UTC+10:00";
 
 $json = array(
 	"log" => $logs,
-	"cycle" => $cycle
+	"cycle" => $cycle,
+	"time" => time()
 );
 
 //if logged in, list event data

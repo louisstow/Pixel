@@ -58,11 +58,35 @@ function ok() {
 */
 function queryDaemon($req) {
 	$fp = fsockopen("localhost", 5607);
-	fwrite($fp, $req);
+	$len = fwrite($fp, $req);
+	
+	//shit wnet wrong
+	if($len !== strlen($req)) {
+		echo $len . " (" . $req . ")";
+	}
 	
 	while(!feof($fp)) {
 		$str .= fread($fp, 1024);
 	}
+}
+
+/**
+* Convert PQL to Assoc Array
+*/
+function toArray($resp) {
+	$result = array();
+	
+	$len = strlen($resp) / 13;
+	for($i = 0; $i < $len; $i++) {
+		//every 13th char
+		$result[] = array(
+			"color" => substr($resp, $i * 13, 6),
+			"cost" => substr($resp, $i * 13 + 6, 3),
+			"owner" => substr($resp, $i * 13 + 9, 4)
+		);
+	}
+	
+	return $result;
 }
 
 if(isset($_SESSION['id'])) define("USER", $_SESSION['id']);
