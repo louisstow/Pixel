@@ -45,6 +45,8 @@ $(function() {
 		stagePos = $("#canvas").offset();
 	});
 	
+	$(window).bind("selectstart", function() { return false; });
+	
 	//shortcut keys
 	$(document).keydown(function(e) {
 		if(!hasFocus) return;
@@ -738,6 +740,7 @@ function selectPixel(x, y) {
 }
 
 function startZoomer(level) {
+	stagePos = $("#canvas").offset();
 	//reset to 1
 	if(zoomLevel !== 1) drawBoard();
 	
@@ -899,6 +902,7 @@ function redraw() {
 }
 
 function translate(x, y) {
+	stagePos = $("#canvas").offset();
 	return {
 		x: (x - stagePos.left + body.scrollLeft) / zoomLevel + zoomPos.left,
 		y: (y - stagePos.top + body.scrollTop) / zoomLevel + zoomPos.top
@@ -906,6 +910,7 @@ function translate(x, y) {
 }
 
 function translateGlobal(x, y) {
+	stagePos = $("#canvas").offset();
 	return {
 		left: (x - stagePos.left + body.scrollLeft),
 		top: (y - stagePos.top + body.scrollTop)
