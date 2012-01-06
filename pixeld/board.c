@@ -5,17 +5,17 @@
 #define COST_SIZE 	3
 #define OID_SIZE	4
 
-typedef struct {
+struct {
 	char colour[COLOUR_SIZE];
 	char cost[COST_SIZE];
 	char oid[OID_SIZE];
 } pixel;
 
-pixel 
+struct pixel 
 **init_board(unsigned int rows, unsigned int cols)
 {
 	unsigned int i, j;
-	pixel **board;
+	struct pixel **board;
 	board = malloc(rows * sizeof(pixel *));
 	
 	for (i = 0; i < rows; i++) {
@@ -27,10 +27,30 @@ pixel
 	return board;
 }
 
+int
+write_pixel(struct pixel **b, struct pixel *p, int r, int c)
+{
+	struct pixel *pp = b[r][c];
+
+	if (p == NULL) {
+		p->colour[0] = '.';
+		return 0;
+	}
+
+	if (p->colour != NULL)
+		memcpy(pp->colour, p->colour, COLOUR_SIZE);
+	if (p->cost != NULL)
+		memcpy(pp->cost, p->cost, COST_SIZE);
+	if (p->oid != NULL)
+		memcpy(pp->oid, p->oid, OID_SIZE);
+
+	return 1;
+}
+
 void 
 print_board(pixel **b, unsigned int rows, unsigned int cols) {
 	unsigned int i, j;
-	pixel *p;
+	struct pixel *p;
 
 	for (i = 0; i < rows; i++) {
 		for (j = 0; j < cols; j++) {
