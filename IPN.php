@@ -50,65 +50,45 @@ if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
     error("Invalid pixels");
 }
 
-$list = implode($pixels, "','");
+//grab pixels
+$list = implode($pixels, "|");
+$result = queryDaemon("{$list} g");
+$result = toArray($result);
 
-//grab all the pixels
-$sql = "SELECT * FROM pixels WHERE pixelLocation IN(";
-$sql .= str_repeat("?,", count($pixels));
-$sql = substr($sql, 0, strlen($sql) - 1) . ")";
-
-$q = ORM::query($sql, $pixels);
-
-$result = array();
-
-while($row = $q->fetch(PDO::FETCH_ASSOC)) $result[$row['pixelLocation']] = $row;
-
-//loop over pixels
 $cost = 0;
-$dsql = "DELETE FROM pixels WHERE pixelLocation IN(";
-$isql = "INSERT INTO pixels VALUES ";
-
-//prepared statement values
-$iprep = array();
-$dprep = array();
 
 $owners = array();
 $profit = 0;
 
+$i = 0;
 //loop over every specified pixel and double check
 foreach($pixels as $pix) {
     //skip if not for sale
-	if(isset($result[$pix])) {
-		$pixel = $result[$pix];
+	if(isset($result[$i])) {
+		$pixel = $result[$i];
 		
 		//increase the total cost
 		$cost += $pixel['cost'];
 		$p = $pixel['cost'];
 		
 		//map of owners to sold for event data
-		if(!isset($owners[$pixel['ownerID']])) {
-			$owners[$pixel['ownerID']] = array("sold" => 0, "credit" => 0);
+		if(!isset($owners[$pixel['owner']])) {
+			$owners[$pixel['owner']] = array("sold" => 0, "credit" => 0);
 		}
 		
-		$owners[$pixel['ownerID']]['sold']++;
-		$owners[$pixel['ownerID']]['credit'] += floor($p * 0.8);
+		$owners[$pixel['owner']]['sold']++;
+		$owners[$pixel['owner']]['credit'] += floor($p * 0.8);
 		$profit += ceil($p * 0.2);
 	} else {
 		$cost += 10;
 		$p = 10;
 		$profit += 10;
     }
-	
-    $isql .= "(?, ?, 5000, 'aaaaaa', ?, 'true'),";
-	$dsql .= "?,";
-	
-	$dprep[] = $pix;
-	$iprep[] = $pix;
-	$iprep[] = $_POST['payer_id'];
-	$iprep[] = $p;
+
+	$i++;
 }
 
-//if the price was incorrect
+//if the price was incorrect (CHECK IF PAID TOO MUCH, CREDIT ACCOUNT)
 if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 	$message = "";
 	$message .= print_r($_POST, true) . "\r\n";
@@ -118,12 +98,8 @@ if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 	exit;
 }
 
+queryDaemon("{$list} w AAAAAA 500 {$_POST['payer_id']}");
 
-$dsql = substr($dsql, 0, strlen($dsql) - 1) . ")";
-$isql = substr($isql, 0, strlen($isql) - 1);
-
-ORM::query($dsql, $dprep);
-ORM::query($isql, $iprep);
 Stat::updateProfit($profit);
 
 //log as events

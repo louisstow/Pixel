@@ -76,14 +76,21 @@ function queryDaemon($req) {
 function toArray($resp) {
 	$result = array();
 	
-	$len = strlen($resp) / 13;
+	$len = strlen($resp);
 	for($i = 0; $i < $len; $i++) {
+		if(substr($resp, $i, 1) == ".") {
+			$result[] = false;
+			continue;
+		}
+		
 		//every 13th char
 		$result[] = array(
-			"color" => substr($resp, $i * 13, 6),
-			"cost" => substr($resp, $i * 13 + 6, 3),
-			"owner" => substr($resp, $i * 13 + 9, 4)
+			"color" => substr($resp, $i, 6),
+			"cost" => substr($resp, $i + 6, 3),
+			"owner" => substr($resp, $i + 9, 4)
 		);
+		
+		$i += 13;
 	}
 	
 	return $result;
