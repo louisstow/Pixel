@@ -14,7 +14,9 @@ if(!file_exists("actions/" . $a . ".php")) {
 
 if(!isset($_SESSION['id'])) {
 	//if user is not intending to Login or Register
-	if($a != "Login" && $a != "Register" && $a != "GetBoard" && $a != "GetUsers") error("Please login");
+	if($a != "Login" && $a != "Register" && $a != "GetBoard" && $a != "GetUsers" && $a != "Status") 
+		error("Please login");
+		
 } else {
 	load("User");
 	$me = I("User")->get(USER);

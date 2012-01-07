@@ -79,9 +79,11 @@ run_cycle(struct pixel **b) {
 				memset(key, '\0', 10);
 				sprintf(key, "%d,%d", col, row);
 				
-				//if the pixel has immunity
-				if(get_meta(key, "immunity") == 1)
+				//if the pixel has immunity skip them and take away immunity
+				if(get_meta(key, "immunity") == 1) {
+					set_meta(key, "immunity", 0);
 					continue;
+				}
 				
 				//extract opponent colors
 				ocolor = atoi(p->colour);
