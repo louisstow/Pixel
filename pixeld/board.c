@@ -63,7 +63,6 @@ print_board(int s, struct pixel **b) {
 					p->cost, 
 					p->oid);
 		}
-		fprintf(f, "\n");
 	}
 }
 
@@ -71,6 +70,7 @@ print_board(int s, struct pixel **b) {
 int
 parse_query(int sock, char *qry, struct pixel **board)
 {
+	int *c;
 	char *s = malloc(strlen(qry)); 
 	char *qp;
 
@@ -85,11 +85,17 @@ parse_query(int sock, char *qry, struct pixel **board)
 	strcpy(s, qry);
 	if (strtok(s, " ") == NULL)
 		return 0;
-	
+
+	c = extract_pixels(qry);
 	qp = malloc(strlen(qry));
 	memcpy(qp, qry + strlen(s) + 1, strlen(qry) - strlen(s));
 
+	if (qp[0] == 'g') {
+
+	}
+
 	free(s);
+	free(c);
 	return 1;
 }
 
