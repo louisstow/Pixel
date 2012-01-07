@@ -24,7 +24,8 @@ var canvas,
 	sellList,
 	buyList,
 	total,
-	nextCycle = unixtime(new Date());
+	nextCycle = unixtime(new Date()),
+	currentTimestamp;
 
 var $hours,
 	$minutes,
@@ -648,22 +649,59 @@ $(function() {
 	setInterval(status, 1000 * 60);
 });
 
+//should grab logs
 function status() {
-	api("Status", function() {
-	
+	api("Status", function(resp) {
+		nextCycle = ~~(Date.parse(resp.cycle.cycleTime) / 1000);
+		currentTimestamp = resp.time;
+		
+		if(resp.events) {
+			updateEvents(data.events);
+		}
+		
+		applyLogs(resp.logs);
 	});
 }
 
 function updateBoard(data) {
-	board = data.pixels;
-	owners = data.owners;
-	nextCycle = ~~(Date.parse(data.cycle.cycleTime) / 1000);
-		
-	if(data.events) {
-		updateEvents(data.events);
-	}
+	currentTimestamp = data.substr(0, 13);
+	parse = data.substr(13);
 	
 	redraw();
+}
+
+function applyLogs(logs) {
+	var logs = logs.split('\n'),
+		i = 0, len = logs.length,
+		log;
+	
+	//split the logs on newline
+	for(;i < len; ++i) {
+		log = logs[i];
+		var opts = log.split(' ');
+		var pixels = opts[0].split('|');
+		
+		//loop over pixels
+		for(var p = 0; p < pixels.length; ++p) {
+			var pixel = pixels[p];
+			
+			//delete pixel
+			if(opts[1] == 'd') {
+				delete board[pixel];
+				continue;
+			}
+			
+			//init if not exists
+			if(!board[pixel]) {
+				board[pixel] = {};
+			}
+			
+			//update the board
+			if(opts[2] != '-1') board[pixel].color = opts[2];
+			if(opts[3] != '-1') board[pixel].cost = opts[3];
+			if(opts[4] != '-1') board[pixel].owner = opts[4];
+		}
+	}
 }
 
 function tick() {
