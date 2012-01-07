@@ -649,7 +649,9 @@ $(function() {
 });
 
 function status() {
-	api("GetBoard", updateBoard);
+	api("Status", function() {
+	
+	});
 }
 
 function updateBoard(data) {
