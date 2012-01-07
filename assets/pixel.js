@@ -119,6 +119,8 @@ $(function() {
 	$minutes = $("span.minutes");
 	$seconds = $("span.seconds");
 	
+	updateBoard(DATA);
+	
 	$(".color").each(function() {
 		var self = $(this);
 		
@@ -139,9 +141,6 @@ $(function() {
 			updateUser(resp);
 		}
 	}, false);
-	
-	//retrieve the current board
-	api("GetBoard", updateBoard);
 	
 	$("#login").click(function() {
 		$("div.login").show();
@@ -666,7 +665,7 @@ function status() {
 function updateBoard(data) {
 	currentTimestamp = data.substr(0, 13);
 	parse = data.substr(13);
-	
+	console.log(parse.length);
 	var len = parse.length;
 	var x = 0, y = 0;
 	var params = {};
@@ -1036,6 +1035,9 @@ function api(action, data, callback, showErrorFlag) {
 			}
 			
 			if(callback) callback(data);
+		},
+		error: function(a,e) {
+			console.log(a,e);
 		}
 	});
 };
