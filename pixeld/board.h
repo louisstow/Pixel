@@ -8,5 +8,6 @@ struct pixel {
 	char oid[OID_SIZE];
 };
 
+int *extract_pixels(char *qry);
 int parse_query(int sock, char *qry, struct pixel **board);
 struct pixel  **init_board(unsigned int rows, unsigned int cols);
