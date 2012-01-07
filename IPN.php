@@ -88,14 +88,18 @@ foreach($pixels as $pix) {
 	$i++;
 }
 
-//if the price was incorrect (CHECK IF PAID TOO MUCH, CREDIT ACCOUNT)
+//paid too little, credit the payment
 if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 	$message = "";
 	$message .= print_r($_POST, true) . "\r\n";
 	$message .= $cost;
 	
 	mail($TO, "Incorrect price", $message);
+	User::updateCredit($_POST['payer_id'], ($_POST['mc_gross'] * 100));
 	exit;
+} //paid too much, credit the difference
+else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
+	User::updateCredit($_POST['payer_id'], $_POST['mc_gross'] * 100 - $cost);
 }
 
 queryDaemon("{$list} w AAAAAA 500 {$_POST['payer_id']}");
@@ -107,9 +111,9 @@ $count = count($dprep);
 I("Event")->create($_POST['payer_id'], NOW(), "You bought {$count} pixels");
 
 foreach($owners as $id => $data) {
-	I("Event")->create($id, NOW(), "You bought {$data['sold']} pixels");
+	I("Event")->create($id, NOW(), "You sold {$data['sold']} pixels");
 	//update the credit
-	User::updateCredit($pixel['ownerID'], $data['credit']);
+	User::updateCredit($id, $data['credit']);
 }
 
 //send a payment email as a log of the transaction
