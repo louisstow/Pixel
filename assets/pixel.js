@@ -667,6 +667,48 @@ function updateBoard(data) {
 	currentTimestamp = data.substr(0, 13);
 	parse = data.substr(13);
 	
+	var len = parse.length;
+	var x = 0, y = 0;
+	var params = {};
+	var owners = {};
+	
+	for(var i = 0; i < len; i++) {
+		if(parse.charAt(i) === '.') {
+			x++;
+			continue;
+		}
+		
+		if(x == 1200) {
+			x = 0;
+			y++;
+		}
+		
+		var key = x + "," + y;
+		
+		if(!board[key]) {
+			board[key] = {};
+		}
+		
+		board[key].color = parse.substr(i, 6);
+		board[key].cost = parse.substr(i + 6, 3);
+		board[key].owner = parse.substr(i + 9, 4);
+		owners[board[key].owner] = true;
+		
+		x++;
+		i += 13;
+	}
+	
+	//convert owners object to param array
+	params.owners = [];
+	for(var id in owners) {
+		params.owners.push(id);
+	}
+	
+	//grab the information about owners
+	api("GetOwners", params, function(resp) {
+	
+	});
+	
 	redraw();
 }
 
