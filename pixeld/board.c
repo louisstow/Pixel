@@ -74,6 +74,9 @@ parse_query(int sock, char *qry, struct pixel **board)
 	char *s = malloc(strlen(qry)); 
 	char *qp;
 
+	if (qry[0] == 'l')
+		return 1;
+
 	if (qry[0] == 'g') {
 		print_board(sock, board);
 		return 1;
@@ -88,4 +91,38 @@ parse_query(int sock, char *qry, struct pixel **board)
 
 	free(s);
 	return 1;
+}
+
+int 
+*extract_pixels(char *qry)
+{
+	char *s, *p, *orig;
+	int i, j, n, *coods;
+
+	p = s = orig = malloc(strlen(qry) + 1);
+	strcpy(s, qry);
+
+	n = 1;
+	for (i = 0; s[i] != ' '; i++) {
+		if (s[i] == '|')
+			n++;
+	}
+
+	coods = malloc(sizeof(int) * n * 2 + 1);
+
+	for (i = 0; *s != ' '; s++) {
+		if (*s == '|') {
+			*s = '\0';
+			if (sscanf(p, "%d,%d", &coods[i++], &coods[i++]) < 2)
+				goto finish;
+			p = s+1;
+		}
+	}
+	*s = '\0';
+	sscanf(p, "%d,%d", &coods[i++], &coods[i++]);
+
+finish:
+	coods[i] = -1;
+	free(orig);
+	return coods;
 }
