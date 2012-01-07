@@ -40,6 +40,8 @@ run_cycle(struct pixel **b) {
 	unsigned int ocolor, or, og, ob, odominant; //opponent colors
 	unsigned int odds = 0;
 	
+	char key[10];
+	
 	srand(time(NULL));
 
 	for (i = 0; i < ROWS; i++) {
@@ -69,10 +71,17 @@ run_cycle(struct pixel **b) {
 				
 				o = &b[row][col];
 				
-				//skip the pixel if not exists
-				if (o->colour[0] == '.') {
+				//skip the pixel if not exists or the same owners
+				if (o->colour[0] == '.' || o->owner == p->owner)
 					continue;
-				}
+				
+				//build the pixel location string
+				memset(key, '\0', 10);
+				sprintf(key, "%d,%d", col, row);
+				
+				//if the pixel has immunity
+				if(get_meta(key, "immunity") == 1)
+					continue;
 				
 				//extract opponent colors
 				ocolor = atoi(p->colour);
