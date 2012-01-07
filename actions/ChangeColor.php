@@ -2,7 +2,7 @@
 load("Pixel");
 data("color, pixels");
 
-$pix = implode($pixels, "','");
+$pix = implode($pixels, "|");
 if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
     error("Invalid pixels");
 }
@@ -16,15 +16,17 @@ if($icolor < 0 || $color > 16777215) {
 $color = dechex($icolor);
 $color = str_repeat("0", 6 - strlen($color)) . $color;
 
-$sql = "UPDATE pixels SET color = ? WHERE pixelLocation IN(";
-$sql .= str_repeat("?,", count($pixels));
-$sql = substr($sql, 0, strlen($sql) - 1) . ")";
-$sql .= " AND ownerID = ?";
+$q = queryDaemon("{$pix} g");
+$data = toArray($q);
 
-$prep = array($color);
-$prep = array_merge($prep, $pixels);
-$prep[] = USER;
+//validate the owner of the pixel
+foreach($data as $row) {
+	if($row['owner'] != USER) {
+		error("This is not your pixel");
+	}
+}
 
-ORM::query($sql, $prep);
+queryDaemon("{$pix} w {$color} -1 " . USER);
+
 ok();
 ?>

@@ -1,21 +1,7 @@
 <?php
 session_start();
 
-/**
-* If a user is suspected of hacking attempts,
-* put a strike on their record and 3 attempts
-* means banned.
-*/
-define("LOW", 0);
-define("MEDIUM", 1);
-define("SEVERE", 2);
-
 define("SALT", "AND PEPPER");
-
-function hacking($level=LOW) {
-	//TODO: log this attempt
-	exit;
-}
 
 /**
 * Include the methods from this file
@@ -59,9 +45,55 @@ function error($msg) {
 	exit;
 }
 
+/**
+* Request was Okelydokely
+*/
 function ok() {
 	echo "{\"status\": \"ok\"}";
 	exit;
+}
+
+/**
+* Send PQL to reth's shitty daemon
+*/
+function queryDaemon($req) {
+	$fp = fsockopen("localhost", 5607);
+	$len = fwrite($fp, $req);
+	
+	//shit wnet wrong
+	if($len !== strlen($req)) {
+		echo $len . " (" . $req . ")";
+	}
+	
+	while(!feof($fp)) {
+		$str .= fread($fp, 1024);
+	}
+}
+
+/**
+* Convert PQL to Assoc Array
+*/
+function toArray($resp) {
+	$result = array();
+	
+	$len = strlen($resp);
+	for($i = 0; $i < $len; $i++) {
+		if(substr($resp, $i, 1) == ".") {
+			$result[] = false;
+			continue;
+		}
+		
+		//every 13th char
+		$result[] = array(
+			"color" => substr($resp, $i, 6),
+			"cost" => substr($resp, $i + 6, 3),
+			"owner" => substr($resp, $i + 9, 4)
+		);
+		
+		$i += 13;
+	}
+	
+	return $result;
 }
 
 if(isset($_SESSION['id'])) define("USER", $_SESSION['id']);
