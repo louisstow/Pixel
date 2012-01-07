@@ -27,6 +27,7 @@ main(int argc, char *argv[])
 
 	buf = malloc(BUF_SIZE);
 	sock = create_listen("5607");
+	board = init_board(1000, 1200);
 
 	for(;;) {
 		sin_size = sizeof r_addr;
@@ -48,7 +49,6 @@ main(int argc, char *argv[])
 		}
 
 		buf[r] = '\0';
-		board = init_board(1000, 1200);
 		parse_query(fd, buf, board);
 		fprintf(stderr, "finished\n");
 		close(fd);

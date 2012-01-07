@@ -26,6 +26,7 @@ struct pixel
 int
 write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 {
+	int i, val;
 	struct pixel *pp = &b[r][c];
 
 	if (p == NULL) {
@@ -34,12 +35,12 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 	}
 
 	if (p->colour != NULL)
-		memcpy(pp->colour, p->colour, COLOUR_SIZE);
+		strcpy(pp->colour, p->colour);
 	if (p->cost != NULL)
-		memcpy(pp->cost, p->cost, COST_SIZE);
+		sprintf(pp->cost, "%03d", atoi(p->cost));
 	if (p->oid != NULL)
-		memcpy(pp->oid, p->oid, OID_SIZE);
-
+		sprintf(pp->oid, "%04d", atoi(p->oid));
+	
 	return 1;
 }
 
@@ -54,16 +55,17 @@ print_board(int s, struct pixel **b) {
 
 	for (i = 0; i < ROWS; i++) {
 		for (j = 0; j < COLS; j++) {
-			p = &b[i][j];
-			if (p->colour[0] == '.')
+			 p = &b[i][j];
+			if (p->colour[0] == '.') {
 				fprintf(f, ".");
-			else
+			} else
 				fprintf(f, "%s%s%s", 
 				        p->colour, 
 					p->cost, 
 					p->oid);
 		}
 	}
+	fflush(f);
 }
 
 /* parse PQL command from the web server */
@@ -94,17 +96,35 @@ parse_query(int sock, char *qry, struct pixel **board)
 	if (qp[0] == 'g') {
 		f = fdopen(sock, "r+");
 		cp = c = extract_pixels(qry);
-		while(*cp != -1) {
+		while (*cp != -1) {
 			bp = &board[*cp][*(cp+1)];
 			if (bp->colour[0] == '.')
 				fprintf(f, "%c", bp->colour[0]);
 			else
-				fprintf(f, "%s%s%s", bp->colour, bp->cost, bp->oid);
+				fprintf(f, "%s%s%s", bp->colour, 
+						     bp->cost,
+						     bp->oid);
 			cp += 2;
+		}
+
+		fflush(f);
+	} else if (qp[0] == 'w') {
+		cp = c = extract_pixels(qry);
+		while (*cp != -1) {
+			bp = malloc(sizeof(struct pixel));
+			sscanf(qp + 2, "%s %s %s", bp->colour, 
+			                           bp->cost, 
+						   bp->oid);
+			if (write_pixel(board, bp, *cp, *(cp+1)) == 1)
+				printf("write success\n");
+			else
+				printf("write fail\n");
+
+			cp += 2;
+			free(bp);
 		}
 	}
 
-	fflush(f);
 	free(s);
 	free(c);
 	return 1;

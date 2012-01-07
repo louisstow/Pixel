@@ -3,9 +3,9 @@
 #define OID_SIZE	4
 
 struct pixel {
-	char colour[COLOUR_SIZE];
-	char cost[COST_SIZE];
-	char oid[OID_SIZE];
+	char colour[COLOUR_SIZE + 1];
+	char cost[COST_SIZE + 1];
+	char oid[OID_SIZE + 1];
 };
 
 int *extract_pixels(char *qry);
