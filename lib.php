@@ -57,9 +57,11 @@ function ok() {
 * Send PQL to reth's shitty daemon
 */
 function queryDaemon($req) {
-	$errno;
-	$errstr;
-	$fp = fsockopen("192.168.1.8", 5607);
+	$fp = fsockopen("192.168.1.8", 5607, $errno, $errstr, 1);
+	if(!$fp) {
+		return FALSE;
+	}
+	
 	$len = fwrite($fp, $req);
 	
 	//shit wnet wrong

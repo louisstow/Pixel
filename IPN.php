@@ -102,7 +102,7 @@ else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 	User::updateCredit($_POST['payer_id'], $_POST['mc_gross'] * 100 - $cost);
 }
 
-queryDaemon("{$list} w AAAAAA 500 {$_POST['payer_id']}");
+queryDaemon("{$list} w AAAAAA 500 {$_POST['payer_id']} " . time());
 
 Stat::updateProfit($profit);
 
