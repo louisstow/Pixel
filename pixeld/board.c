@@ -75,7 +75,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 {
 	int i, *c, *cp;
 	FILE *f;
-	char *s = xmalloc(strlen(qry)); 
+	char *s;
 	char *qp;
 	struct pixel *bp;
 
@@ -87,7 +87,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		return 1;
 	}
 
-	strcpy(s, qry);
+	s = strdup(qry);
 	if (strtok(s, " ") == NULL)
 		return 0;
 
@@ -138,8 +138,8 @@ int
 	int i, j, n, *coods;
 
 	p = s = orig = xmalloc(strlen(qry) + 1);
-	strcpy(s, qry);
-
+	p = s = orig = strdup(qry);
+	
 	n = 1;
 	for (i = 0; s[i] != ' '; i++) {
 		if (s[i] == '|')
