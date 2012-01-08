@@ -18,12 +18,13 @@ if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
     error("Invalid pixels");
 }
 
-$password = encrypt($password);
-$player = I("User")->create(D, $password, $email, $url, $message, 0);
+//validate the selected pixels
+$list = implode($pixel, "|");
 
-if(!$player) {
-	//if username taken
-	error("Email taken. Please choose one registered with PayPal to recieve payments.");
+$q = queryDaemon("{$list} g");
+//should be 10 dots
+if(strlen($q) >= 10) {
+	error("Pixels taken");
 }
 
 //ensure color is valid
@@ -35,22 +36,17 @@ if($icolor < 0 || $color > 16777215) {
 $color = dechex($icolor);
 $color = str_repeat("0", 6 - strlen($color)) . $color;
 
-$_SESSION['id'] = $player->userID;
+$password = encrypt($password);
+$player = I("User")->create(D, $password, $email, $url, $message, 0);
 
-$isql = "INSERT INTO pixels VALUES ";
-$iprep = array();
-
-foreach($pixel as $pix) {
-	$isql .= "(?, ?, 5000, ?, 0),";
-	
-	$iprep[] = $pix;
-	$iprep[] = $player->userID;
-	$iprep[] = $color;
+if(!$player) {
+	//if username taken
+	error("Email taken. Please choose one registered with PayPal to recieve payments.");
 }
 
-$isql = substr($isql, 0, strlen($isql) - 1);
+$_SESSION['id'] = $player->userID;
 
-ORM::query($isql, $iprep);
+queryDaemon("{$list} w {$color} 500 " . $player->userID . " " . time());
 
 unset($player->userPass);
 unset($player->_updateFlag);

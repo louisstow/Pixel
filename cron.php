@@ -27,6 +27,7 @@ $esql = substr($esql, 0, strlen($esql) - 1);
 
 ORM::query($esql, $eprep);
 
+
 //when the cycle starts
 $time = time() + (3 * 60 * 60);
 I("Cycle")->create(D, date('Y-m-d H:i:s', $time));
