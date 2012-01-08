@@ -16,6 +16,19 @@
 
 #define BUF_SIZE 4096
 
+void 
+*xmalloc(size_t size)
+{
+	void *p;
+
+	if ((p = malloc(size)) == NULL) {
+		perror("malloc");
+		exit(-1);
+	}
+
+	return p; 
+}
+
 int 
 main(int argc, char *argv[])
 {
@@ -25,7 +38,7 @@ main(int argc, char *argv[])
 	struct pixel **board;
 	struct sockaddr_storage r_addr;
 
-	buf = malloc(BUF_SIZE);
+	buf = xmalloc(BUF_SIZE);
 	sock = create_listen("5607");
 	board = init_board(1000, 1200);
 
