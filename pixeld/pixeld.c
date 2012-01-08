@@ -78,13 +78,12 @@ void
 int 
 main(int argc, char *argv[])
 {
-	char *buf;
+	char buf[BUF_SIZE];
 	int fd, sock, r;
 	socklen_t sin_size;
 	struct pixel **board;
 	struct sockaddr_storage r_addr;
 
-	buf = xmalloc(BUF_SIZE);
 	sock = create_listen("5607");
 	board = init_board(1000, 1200);
 
@@ -98,7 +97,7 @@ main(int argc, char *argv[])
 		}
 		fprintf(stderr, "got connection from www\n");
 
-		if ((r = recv(fd, buf, 127, 0)) == -1) {
+		if ((r = recv(fd, buf, sizeof(buf), 0)) == -1) {
 			close(fd);
 			continue;
 		}

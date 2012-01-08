@@ -137,9 +137,8 @@ int
 	char *s, *p, *orig;
 	int i, j, n, *coods;
 
-	p = s = orig = xmalloc(strlen(qry) + 1);
 	p = s = orig = strdup(qry);
-	
+
 	n = 1;
 	for (i = 0; s[i] != ' '; i++) {
 		if (s[i] == '|')
