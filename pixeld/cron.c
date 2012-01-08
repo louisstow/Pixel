@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "board.h"
+
 #define RED		0
 #define GREEN	1
 #define BLUE	2
@@ -20,7 +25,7 @@
 							))))
 
 void 
-run_cycle(struct pixel **b) {
+run_cycle(struct pixel **board) {
 	struct pixel *p, *o;
 	unsigned int i, j, k, row, col;
 	
@@ -46,7 +51,7 @@ run_cycle(struct pixel **b) {
 
 	for (i = 0; i < ROWS; i++) {
 		for (j = 0; j < COLS; j++) {
-			p = &b[i][j];
+			p = &board[i][j];
 			
 			if (p->colour[0] == '.') {
 				continue;
@@ -69,10 +74,10 @@ run_cycle(struct pixel **b) {
 				if (row < 0 || col < 0 || row > ROWS || col > COLS)
 					continue;
 				
-				o = &b[row][col];
+				o = &board[row][col];
 				
 				//skip the pixel if not exists or the same owners
-				if (o->colour[0] == '.' || o->owner == p->owner)
+				if (o->colour[0] == '.' || o->oid == p->oid)
 					continue;
 				
 				//build the pixel location string
@@ -113,7 +118,7 @@ run_cycle(struct pixel **b) {
 				//are they lucky enough to win?
 				if ((rand() % 1000) < odds) {
 					//they win, change owner!
-					(b[row][col])->owner = p->owner;
+					(&board[row][col])->oid = p->oid;
 					
 					//TODO: for the user who lost, update their lose count
 					//TODO: for the user who won, update their win count

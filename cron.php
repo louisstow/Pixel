@@ -58,7 +58,7 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
 print_r($req);
 //send seperate payment requests
 foreach($req as $r) {
-	MassPay($r);
+	MassPay($nvp . $r);
 }
 
 //when the cycle starts
