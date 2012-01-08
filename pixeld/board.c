@@ -31,7 +31,7 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 	struct pixel *pp = &b[r][c];
 
 	if (p == NULL) {
-		p->colour[0] = '.';
+		pp->colour[0] = '.';
 		return 0;
 	}
 
