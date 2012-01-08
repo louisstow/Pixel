@@ -27,6 +27,10 @@ $esql = substr($esql, 0, strlen($esql) - 1);
 
 ORM::query($esql, $eprep);
 
+$q = ORM::query("SELECT userEmail, money FROM users WHERE money >= 20");
+
+$req = "";
+
 
 //when the cycle starts
 $time = time() + (3 * 60 * 60);

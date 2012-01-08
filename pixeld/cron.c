@@ -114,6 +114,9 @@ run_cycle(struct pixel **b) {
 				if ((rand() % 1000) < odds) {
 					//they win, change owner!
 					(b[row][col])->owner = p->owner;
+					
+					//TODO: for the user who lost, update their lose count
+					//TODO: for the user who won, update their win count
 				}
 			}
 		}
