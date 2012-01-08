@@ -58,6 +58,10 @@ function ok() {
 */
 function queryDaemon($req) {
 	$fp = fsockopen("192.168.1.8", 5607, $errno, $errstr, 1);
+	if(!$fp) {
+		return FALSE;
+	}
+	
 	$len = fwrite($fp, $req);
 	
 	//shit wnet wrong
