@@ -14,6 +14,11 @@ struct pixel {
 	char oid[OID_SIZE + 1];
 };
 
+struct metadata {
+	struct pixel *pixel;
+	char immunity;
+}
+
 struct journal {
 	char *timestamp;
 	char *query;
