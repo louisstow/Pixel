@@ -17,7 +17,7 @@ struct pixel {
 struct metadata {
 	struct pixel *pixel;
 	char immunity;
-}
+};
 
 struct journal {
 	char *timestamp;
