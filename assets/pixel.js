@@ -519,7 +519,7 @@ $(function() {
 					continue;
 				}
 			} else {
-				//add one dollar to the price
+				//add 10 cents to the price
 				cost = 0.1;
 			}
 			
@@ -529,8 +529,8 @@ $(function() {
 			if(pixels.length < 10000) html += "<li><b>" + pix + "</b><i>$" + cost.toFixed(2) + "</i><a class='remove'>remove</a></li>";
 		}
 		
-		if(total == 0) {
-			showError("Select some pixels to buy");
+		if(total < 2) {
+			showError("You must buy at least $2.00 worth of pixels.");
 			$(this).removeClass("active");
 			return;
 		}

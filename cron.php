@@ -10,18 +10,24 @@ $cycle = Cycle::getCurrent();
 
 //start the daemon cron job and get a summary
 $owners = queryDaemon("c");
+$summary = explode("|", $owners);
 /*
 1,0,2|5,1,3|
 */
 
 //generate event SQL
 $esql = "INSERT INTO events VALUES ";
-foreach($pixelcount as $owner => $pix) {
-	$text = "You won {$pix['win']} and lost {$pix['lose']}";
+$eprep = array();
+
+foreach($summary as $sum) {
+	$line = explode(",", $sum);
+	if(count($line) != 3) continue;
+	
+	$text = "You won {$line[1]} and lost {$line[2]}";
 	$esql .= "(?, ?, ?),";
 	
-	$eprep[] = $owner;
-	$eprep[] = NOW();
+	$eprep[] = $line[0];
+	$eprep[] = $cycle['cycleID'];
 	$eprep[] = $text;
 }
 
@@ -60,6 +66,8 @@ print_r($req);
 foreach($req as $r) {
 	MassPay($nvp . $r);
 }
+
+ORM::query("UPDATE users SET money = 0 WHERE money >= 2000");
 
 //when the cycle starts
 $time = time() + (3 * 60 * 60);
