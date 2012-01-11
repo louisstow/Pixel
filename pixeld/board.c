@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <sys/queue.h>
 
 #include "board.h"
@@ -48,7 +51,7 @@ add_journal(char *query, char *ts)
 int
 write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 {
-	int i, val;
+	int i, j, fd, val;
 	struct pixel *pp = &b[r][c];
 
 	if (p == NULL) {
@@ -63,6 +66,26 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 	if (p->oid != NULL)
 		sprintf(pp->oid, "%04d", atoi(p->oid));
 	
+	fd = open("journal.data", O_CREAT | O_RDWR);
+
+	if (fd == -1) {
+		perror("open");
+		exit(-1);
+	}
+
+	for (i = 0; i < ROWS; i++) {
+		for (j = 0; j < COLS; j++) {
+			val = write(fd, &b[r][c], sizeof(struct journal));
+
+			if (val < sizeof(struct journal)) {
+				perror("write");
+				exit(-1);
+			}
+		}
+	}
+
+	close(fd);
+
 	return 1;
 }
 
