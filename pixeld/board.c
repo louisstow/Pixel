@@ -102,8 +102,15 @@ parse_query(int sock, char *qry, struct pixel **board)
 
 	if (qry[0] == 'l') {
 		f = fdopen(sock, "r+");
-		for (jp = head.tqh_first; jp != NULL; jp = jp->entries.tqe_next)
-			fprintf(f, "%s: %s", jp->timestamp, jp->query);
+		for (jp = head.tqh_first; jp != NULL; jp = jp->entries.tqe_next) {
+			if (!strncmp(jp->timestamp, 
+				     qry + 2, 
+				     strlen(jp->timestamp)))
+				break;
+		}
+
+		for (; jp != NULL; jp = jp->entries.tqe_next)
+			fprintf(f, "%s", jp->query);
 
 		fflush(f);
 		return 1;
