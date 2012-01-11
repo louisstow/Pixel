@@ -82,10 +82,12 @@ main(int argc, char *argv[])
 	int fd, sock, r;
 	socklen_t sin_size;
 	struct pixel **board;
+	struct journal **j;
 	struct sockaddr_storage r_addr;
 
 	sock = create_listen("5607");
 	board = init_board(1000, 1200);
+	init_journal();
 
 	for(;;) {
 		sin_size = sizeof r_addr;

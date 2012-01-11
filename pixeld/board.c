@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/queue.h>
 
 #include "board.h"
 #include "pixeld.h"
 
 #define ROWS		1000
 #define COLS		1200
+
+TAILQ_HEAD(tailhead, journal) head;
 
 struct pixel 
 **init_board(unsigned int rows, unsigned int cols)
@@ -22,6 +25,24 @@ struct pixel
 	}
 
 	return board;
+}
+
+void 
+init_journal(void)
+{
+	TAILQ_INIT(&head);
+}
+
+void
+add_journal(char *query, char *ts)
+{
+	struct journal *jp;
+
+	jp = xmalloc(sizeof(struct journal));
+	jp->query = strdup(query);
+	jp->timestamp = strdup(ts);
+
+	TAILQ_INSERT_TAIL(&head, jp, entries);
 }
 
 int
@@ -75,12 +96,18 @@ parse_query(int sock, char *qry, struct pixel **board)
 {
 	int i, *c, *cp;
 	FILE *f;
-	char *s;
-	char *qp;
+	char *s,  *qp, timestamp[32];
 	struct pixel *bp;
+	struct journal *jp;
 
-	if (qry[0] == 'l')
+	if (qry[0] == 'l') {
+		f = fdopen(sock, "r+");
+		for (jp = head.tqh_first; jp != NULL; jp = jp->entries.tqe_next)
+			fprintf(f, "%s: %s", jp->timestamp, jp->query);
+
+		fflush(f);
 		return 1;
+	}
 
 	if (qry[0] == 'g') {
 		print_board(sock, board);
@@ -111,23 +138,27 @@ parse_query(int sock, char *qry, struct pixel **board)
 		fflush(f);
 	} else if (qp[0] == 'w') {
 		cp = c = extract_pixels(qry);
+
 		while (*cp != -1) {
 			bp = xmalloc(sizeof(struct pixel));
-			sscanf(qp + 2, "%s %s %s", bp->colour, 
-			                           bp->cost, 
-						   bp->oid);
-			if (write_pixel(board, bp, *cp, *(cp+1)) == 1)
+			sscanf(qp + 2, "%s %s %s %s", bp->colour, 
+			                              bp->cost, 
+						      bp->oid,
+						      timestamp);
+			if (write_pixel(board, bp, *cp, *(cp+1)) == 1) {
+				add_journal(qry, timestamp);
 				printf("write success\n");
-			else
+			} else
 				printf("write fail\n");
 
 			cp += 2;
 			free(bp);
 		}
+		
+		free(c);
 	}
 
 	free(s);
-	free(c);
 	return 1;
 }
 
