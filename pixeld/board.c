@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "board.h"
+#include "pixeld.h"
 
 #define ROWS		1000
 #define COLS		1200
@@ -12,10 +13,10 @@ struct pixel
 {
 	unsigned int i, j;
 	struct pixel **board;
-	board = malloc(rows * sizeof(struct pixel *));
+	board = xmalloc(rows * sizeof(struct pixel *));
 	
 	for (i = 0; i < rows; i++) {
-		board[i] = malloc(sizeof(struct pixel) * cols);
+		board[i] = xmalloc(sizeof(struct pixel) * cols);
 		for (j = 0; j < cols; j++)
 			board[i][j].colour[0] = '.';
 	}
@@ -30,7 +31,7 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 	struct pixel *pp = &b[r][c];
 
 	if (p == NULL) {
-		p->colour[0] = '.';
+		pp->colour[0] = '.';
 		return 0;
 	}
 
@@ -74,7 +75,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 {
 	int i, *c, *cp;
 	FILE *f;
-	char *s = malloc(strlen(qry)); 
+	char *s;
 	char *qp;
 	struct pixel *bp;
 
@@ -86,11 +87,11 @@ parse_query(int sock, char *qry, struct pixel **board)
 		return 1;
 	}
 
-	strcpy(s, qry);
+	s = strdup(qry);
 	if (strtok(s, " ") == NULL)
 		return 0;
 
-	qp = malloc(strlen(qry));
+	qp = xmalloc(strlen(qry));
 	memcpy(qp, qry + strlen(s) + 1, strlen(qry) - strlen(s));
 
 	if (qp[0] == 'g') {
@@ -111,7 +112,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 	} else if (qp[0] == 'w') {
 		cp = c = extract_pixels(qry);
 		while (*cp != -1) {
-			bp = malloc(sizeof(struct pixel));
+			bp = xmalloc(sizeof(struct pixel));
 			sscanf(qp + 2, "%s %s %s", bp->colour, 
 			                           bp->cost, 
 						   bp->oid);
@@ -136,8 +137,7 @@ int
 	char *s, *p, *orig;
 	int i, j, n, *coods;
 
-	p = s = orig = malloc(strlen(qry) + 1);
-	strcpy(s, qry);
+	p = s = orig = strdup(qry);
 
 	n = 1;
 	for (i = 0; s[i] != ' '; i++) {
@@ -145,7 +145,7 @@ int
 			n++;
 	}
 
-	coods = malloc(sizeof(int) * n * 2 + 1);
+	coods = xmalloc(sizeof(int) * n * 2 + 1);
 
 	for (i = 0; *s != ' '; s++) {
 		if (*s == '|') {
