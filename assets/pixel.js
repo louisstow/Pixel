@@ -249,7 +249,7 @@ $(function() {
 				return;
 			}
 			
-			var info = owners[pixel.owner];
+			var info = owners[+pixel.owner];
 			var globalPos = translateGlobal(e.clientX, e.clientY);
 			$("#tooltip").text(info.message).show().css({
 				left: globalPos.left + 15,
@@ -263,7 +263,7 @@ $(function() {
 			if(!pixel) {
 				showError("This pixel is available");
 			} else {
-				var info = owners[pixel.owner];
+				var info = owners[+pixel.owner];
 				var url = info.url;
 				
 				if(url.substr(0, 7) !== "http://" && url.substr(0, 8) !== "https://") {
@@ -650,7 +650,7 @@ $(function() {
 
 //should grab logs
 function status() {
-	api("Status", function(resp) {
+	api("Status", {time: currentTimestamp}, function(resp) {
 		nextCycle = ~~(Date.parse(resp.cycle.cycleTime) / 1000);
 		currentTimestamp = resp.time;
 		
@@ -658,18 +658,18 @@ function status() {
 			updateEvents(data.events);
 		}
 		
-		applyLogs(resp.logs);
+		applyLogs(resp.log);
 	});
 }
 
 function updateBoard(data) {
-	currentTimestamp = data.substr(0, 13);
-	parse = data.substr(13);
+	currentTimestamp = data.substr(0, 10);
+	parse = data.substr(10);
 	console.log(parse.length);
 	var len = parse.length;
 	var x = 0, y = 0;
 	var params = {};
-	var owners = {};
+	var ownr = {};
 	
 	for(var i = 0; i < len; i++) {
 		if(parse.charAt(i) === '.') {
@@ -689,23 +689,30 @@ function updateBoard(data) {
 		}
 		
 		board[key].color = parse.substr(i, 6);
-		board[key].cost = parse.substr(i + 6, 3);
-		board[key].owner = parse.substr(i + 9, 4);
-		owners[board[key].owner] = true;
+		board[key].cost = parseInt(parse.substr(i + 6, 3), 16);
+		board[key].owner = parseInt(parse.substr(i + 9, 4), 16);
+		ownr[board[key].owner] = true;
 		
 		x++;
 		i += 13;
 	}
 	
+	console.log("OWNERS", owners);
+	
 	//convert owners object to param array
 	params.owners = [];
-	for(var id in owners) {
-		params.owners.push(id);
+	for(var id in ownr) {
+		params.owners.push(+id);
 	}
 	
 	//grab the information about owners
-	api("GetOwners", params, function(resp) {
-	
+	api("GetUsers", params, function(resp) {
+		console.log(resp);
+		var i = 0, l = resp.length, user;
+		for(;i < l; ++i) {
+			user = resp[i];
+			owners[+user.userID] = {message: user.message, url: user.url};
+		}
 	});
 	
 	redraw();
@@ -719,6 +726,8 @@ function applyLogs(logs) {
 	//split the logs on newline
 	for(;i < len; ++i) {
 		log = logs[i];
+		if(!log) continue;
+		
 		var opts = log.split(' ');
 		var pixels = opts[0].split('|');
 		
@@ -1036,8 +1045,8 @@ function api(action, data, callback, showErrorFlag) {
 			
 			if(callback) callback(data);
 		},
-		error: function(a,e) {
-			console.log(a,e);
+		error: function(a,e,c) {
+			console.log(a,e,c);
 		}
 	});
 };

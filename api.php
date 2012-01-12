@@ -5,11 +5,11 @@ include 'ORM.php';
 $a = trim($_GET['action']);
 //if the action contains non-alpha hacking attempt
 if($a === "" && preg_match("/[^a-zA-Z\-]/", $a)) {
-	hacking();
+	error("Action not available: " . $a);
 }
 //if the action does not exist, label as hacking attempt
 if(!file_exists("actions/" . $a . ".php")) {
-	hacking();
+	error("Action not available: " . $a);
 }
 
 if(!isset($_SESSION['id'])) {

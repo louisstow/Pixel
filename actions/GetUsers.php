@@ -1,10 +1,15 @@
 <?php
-data("users");
+data("owners");
+
+if(!isset($owners)) {
+	echo "[]";
+	exit;
+}
 
 $sql = "SELECT userID, url, message FROM users WHERE userID IN(";
-$sql .= str_repeat("?,", count($users)) . "0)";
+$sql .= str_repeat("?,", count($owners)) . "0)";
 
-$q = ORM::query($sql, $users);
+$q = ORM::query($sql, $owners);
 
 $result = array();
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {

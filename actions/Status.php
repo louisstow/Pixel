@@ -1,6 +1,6 @@
 <?php
 data("time");
-$logs = queryDaemon("l {$data}");
+$logs = queryDaemon("l {$time}");
 
 //grab the latest cycle
 $q = ORM::query("SELECT * FROM cycles WHERE cycleID = (SELECT MAX(cycleID) FROM cycles)");
