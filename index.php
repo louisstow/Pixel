@@ -4,6 +4,7 @@
 <link rel="stylesheet" media="screen" type="text/css" href="assets/colorpicker/css/colorpicker.css" />
 <link href='http://fonts.googleapis.com/css?family=Geo' rel='stylesheet' type='text/css'>
 
+<script src="api.php?action=GetBoard" type="text/javascript"></script>
 <script src="assets/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="assets/colorpicker/js/colorpicker.js"></script>
 <script src="assets/pixel.js" type="text/javascript"></script>
@@ -16,6 +17,7 @@
 
 <div id="top">
 <h1>Pixenomics</h1>
+
 <div id="details" class="right">
 	<a id="login">Login</a>
 	<a id="register">Register</a>
@@ -133,7 +135,7 @@ echo recaptcha_get_html($publickey);
 <h2>Instructions</h2>
 
 <p>Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with 10 free pixels and take over neighbouring pixels by strategically choosing a
-color.</p>
+color. You can then sell your pixels for real money or use them as advertising space.</p>
 
 <p>The countdown displays the time until the next cycle where your pixels fight it out against others. After a cycle you will recieve a summary of how many pixels you
 won or lost under 'Events'.</p>

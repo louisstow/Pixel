@@ -57,7 +57,11 @@ function ok() {
 * Send PQL to reth's shitty daemon
 */
 function queryDaemon($req) {
-	$fp = fsockopen("localhost", 5607);
+	$fp = fsockopen("192.168.1.8", 5607, $errno, $errstr, 1);
+	if(!$fp) {
+		return FALSE;
+	}
+	
 	$len = fwrite($fp, $req);
 	
 	//shit wnet wrong
@@ -65,9 +69,16 @@ function queryDaemon($req) {
 		echo $len . " (" . $req . ")";
 	}
 	
+	$r = "";
+	$str = "";
 	while(!feof($fp)) {
-		$str .= fread($fp, 1024);
+		$r = fgets($fp, 1050);
+		$str .= $r;
 	}
+	
+	fclose($fp);
+	
+	return $str;
 }
 
 /**

@@ -1,4 +1,4 @@
 <?php
 //grab the board
-echo queryDaemon("g");
+echo "var DATA = '" . time() . queryDaemon("g") . "';";
 ?>

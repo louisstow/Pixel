@@ -8,21 +8,24 @@ if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
 }
 
 //ensure cost is a number between 1,00 and 100,00
-$cost = floor(((float) $cost) * 100);
-if($cost < 10 || $cost > 5000) {
+$cost = floor(((float) $cost) * 10);
+if($cost < 1 || $cost > 500) {
     error("Price must be less between $0.00 and $50");
 }
 
-$list = implode($pixels, "','");
+$list = implode($pixels, "|");
 
-$sql = "UPDATE pixels SET cost = ? WHERE ownerID = ? AND pixelLocation IN(";
-$sql .= str_repeat("?,", count($pixels));
-$sql = substr($sql, 0, strlen($sql) - 1) . ")";
+//grab the pixels
+$get = queryDaemon("{$list} g");
+$data = toArray($get);
 
-$prep = array($cost, USER);
-$prep = array_merge($prep, $pixels);
+foreach($data as $pixel) {
+	if($pixel['owner'] != USER) {
+		error("Not your pixels");
+	}
+}
 
-ORM::query($sql, $prep);
+queryDaemon("{$list} w -1 {$cost} -1 " . time());
 
 ok();
 ?>

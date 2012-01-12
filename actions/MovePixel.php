@@ -9,8 +9,8 @@ $cents = substr($f, 6, 3);
 $owner = substr($f, 9, 4);
 
 //write to daemon
-queryDaemon("{$to} w {$color} {$cost} {$owner}");
-queryDaemon("{$from} d");
+queryDaemon("{$to} w {$color} {$cost} {$owner} " . time());
+queryDaemon("{$from} d " . time());
 
 ok();
 ?>

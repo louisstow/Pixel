@@ -24,7 +24,8 @@ var canvas,
 	sellList,
 	buyList,
 	total,
-	nextCycle = unixtime(new Date());
+	nextCycle = unixtime(new Date()),
+	currentTimestamp;
 
 var $hours,
 	$minutes,
@@ -118,6 +119,8 @@ $(function() {
 	$minutes = $("span.minutes");
 	$seconds = $("span.seconds");
 	
+	updateBoard(DATA);
+	
 	$(".color").each(function() {
 		var self = $(this);
 		
@@ -138,9 +141,6 @@ $(function() {
 			updateUser(resp);
 		}
 	}, false);
-	
-	//retrieve the current board
-	api("GetBoard", updateBoard);
 	
 	$("#login").click(function() {
 		$("div.login").show();
@@ -519,7 +519,7 @@ $(function() {
 					continue;
 				}
 			} else {
-				//add one dollar to the price
+				//add 10 cents to the price
 				cost = 0.1;
 			}
 			
@@ -529,8 +529,8 @@ $(function() {
 			if(pixels.length < 10000) html += "<li><b>" + pix + "</b><i>$" + cost.toFixed(2) + "</i><a class='remove'>remove</a></li>";
 		}
 		
-		if(total == 0) {
-			showError("Select some pixels to buy");
+		if(total < 2) {
+			showError("You must buy at least $2.00 worth of pixels.");
 			$(this).removeClass("active");
 			return;
 		}
@@ -648,20 +648,101 @@ $(function() {
 	setInterval(status, 1000 * 60);
 });
 
+//should grab logs
 function status() {
-	api("GetBoard", updateBoard);
+	api("Status", function(resp) {
+		nextCycle = ~~(Date.parse(resp.cycle.cycleTime) / 1000);
+		currentTimestamp = resp.time;
+		
+		if(resp.events) {
+			updateEvents(data.events);
+		}
+		
+		applyLogs(resp.logs);
+	});
 }
 
 function updateBoard(data) {
-	board = data.pixels;
-	owners = data.owners;
-	nextCycle = ~~(Date.parse(data.cycle.cycleTime) / 1000);
+	currentTimestamp = data.substr(0, 13);
+	parse = data.substr(13);
+	console.log(parse.length);
+	var len = parse.length;
+	var x = 0, y = 0;
+	var params = {};
+	var owners = {};
+	
+	for(var i = 0; i < len; i++) {
+		if(parse.charAt(i) === '.') {
+			x++;
+			continue;
+		}
 		
-	if(data.events) {
-		updateEvents(data.events);
+		if(x == 1200) {
+			x = 0;
+			y++;
+		}
+		
+		var key = x + "," + y;
+		
+		if(!board[key]) {
+			board[key] = {};
+		}
+		
+		board[key].color = parse.substr(i, 6);
+		board[key].cost = parse.substr(i + 6, 3);
+		board[key].owner = parse.substr(i + 9, 4);
+		owners[board[key].owner] = true;
+		
+		x++;
+		i += 13;
 	}
 	
+	//convert owners object to param array
+	params.owners = [];
+	for(var id in owners) {
+		params.owners.push(id);
+	}
+	
+	//grab the information about owners
+	api("GetOwners", params, function(resp) {
+	
+	});
+	
 	redraw();
+}
+
+function applyLogs(logs) {
+	var logs = logs.split('\n'),
+		i = 0, len = logs.length,
+		log;
+	
+	//split the logs on newline
+	for(;i < len; ++i) {
+		log = logs[i];
+		var opts = log.split(' ');
+		var pixels = opts[0].split('|');
+		
+		//loop over pixels
+		for(var p = 0; p < pixels.length; ++p) {
+			var pixel = pixels[p];
+			
+			//delete pixel
+			if(opts[1] == 'd') {
+				delete board[pixel];
+				continue;
+			}
+			
+			//init if not exists
+			if(!board[pixel]) {
+				board[pixel] = {};
+			}
+			
+			//update the board
+			if(opts[2] != '-1') board[pixel].color = opts[2];
+			if(opts[3] != '-1') board[pixel].cost = opts[3];
+			if(opts[4] != '-1') board[pixel].owner = opts[4];
+		}
+	}
 }
 
 function tick() {
@@ -954,6 +1035,9 @@ function api(action, data, callback, showErrorFlag) {
 			}
 			
 			if(callback) callback(data);
+		},
+		error: function(a,e) {
+			console.log(a,e);
 		}
 	});
 };
