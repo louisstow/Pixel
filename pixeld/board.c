@@ -38,6 +38,15 @@ init_journal(void)
 	TAILQ_INIT(&head);
 }
 
+void strip_nl(char *s) {
+	int i;
+
+	for (i = 0; i < strlen(s); i++) { 
+		if (s[i] == '\n')
+			s[i] = '\0';
+	}
+}
+
 void
 add_journal(char *query, char *ts)
 {
@@ -133,8 +142,10 @@ parse_query(int sock, char *qry, struct pixel **board)
 				break;
 		}
 
-		for (; jp != NULL; jp = jp->entries.tqe_next)
-			fprintf(f, "%s", jp->query);
+		for (; jp != NULL; jp = jp->entries.tqe_next) {
+			strip_nl(jp->query);
+			fprintf(f, "%s\n", jp->query);
+		}
 
 		fflush(f);
 		return 1;
@@ -192,6 +203,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		while(*cp != -1) {
 			bp = &board[*cp][*(cp+1)];
 			bp->colour[0] = '.';
+			add_journal(qry, qp + 2);
 			cp += 2;
 		}
 		fprintf(stderr, "delete success\n");
