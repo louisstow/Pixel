@@ -128,9 +128,8 @@ parse_query(int sock, char *qry, struct pixel **board)
 	if (qry[0] == 'l') {
 		f = fdopen(sock, "r+");
 		for (jp = head.tqh_first; jp != NULL; jp = jp->entries.tqe_next) {
-			if (!strncmp(jp->timestamp, 
-				     qry + 2, 
-				     strlen(jp->timestamp)))
+			fprintf(stderr, "journal: %u %u\n", atol(qry + 2), atol(jp->timestamp));
+			if (atol(qry + 2) < atol(jp->timestamp))
 				break;
 		}
 
