@@ -645,7 +645,7 @@ $(function() {
 	
 	tick();
 	setInterval(tick, 1000);
-	setInterval(status, 1000 * 60);
+	setInterval(status, 1000 * 10);
 });
 
 //should grab logs
@@ -672,6 +672,8 @@ function updateBoard(data) {
 	var ownr = {};
 	
 	for(var i = 0; i < len; i++) {
+		if(parse.charAt(i) === '') break;
+		
 		if(parse.charAt(i) === '.') {
 			x++;
 			
@@ -687,6 +689,9 @@ function updateBoard(data) {
 			y++;
 		}
 		
+		if(x === 1000) {
+			console.log("WTF", i, x, y, parse.substr(i, 13));
+		}
 		var key = x + "," + y;
 		
 		if(!board[key]) {
@@ -781,6 +786,7 @@ function applyLogs(logs) {
 		param.owners.push(ow);
 	}
 	
+	redraw();
 	api("GetUsers", param, getUsers);
 }
 
