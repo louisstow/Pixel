@@ -381,7 +381,8 @@ $(function() {
 					
 					//loop over the y difference
 					while(y !== pos2.y + diffy) {
-						if(!pixels[x + "," + y]) {
+					
+						if(!pixels[x + "," + y] && x >= 0 && y >= 0) {
 							pixels[x + "," + y] = true;
 							pixels.length++;
 						}
@@ -771,7 +772,7 @@ function applyLogs(logs) {
 			
 			//update the board
 			if(opts[2] != '.') board[pixel].color = opts[2];
-			if(opts[3] != '.') board[pixel].cost = parseInt(opts[3], 16);
+			if(opts[3] != '.') board[pixel].cost = parseInt(opts[3], 16) * 10;
 			if(opts[4] != '.') board[pixel].owner = o = parseInt(opts[4], 16);
 			
 			//if we dont know about this owner, get it
