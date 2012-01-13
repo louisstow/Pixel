@@ -100,9 +100,9 @@ print_board(int s, struct pixel **b) {
 	if ((f = fdopen(s, "w+")) == NULL)
 		return;
 
-	for (i = 0; i < COLS; i++) {
-		for (j = 0; j < ROWS; j++) {
-			 p = &b[j][i];
+	for (i = 0; i < 1000; i++) {
+		for (j = 0; j < 1200; j++) {
+			p = &b[i][j];
 			if (p->colour[0] == '.') {
 				fprintf(f, ".");
 			} else
@@ -156,7 +156,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		f = fdopen(sock, "r+");
 		cp = c = extract_pixels(qry);
 		while (*cp != -1) {
-			bp = &board[*(cp+1)][*cp+1];
+			bp = &board[*cp][*(cp+1)];
 			if (bp->colour[0] == '.')
 				fprintf(f, "%c", bp->colour[0]);
 			else
@@ -176,7 +176,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 			                              bp->cost, 
 						      bp->oid,
 						      timestamp);
-			if (write_pixel(board, bp, *(cp+1), *cp) == 1) {
+			if (write_pixel(board, bp, *cp, *(cp+1)) == 1) {
 				add_journal(qry, timestamp);
 				printf("write success\n");
 			} else
@@ -190,7 +190,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		cp = c = extract_pixels(qry);
 
 		while(*cp != -1) {
-			bp = &board[*cp+1][*cp];
+			bp = &board[*cp][*(cp+1)];
 			bp->colour[0] = '.';
 			cp += 2;
 		}
@@ -199,7 +199,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		cp = c = extract_pixels(qry);
 
 		while(*cp != -1) {
-			bp = &board[*cp+1][*cp];	
+			bp = &board[*cp][*(cp+1)];	
 			key = xmalloc(strlen(qry));
 			value = xmalloc(strlen(qry));
 
