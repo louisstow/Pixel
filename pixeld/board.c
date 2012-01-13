@@ -23,8 +23,10 @@ struct pixel
 	
 	for (i = 0; i < rows; i++) {
 		board[i] = xmalloc(sizeof(struct pixel) * cols);
-		for (j = 0; j < cols; j++)
+		for (j = 0; j < cols; j++) {
 			board[i][j].colour[0] = '.';
+			board[i][j].mdata = xmalloc(sizeof(struct metadata));
+		}
 	}
 
 	return board;
@@ -59,11 +61,11 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 		return 0;
 	}
 
-	if (p->colour != NULL)
+	if (p->colour[0] != '.')
 		strcpy(pp->colour, p->colour);
-	if (p->cost != NULL)
+	if (p->cost[0] != '.')
 		sprintf(pp->cost, "%03d", atoi(p->cost));
-	if (p->oid != NULL)
+	if (p->oid[0] != '.')
 		sprintf(pp->oid, "%04d", atoi(p->oid));
 	
 	fd = open("journal.data", O_CREAT | O_RDWR);
@@ -98,9 +100,9 @@ print_board(int s, struct pixel **b) {
 	if ((f = fdopen(s, "w+")) == NULL)
 		return;
 
-	for (i = 0; i < ROWS; i++) {
-		for (j = 0; j < COLS; j++) {
-			 p = &b[i][j];
+	for (i = 0; i < COLS; i++) {
+		for (j = 0; j < ROWS; j++) {
+			 p = &b[j][i];
 			if (p->colour[0] == '.') {
 				fprintf(f, ".");
 			} else
@@ -119,7 +121,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 {
 	int i, *c, *cp;
 	FILE *f;
-	char *s,  *qp, timestamp[32];
+	char *s,  *qp, timestamp[32], *key, *value;
 	struct pixel *bp;
 	struct journal *jp;
 
@@ -155,7 +157,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		f = fdopen(sock, "r+");
 		cp = c = extract_pixels(qry);
 		while (*cp != -1) {
-			bp = &board[*cp][*(cp+1)];
+			bp = &board[*(cp+1)][*cp+1];
 			if (bp->colour[0] == '.')
 				fprintf(f, "%c", bp->colour[0]);
 			else
@@ -175,7 +177,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 			                              bp->cost, 
 						      bp->oid,
 						      timestamp);
-			if (write_pixel(board, bp, *cp, *(cp+1)) == 1) {
+			if (write_pixel(board, bp, *(cp+1), *cp) == 1) {
 				add_journal(qry, timestamp);
 				printf("write success\n");
 			} else
@@ -185,9 +187,36 @@ parse_query(int sock, char *qry, struct pixel **board)
 			free(bp);
 		}
 		
-		free(c);
+	} else if (qp[0] == 'd') {
+		cp = c = extract_pixels(qry);
+
+		while(*cp != -1) {
+			bp = &board[*cp+1][*cp];
+			bp->colour[0] = '.';
+			cp += 2;
+		}
+		fprintf(stderr, "delete success\n");
+	} else if (qp[0] == 'm') {
+		cp = c = extract_pixels(qry);
+
+		while(*cp != -1) {
+			bp = &board[*cp+1][*cp];	
+			key = xmalloc(strlen(qry));
+			value = xmalloc(strlen(qry));
+
+			sscanf(qp + 2, "%s %s", key, value);
+
+			if (!strcmp("immunity", key))
+				bp->mdata->immunity = value[0];
+
+			c += 2;
+		}
+		
+		free(key);
+		free(value);
 	}
 
+	free(c);
 	free(s);
 	return 1;
 }
@@ -216,7 +245,7 @@ int
 			p = s+1;
 		}
 	}
-	*s = '\0';
+	s = '\0';
 	sscanf(p, "%d,%d", &coods[i++], &coods[i++]);
 
 finish:
