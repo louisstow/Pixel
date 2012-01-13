@@ -101,7 +101,7 @@ function toArray($resp) {
 			"owner" => substr($resp, $i + 9, 4)
 		);
 		
-		$i += 13;
+		$i += 12;
 	}
 	
 	return $result;

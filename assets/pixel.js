@@ -655,7 +655,7 @@ function status() {
 		currentTimestamp = resp.time;
 		
 		if(resp.events) {
-			updateEvents(data.events);
+			updateEvents(resp.events);
 		}
 		
 		applyLogs(resp.log);
@@ -674,6 +674,11 @@ function updateBoard(data) {
 	for(var i = 0; i < len; i++) {
 		if(parse.charAt(i) === '.') {
 			x++;
+			
+			if(x == 1200) {
+				x = 0;
+				y++;
+			}
 			continue;
 		}
 		
@@ -691,10 +696,13 @@ function updateBoard(data) {
 		board[key].color = parse.substr(i, 6);
 		board[key].cost = parseInt(parse.substr(i + 6, 3), 16);
 		board[key].owner = parseInt(parse.substr(i + 9, 4), 16);
+		if(isNaN(board[key].owner)) {
+			console.log(parse.substr(i, 13));
+		}
 		ownr[board[key].owner] = true;
 		
 		x++;
-		i += 13;
+		i += 12;
 	}
 	
 	console.log("OWNERS", owners);
@@ -706,22 +714,32 @@ function updateBoard(data) {
 	}
 	
 	//grab the information about owners
-	api("GetUsers", params, function(resp) {
-		console.log(resp);
-		var i = 0, l = resp.length, user;
-		for(;i < l; ++i) {
-			user = resp[i];
-			owners[+user.userID] = {message: user.message, url: user.url};
-		}
-	});
+	api("GetUsers", params, getUsers);
 	
 	redraw();
 }
 
+function getUsers(resp) {
+	console.log(resp);
+	var i = 0, l = resp.length, user;
+	for(;i < l; ++i) {
+		user = resp[i];
+		owners[+user.userID] = {message: user.message, url: user.url};
+	}
+}
+
 function applyLogs(logs) {
+	//log too big, refresh page
+	if(log == ".") {
+		window.location.reload();
+		return;
+	}
+	
 	var logs = logs.split('\n'),
 		i = 0, len = logs.length,
-		log;
+		log, o,
+		ownr = {},
+		param = {};
 	
 	//split the logs on newline
 	for(;i < len; ++i) {
@@ -747,11 +765,23 @@ function applyLogs(logs) {
 			}
 			
 			//update the board
-			if(opts[2] != '-1') board[pixel].color = opts[2];
-			if(opts[3] != '-1') board[pixel].cost = opts[3];
-			if(opts[4] != '-1') board[pixel].owner = opts[4];
+			if(opts[2] != '.') board[pixel].color = opts[2];
+			if(opts[3] != '.') board[pixel].cost = parseInt(opts[3], 16);
+			if(opts[4] != '.') board[pixel].owner = o = parseInt(opts[4], 16);
+			
+			//if we dont know about this owner, get it
+			if(!owners[o] && !ownr[o]) {
+				ownr[o] = true;
+			}
 		}
 	}
+	
+	param.owners = [];
+	for(var ow in ownr) {
+		param.owners.push(ow);
+	}
+	
+	api("GetUsers", param, getUsers);
 }
 
 function tick() {

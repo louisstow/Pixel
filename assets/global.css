@@ -4,11 +4,11 @@ label { display: block }
 input { outline: none }
 
 #canvas { margin: auto }
-#stage { width: 1202px; height: 1002px; margin: auto; overflow: hidden; position: relative; background: #fff; border: 1px solid #999; box-shadow: 0 0 5px #aaa }
+#stage { width: 1200px; height: 1000px; margin: auto; overflow: hidden; position: relative; background: #fff; border: 1px solid #999; box-shadow: 0 0 5px #aaa }
 
 .box { position: absolute; border-color: #999; border-style: solid; background: #fff; padding: 10px 15px; margin-top: 9px; }
-.login, .register, .events, .change { right: -1px; width: 320px; border-width: 0 0 1px 1px; display: none; box-shadow: -1px 1px 2px #ddd }
-.buy, .sell, .instr { left: -1px; width: 300px; display: none; border-width: 0 1px 1px 0; box-shadow: 1px 1px 2px #ddd }
+.login, .register, .events, .change { right: 0; width: 320px; border-width: 0 0 1px 1px; display: none; box-shadow: -1px 1px 2px #ddd }
+.buy, .sell, .instr { left: 0; width: 300px; display: none; border-width: 0 1px 1px 0; box-shadow: 1px 1px 2px #ddd }
 
 #details { position: absolute; right: 0; top: 10px }
 #details a, #details span { display: none; margin:0 5px }

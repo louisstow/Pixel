@@ -13,6 +13,7 @@ if($cost < 1 || $cost > 500) {
     error("Price must be less between $0.00 and $50");
 }
 
+$cost = dechex($cost);
 $list = implode($pixels, "|");
 
 //grab the pixels
@@ -21,11 +22,11 @@ $data = toArray($get);
 
 foreach($data as $pixel) {
 	if($pixel['owner'] != USER) {
-		error("Not your pixels");
+		error("Not your pixels (" . $pixel['owner'] . ") vs (" . USER . ")");
 	}
 }
 
-queryDaemon("{$list} w -1 {$cost} -1 " . time());
+queryDaemon("{$list} w . {$cost} . " . time());
 
 ok();
 ?>
