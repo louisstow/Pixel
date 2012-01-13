@@ -242,7 +242,7 @@ $(function() {
 		
 		$("#stage").mousemove(function(e) {
 			var pos = translate(e.clientX, e.clientY);
-			var pixel = board[~~pos.x + ',' + ~~pos.y];
+			var pixel = board[Math.floor(pos.x) + ',' + Math.floor(pos.y)];
 			
 			if(!pixel) {
 				$("#tooltip").hide().text("");
