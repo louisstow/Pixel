@@ -116,7 +116,7 @@ else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 queryDaemon("{$list} w AAAAAA 500 {$_POST['payer_id']} " . time());
 
 //give the pixels immunity
-queryDaemon("{$list} m immunity 1");
+queryDaemon("{$list} s immunity 1");
 
 Stat::updateProfit($profit);
 

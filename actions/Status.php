@@ -1,4 +1,5 @@
 <?php
+load("Event");
 data("time");
 $logs = queryDaemon("l {$time}");
 
