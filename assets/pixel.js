@@ -821,6 +821,7 @@ function updateUser(user) {
 	$("#welcome").text(user.userEmail).show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
 	$("#events,#logout,#change").show();
+	$("div.instr").hide();
 	status();
 }
 
