@@ -194,8 +194,6 @@ run_cron(int s, struct pixel **board) {
     unsigned int ocolor, or, og, ob, odominant; //opponent colors
     unsigned int odds = 0;
 
-    char key[10];
-
     srand(time(NULL));
 
     for (i = 0; i < ROWS; i++) {
@@ -207,7 +205,7 @@ run_cron(int s, struct pixel **board) {
             }
 
             //extract colour channels
-            color = atoi(p->colour);
+            color = strtoul(p->colour, NULL, 16);
             r = (color & 0xFF0000) >> 16;
             g = (color & 0x00FF00) >> 8;
             b = (color & 0x0000FF);
@@ -218,6 +216,7 @@ run_cron(int s, struct pixel **board) {
                 //apply the direction
                 row = i + circle[k][0];
                 col = j + circle[k][1];
+                odds = 0;
 
                 //if the pixel is out of bounds
                 if (row < 0 || col < 0 || row > ROWS || col > COLS)
@@ -229,26 +228,25 @@ run_cron(int s, struct pixel **board) {
                 if (o->colour[0] == '.' || strcmp(o->oid, p->oid) == 0)
                     continue;
 
-                //build the pixel location string
-                memset(key, '\0', 10);
-                sprintf(key, "%d,%d", col, row);
 
                 //if the pixel has immunity skip them and take away immunity
-                //if(get_meta(key, "immunity") == 1) {
-                //    set_meta(key, "immunity", 0);
-                //    continue;
-                //}
+                if (get_meta(row, col, "immunity", board) == 1) {
+                    set_meta(row, col, "immunity", "0", board);
+                    continue;
+                }
 
                 //extract opponent colors
-                ocolor = atoi(p->colour);
+                ocolor = strtoul(o->colour, NULL, 16);
                 or = (ocolor & 0xFF0000) >> 16;
                 og = (ocolor & 0x00FF00) >> 8;
                 ob = (ocolor & 0x0000FF);
 
                 odominant = get_dominant(or, og, ob);
 
+                fprintf(stderr, "Opponent %d %d (%d) R[%d] G[%d] B[%d]\n", col, row, odominant, or, og, ob);
+                
                 //if the players dominant color beats the opponent
-                if(dominant == RED && odominant == GREEN ||
+                if (dominant == RED && odominant == GREEN ||
                    dominant == GREEN && odominant == BLUE ||
                    dominant == BLUE && odominant == RED) {
 
@@ -264,7 +262,9 @@ run_cron(int s, struct pixel **board) {
                 } else if (dominant == BLUE) {
                     odds += ((b - r) + (b - g)) / 4;
                 }
-                fprintf(stderr, "Odds for %d %d  are %d (%d) R[%d] G[%d] B[%d]\n", col, row, odds, dominant, r, g, b);
+
+                fprintf(stderr, "Odds for %d %d  are %d (%d) R[%d] G[%d] B[%d]\n", j, i, odds, dominant, r, g, b);
+                
                 //are they lucky enough to win?
                 if ((rand() % 1000) < odds) {
                     //they win, change owner!
