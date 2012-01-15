@@ -2,7 +2,7 @@
 <head>
 <link href="assets/global.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" media="screen" type="text/css" href="assets/colorpicker/css/colorpicker.css" />
-<!--<link href='http://fonts.googleapis.com/css?family=Geo' rel='stylesheet' type='text/css'>-->
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 
 <script src="api.php?action=GetBoard" type="text/javascript"></script>
 <script src="assets/jquery.min.js" type="text/javascript"></script>
@@ -15,8 +15,18 @@
 <body>
 <div id="dialog"></div>
 
+<div id="controls" class="menu">
+<ul>
+	<li><a class="instructions"><u>I</u>nstructions</a></li>
+	<li><a class="mypixels"><u>M</u>y Pixels</a></li>
+	<li><a class="buypixel"><u>B</u>uy</a></li>
+	<li><a class="sellpixel">S<u>e</u>ll</a></li>
+</ul>
+</div>
+
 <div id="top">
-<h1>Pixenomics</h1>
+
+<h1><img src="assets/images/logo.png" alt="Pixenomics" /></h1>
 
 <div id="details" class="right">
 	<a id="login">Login</a>
@@ -31,16 +41,6 @@
 <div id="hint">
 Next cycle in <span class="hours"></span> <span class="minutes"></span> <span class="seconds"></span>.
 </div>
-
-<div id="controls" class="menu">
-<ul>
-	<li><a class="buypixel"><u>B</u>uy</a></li>
-	<li><a class="sellpixel">S<u>e</u>ll</a></li>
-	<li><a class="mypixels"><u>M</u>y Pixels</a></li>
-	<li><a class="instructions"><u>I</u>nstructions</a></li>
-</ul>
-</div>
-
 
 <div id="tools" class="menu">
 <ul>
@@ -73,18 +73,31 @@ Next cycle in <span class="hours"></span> <span class="minutes"></span> <span cl
 </div>
 
 <div class="box register">
-<label>Email: <input type="text" class="email" /> <span class="important">This email address must be tied to PayPal to recieve payments.</label>
-<label>Password: <input type="password" class="pass" /></label>
-<label>URL: <input type="text" class="url" /></label>
-<label>Hover Text: <input type="text" class="message" /></label>
-<label>Color: <input type="text" class="color" /></label>
-<span>Select 10 pixels on the canvas to start your empire.</span>
-<?php
-include 'recaptchalib.php';
-$publickey = "6Ldq1ssSAAAAAIjRnrdLG6NPlR-C4-T5zzapct4N"; // you got this from the signup page
-echo recaptcha_get_html($publickey);
-?>
-<button>Register</button>
+
+	<div class="register_col">
+		<h3>1. Login details</h3>
+		<label>Email: <input type="text" class="email" />
+		<span class="important">This email address must be tied to PayPal to recieve payments.</label>
+		<label>Password: <input type="password" class="pass" /></label>
+
+		<h3>2. Pixel Properties</h3>
+		<label>URL: <input type="text" class="url" /></label>
+		<label>Hover Text: <input type="text" class="message" /></label>
+		<label>Color: <input type="text" class="color" /></label>
+		<span>Select 10 pixels on the canvas to start your empire.</span>
+	</div>
+
+	<div class="register_col">
+		<h3>3. Verification</h3>
+		<?php
+		include 'recaptchalib.php';
+		$publickey = "6Ldq1ssSAAAAAIjRnrdLG6NPlR-C4-T5zzapct4N"; // you got this from the signup page
+		echo recaptcha_get_html($publickey);
+		?>
+		<button>Register</button>
+	</div>
+	<div class="clearer">&nbsp;</div>
+	
 </div>
 
 <div class="box events">
@@ -134,14 +147,14 @@ echo recaptcha_get_html($publickey);
 <div class="box instr">
 <h2>Instructions</h2>
 
-<p>Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with 10 free pixels and take over neighbouring pixels by strategically choosing a
+<p class="feature">Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with 10 free pixels and take over neighbouring pixels by strategically choosing a
 color. You can then sell your pixels for real money or use them as advertising space.</p>
 
 <p>The countdown displays the time until the next cycle where your pixels fight it out against others. After a cycle you will recieve a summary of how many pixels you
 won or lost under 'Events'.</p>
 
 <p>To invade a neighbouring pixel you need to increase your odds by choosing a dominant color channel that can beat the opponent's dominant color channel. 
-Each color is made up of different amounts of Red, Green and Blue (we call these color channels). If your color is mostly Red, it's dominant color channel
+Each color is made up of different amounts of Red, Green and Blue (we call these color channels). If your color is mostly Red, its dominant color channel
 will be Red.</p>
 
 <p><span class="red">Red</span> beats <span class="green">Green</span>, <span class="blue">Blue</span> beats <span class="red">Red</span> and 
@@ -158,5 +171,6 @@ will be Red.</p>
 <div id="tooltip"></div>
 <canvas id="canvas" width="1200" height="1000"></canvas>
 </div>
+<div id="footer">Pixenomics brought to you by Saul</div>
 </body>
 </html>

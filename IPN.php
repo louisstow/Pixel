@@ -109,7 +109,7 @@ if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 	exit;
 } //paid too much, credit the difference
 else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
-	User::updateCredit($_POST['payer_id'], $_POST['mc_gross'] * 100 - $cost);
+	User::updateCredit($_POST['payer_id'], ($_POST['mc_gross'] * 100 - $cost) * 0.8);
 }
 
 //update the pixel data

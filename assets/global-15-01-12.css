@@ -1,0 +1,100 @@
+body { text-align: center; font-family: Verdana; font-size: 14px; cursor: default; background: #eee }
+
+label { display: block }
+input { outline: none }
+
+#canvas { margin: auto }
+#stage { width: 1200px; height: 1000px; margin: auto; overflow: hidden; position: relative; background: #fff; border: 1px solid #999; box-shadow: 0 0 5px #aaa }
+
+.box { position: absolute; border-color: #999; border-style: solid; background: #fff; padding: 10px 15px; margin-top: 9px; }
+.login, .register, .events, .change { right: 0; width: 320px; border-width: 0 0 1px 1px; display: none; box-shadow: -1px 1px 2px #ddd }
+.buy, .sell, .instr { left: 0; width: 300px; display: none; border-width: 0 1px 1px 0; box-shadow: 1px 1px 2px #ddd }
+
+#details { position: absolute; right: 0; top: 10px }
+#details a, #details span { display: none; margin:0 5px }
+
+#top { width: 1200px; margin: auto; position: relative; text-align: left; z-index: 100; }
+#top h1 { margin: 0; padding: 0; text-align: center; font-family: 'Geo'; margin: -10px 0 -50px 0; font-size: 53px;  text-shadow: 0 0 5px #444; }
+h2 { font-family: 'Geo'; font-size: 25px; margin: 0 0 -5px 0; letter-spacing: -2px }
+
+div.menu ul { padding: 0; margin: 0; list-style: none }
+div.menu li { display: inline; margin: 0 20px 0 0; position: relative }
+.menu a { padding: 3px 10px; cursor: pointer; border: 1px solid #ccc; background: white; }
+div.menu li ul { position: absolute; display: none; margin: 3px 0 0 0; padding: 0; left: 0 }
+div.menu li li a { display: block; border: 1px solid #ccc; width: 140px; padding: 3px 10px; position: relative; z-index: 1000; margin-bottom: -1px }
+div.menu li li a:hover { background: #eee }
+div.menu li:hover ul { display: block }
+
+#controls { margin: -54px 0 20px -3px; }
+#controls li { margin: 0 }
+#controls li a { padding: 5px 20px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; }
+
+#tools { margin-bottom: 8px; margin-left: 1px }
+#tools li { margin: 0 -3px; }
+#tools a { padding-left: 25px; }
+
+.events ul { list-style: none; padding: 0; margin: 0 }
+
+.zoomer { border: 1px solid #ccc; position: absolute; cursor: crosshair }
+
+a.active { background: #222; color: #eee; border-color: #444 }
+a.swatch span { background: black; border: 1px solid #111; width: 10px; height: 10px; display: inline-block; margin-top: 1px }
+
+a.default { border-top-left-radius: 6px; border-bottom-left-radius: 6px; background-image: url('images/cursor.png'); background-repeat: no-repeat;
+	background-position: 4px 3px }
+a.swatch { border-top-right-radius: 6px; border-bottom-right-radius: 6px; background-image: url('images/color_wheel.png'); background-repeat: no-repeat;
+	background-position: 4px 3px }
+a.select { background-image: url('images/shape_square.png'); background-repeat: no-repeat; background-position: 4px 3px }
+a.zoomin { background-image: url('images/zoom.png'); background-repeat: no-repeat; background-position: 4px 3px }
+
+span.green { color: green; font-weight: bold }
+span.red { color: red; font-weight: bold; }
+span.blue { color: blue; font-weight: bold }
+
+#hint { position: absolute; right: 0; top: 40px; }
+
+.colorpicker { z-index: 1000 }
+
+span.hinttype { text-transform: capitalize; font-weight: bold }
+span.hintcolor { font-weight: bold }
+
+#welcome { font-style: italic; color: #333; margin-right: 20px; font-weight: bold }
+
+#tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000; max-width: 200px;
+text-align: left; }
+
+.list { max-height: 100px; overflow: auto; }
+.list ul { padding: 0; margin: 0; list-style: none }
+.list li { padding: 5px }
+.list li:nth-child(odd) { background: #eee }
+.list  i { font-style: normal; color: #666; float:right; margin-left: 15px; }
+.list a { float: right }
+
+.slider { width: 290px; }
+.clearer { clear: both }
+
+label { display: block; margin: 15px 0 }
+label input { float: right; margin: 0 }
+button { clear: both }
+
+.important { font-size: 10px; color: #cc1111; float: left }
+
+#money { border-bottom: 1px dashed #0022FF }
+
+#dialog {
+	width: 1184px;
+	margin: auto;
+	background: #111;
+	opacity: 0.9;
+	height: 30px;
+	border: 3px solid #666;
+	border-radius: 4px;
+	display: none;
+	position: fixed;
+	color: #eee;
+	padding:5px;
+	bottom: -50px;
+	line-height: 25px;
+	text-align: center;
+	z-index: 1000;
+}

@@ -13,6 +13,7 @@ class User extends ORM {
 	);
 	
 	public static function updateCredit($user, $amount) {
+		$amount = floor($amount);
 		ORM::query("UPDATE users SET money = money + ? WHERE userID = ?", array($amount, $user));
 	}
 }

@@ -57,7 +57,7 @@ function ok() {
 * Send PQL to reth's shitty daemon
 */
 function queryDaemon($req) {
-	$fp = fsockopen("192.168.1.3", 5607, $errno, $errstr, 2);
+	$fp = fsockopen("192.168.1.11", 5607, $errno, $errstr, 2);
 	if(!$fp) {
 		return FALSE;
 	}
