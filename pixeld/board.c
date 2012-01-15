@@ -258,13 +258,13 @@ run_cron(int s, struct pixel **board) {
 
                 //reward brighter colours
                 if (dominant == RED) {
-                    odds += (r - g) + (r - b);
+                    odds += ((r - g) + (r - b)) / 4;
                 } else if (dominant == GREEN) {
-                    odds += (g - r) + (g - b);
+                    odds += ((g - r) + (g - b)) / 4;
                 } else if (dominant == BLUE) {
-                    odds += (b - r) + (b - g);
+                    odds += ((b - r) + (b - g)) / 4;
                 }
-
+                fprintf(stderr, "Odds for %d %d  are %d (%d) R[%d] G[%d] B[%d]\n", col, row, odds, dominant, r, g, b);
                 //are they lucky enough to win?
                 if ((rand() % 1000) < odds) {
                     //they win, change owner!
