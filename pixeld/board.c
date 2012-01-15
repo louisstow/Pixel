@@ -86,18 +86,46 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 
 	for (i = 0; i < ROWS; i++) {
 		for (j = 0; j < COLS; j++) {
-			val = write(fd, &b[r][c], sizeof(struct journal));
+			/* val = write(fd, &b[r][c], sizeof(struct journal));
 
 			if (val < sizeof(struct journal)) {
 				perror("write");
 				exit(-1);
-			}
+			}*/
 		}
 	}
 
 	close(fd);
 
 	return 1;
+}
+
+int
+get_meta(int row, int col, char *type, struct pixel **board) 
+{
+	struct pixel *bp;
+	bp = &board[row][col];
+
+	if (!strcmp(type, "immunity")) {
+		if (bp->mdata->immunity == '1')
+			return 1;
+		else
+			return 0;
+	}
+}
+
+int
+set_meta(int row, int col, char *type, char *val, struct pixel **board) 
+{
+	struct pixel *bp;
+	bp = &board[row][col];
+
+	if (!strcmp(type, "immunity")) {
+		bp->mdata->immunity = val[0];
+		return 1;
+	}
+
+	return 0;
 }
 
 void 

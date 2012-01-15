@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "board.h"
 
@@ -118,7 +119,7 @@ run_cycle(struct pixel **board) {
 				//are they lucky enough to win?
 				if ((rand() % 1000) < odds) {
 					//they win, change owner!
-					(&board[row][col])->oid = p->oid;
+					strcpy(board[row][col].oid, p->oid);
 					
 					//TODO: for the user who lost, update their lose count
 					//TODO: for the user who won, update their win count
