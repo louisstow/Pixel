@@ -26,6 +26,12 @@ struct journal {
 	TAILQ_ENTRY(journal) entries;
 };
 
+struct summary {
+    char oid[OID_SIZE + 1];
+    unsigned int wins;
+    unsigned int loses;
+};
+
 int *extract_pixels(char *qry);
 void init_journal(void);
 int parse_query(int sock, char *qry, struct pixel **board);
