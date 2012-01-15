@@ -567,12 +567,15 @@ $(function() {
 			});
 		}
 		
-		$("div.buy span.total").text(total.toFixed(2));
-		$("div.buy input.amount").val(total.toFixed(2));
-		$("input.item").val(buyList.join(' '));
-		$("input.payer").val(me.userID);
-		$("input.payeremail").val(me.userEmail);
-		$("div.buy").show();
+		api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
+			$("div.buy span.total").text(total.toFixed(2));
+			$("div.buy input.amount").val(total.toFixed(2));
+			$("input.item").val(resp.orderID);
+			$("input.payer").val(me.userID);
+			$("input.payeremail").val(me.userEmail);
+			$("div.buy").show();
+		});
+		
 		redraw();
 	});
 	
@@ -1058,6 +1061,8 @@ function showError(msg) {
 }
 
 function api(action, data, callback, showErrorFlag) {
+	var format = "GET";
+	
 	//allow empty data
 	if(typeof data === "function") {
 		showErrorFlag = callback;
@@ -1070,8 +1075,14 @@ function api(action, data, callback, showErrorFlag) {
 		showErrorFlag = true;
 	}
 	
+	if(data && data.POST) {
+		format = "POST";
+		delete data.POST;
+	}
+	
 	$.ajax("api.php?action=" + action, {
 		dataType: "json",
+		type: format,
 		data: data,
 		success: function(data) {
 			//if there is an error, automatically display

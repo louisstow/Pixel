@@ -24,9 +24,10 @@ foreach($summary as $sum) {
 	if(count($line) != 3) continue;
 	
 	$text = "You won {$line[1]} and lost {$line[2]}";
-	$esql .= "(?, ?, ?),";
+	$esql .= "(?, ?, ?, ?),";
 	
 	$eprep[] = $line[0];
+	$eprep[] = NOW();
 	$eprep[] = $cycle['cycleID'];
 	$eprep[] = $text;
 }

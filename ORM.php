@@ -34,7 +34,7 @@ class ORM {
 	/* last error from PDO */
 	private static $error;
 	/* last executed query */
-	private static $SQL;
+	public static $SQL;
 	/* if the Model should be inserted first */
 	public $_updateFlag = false;
 	
@@ -44,14 +44,10 @@ class ORM {
 	static function query($sql, $vars=array()) {
 		if(self::$db == null) {
 			//local versus server
-			if($_SERVER['SERVER_NAME'] === "localhost") {
-				self::$db = new PDO("mysql:host=localhost; dbname=pixel","root","");
-			} else {
-				self::$db = new PDO("mysql:host=localhost; dbname=pixel","root","louis5838!");
-			}
+			self::$db = new PDO("mysql:host=localhost; dbname=pixel","root","louis5838!");
 		}
 		
-		$SQL = $sql;
+		self::$SQL = $sql;
 		$statement = self::$db->prepare($sql);
 		$statement->execute($vars);
 

@@ -26,6 +26,8 @@ function data($list) {
 		$var = trim($var);
 		if(isset($_GET[$var])) {
 			$GLOBALS[$var] = $_GET[$var];
+		} else if(isset($_POST[$var])) {
+			$GLOBALS[$var] = $_POST[$var];
 		}
 	}
 }

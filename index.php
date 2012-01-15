@@ -74,20 +74,20 @@ Next cycle in <span class="hours"></span> <span class="minutes"></span> <span cl
 
 <div class="box register">
 
-	<div class="register_col">
+	<div class="register_col_l">
 		<h3>1. Login details</h3>
-		<label>Email: <input type="text" class="email" />
-		<span class="important">This email address must be tied to PayPal to recieve payments.</label>
+		<label>Email: <input type="text" class="email" /><br /><br />
+		<span class="important">This email address must be tied to PayPal to recieve payments</span></label>
 		<label>Password: <input type="password" class="pass" /></label>
 
 		<h3>2. Pixel Properties</h3>
 		<label>URL: <input type="text" class="url" /></label>
 		<label>Hover Text: <input type="text" class="message" /></label>
 		<label>Color: <input type="text" class="color" /></label>
-		<span>Select 10 pixels on the canvas to start your empire.</span>
+		<span>These settings will apply to your first 10 pixels.</span>
 	</div>
 
-	<div class="register_col">
+	<div class="register_col_r">
 		<h3>3. Verification</h3>
 		<?php
 		include 'recaptchalib.php';

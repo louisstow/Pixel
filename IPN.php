@@ -43,7 +43,28 @@ if($res != "VERIFIED") {
 	exit;
 }
 
-$pixels = explode(' ', $_POST['item_number']);
+//payment wasn't completed
+if($_POST['payment_status'] !== "Completed") {
+	//log error
+	$message = $res . "\r\n";
+	$message .= print_r($_POST, true) . "\r\n";
+	
+	mail($TO, "Not Completed", $message);
+	exit;
+}
+
+$q = ORM::query("SELECT * FROM orders WHERE orderID = ? AND userID = ?", array($_POST['item_number'], $_POST['payer_id']));
+$data = $q->fetch(PDO::FETCH_ASSOC);
+
+if(!$data) {
+	//log error
+	$message = print_r($_POST, true) . "\r\n";
+	
+	mail($TO, "Invalid user or order ID", $message);
+	exit;
+}
+
+$pixels = explode(' ', $data['pixels']);
 
 //check for sql injection
 if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
@@ -61,11 +82,14 @@ $owners = array();
 $profit = 0;
 
 $i = 0;
+$count = 0;
+
 //loop over every specified pixel and double check
 foreach($pixels as $pix) {
     //skip if not for sale
 	if(isset($result[$i])) {
 		$pixel = $result[$i];
+		if(!$pixel) continue;
 		
 		//increase the total cost
 		$cost += $pixel['cost'];
@@ -78,7 +102,8 @@ foreach($pixels as $pix) {
 		
 		$owners[$pixel['owner']]['sold']++;
 		$owners[$pixel['owner']]['credit'] += floor($p * 0.75);
-		$profit += ceil($p * 0.23); //minus 2% for paypal fees
+		$profit += ceil($p * 0.25); //minus 3% for paypal fees
+		$count++;
 	} else {
 		$cost += 10;
 		$p = 10;
@@ -105,11 +130,18 @@ if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 	$message .= $cost;
 	
 	mail($TO, "Incorrect price", $message);
-	User::updateCredit($_POST['payer_id'], ($_POST['mc_gross'] * 100));
+	//User::updateCredit($_POST['payer_id'], ($_POST['mc_gross'] * 100));
 	exit;
 } //paid too much, credit the difference
 else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
-	User::updateCredit($_POST['payer_id'], ($_POST['mc_gross'] * 100 - $cost) * 0.8);
+	$message = print_r($_POST, true) . "\r\n";
+	$message .= "Paid: " . $cost . "\r\n";
+	$message .= "Gave: " . (($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100) . "\r\n";
+	
+	mail($TO, "Too much", $message);
+	
+	$profit += $_POST['mc_fee'] * 100;
+	User::updateCredit($_POST['payer_id'], ($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100);
 }
 
 //update the pixel data
@@ -118,21 +150,25 @@ queryDaemon("{$list} w AAAAAA 500 {$_POST['payer_id']} " . time());
 //give the pixels immunity
 queryDaemon("{$list} s immunity 1");
 
+//our profit will be deducted by the fee
+$profit -= ($_POST['mc_fee'] * 100);
 Stat::updateProfit($profit);
 
 //log as events
-$count = count($dprep);
-I("Event")->create($_POST['payer_id'], NOW(), "You bought {$count} pixels");
+I("Event")->create($_POST['payer_id'], NOW(), 0, "You bought {$count} pixels");
 
 foreach($owners as $id => $data) {
-	I("Event")->create($id, NOW(), "You sold {$data['sold']} pixels");
+	I("Event")->create($id, NOW(), 0, "You sold {$data['sold']} pixels");
 	//update the credit
 	User::updateCredit($id, $data['credit']);
 }
 
+//remove the order
+ORM::query("DELETE FROM orders WHERE orderID = ?", array($_POST['item_number']));
+
 //send a payment email as a log of the transaction
-$message = $header . "\r\n\r\n";
-$message .= print_r($_POST, true) . "\r\n";
+$message = print_r($_POST, true) . "\r\n";
+$message .= "Profit: {$profit}\r\n";
 
 mail($TO, "Pixels bought", $message);
 ?>
