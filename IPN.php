@@ -53,6 +53,15 @@ if($_POST['payment_status'] !== "Completed") {
 	exit;
 }
 
+//payment wasn't USD
+if($_POST['mc_currency'] !== "USD") {
+	//log error
+	$message = print_r($_POST, true) . "\r\n";
+	
+	mail($TO, "Not USD", $message);
+	exit;
+}
+
 $q = ORM::query("SELECT * FROM orders WHERE orderID = ? AND userID = ?", array($_POST['item_number'], $_POST['payer_id']));
 $data = $q->fetch(PDO::FETCH_ASSOC);
 

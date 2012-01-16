@@ -175,6 +175,6 @@ will be Red.</p>
 	<p class="browser">To use Pixenomics, please update or switch your browser to one of the following: Chrome, Firefox, Opera, IE10</p>
 </canvas>
 </div>
-<div id="footer">&copy; Pixenomics 2012</div>
+<div id="footer">&copy; Pixenomics 2012 - <a href="mailto:contact@pixenomics.com">contact@pixenomics.com</a></div>
 </body>
 </html>
