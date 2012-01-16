@@ -36,3 +36,5 @@ int *extract_pixels(char *qry);
 void init_journal(void);
 int parse_query(int sock, char *qry, struct pixel **board);
 struct pixel  **init_board(unsigned int rows, unsigned int cols);
+struct summary* find_owner(char *oid, struct summary* sum);
+void run_cron(int s, struct pixel **board);

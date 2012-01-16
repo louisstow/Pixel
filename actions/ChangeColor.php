@@ -26,7 +26,7 @@ foreach($data as $row) {
 	}
 }
 
-queryDaemon("{$pix} w {$color} . " . USER . " " . time());
+queryDaemon("{$pix} w {$color} . . " . time());
 
 ok();
 ?>

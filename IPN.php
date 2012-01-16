@@ -145,7 +145,8 @@ else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 }
 
 //update the pixel data
-queryDaemon("{$list} w AAAAAA 500 {$_POST['payer_id']} " . time());
+$user = dechex($_POST['payer_id']);
+queryDaemon("{$list} w AAAAAA 1f4 {$user} " . time());
 
 //give the pixels immunity
 queryDaemon("{$list} s immunity 1");

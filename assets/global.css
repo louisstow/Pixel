@@ -1,15 +1,16 @@
 body, html { padding:0; margin:0 }
-
 body { text-align: center; font-family: 'Droid Sans', Arial, sans-serif; font-size: 14px; cursor: default; background: url('images/bg.gif'); font-weight: 400 }
+
+html, body, div, ul, ul li, h1, h2, h3 { margin:0px;padding:0px }
 
 label { display: block }
 input { outline: none }
 
 #canvas { margin: auto }
-#stage { width: 1200px; height: 1000px; margin: auto; overflow: hidden; position: relative; background: #fff; border: 1px solid #b2b1b1; box-shadow: 0 2px 4px #939393 }
-#footer { padding-top: 10px }
+#stage { width: 1200px; height: 1000px; margin: 0px auto; overflow: hidden; position: relative; background: #fff; border: 1px solid #b2b1b1; box-shadow: 0 2px 4px #939393 }
+#footer { padding-top: 10px; color: #0c7147; text-transform:uppercase; text-shadow: 0px 1px #fff }
 
-.box { position: absolute; border-color: #b2b1b1; border-style: solid; background: #fff; padding: 10px 15px; margin-top: 29px; }
+.box { position: absolute; border-color: #b2b1b1; border-style: solid; background: #fff; padding: 10px 15px; margin-top: 0px; top:77px; }
 .login, .register, .events, .change { right: 0; border-width: 0 0 1px 1px; display: none; /*box-shadow: -1px 1px 2px #ddd*/ }
 .login, .events, .change { width: 320px; }
 .register { width: 620px; }
@@ -18,15 +19,15 @@ input { outline: none }
 .instr { width: 500px}
 
 .register_col_l, .register_col_r { width: 290px; float:left }
-.register_col_l { margin-right: 10px }
+.register_col_l { margin-right: 15px }
 
 #details { position: absolute; right: 0; top: 10px }
 #details a, #details span { display: none; margin:0 5px }
 
 #details a, #tools a { color: #0c7147; text-shadow: 0px 1px #fff; text-transform:uppercase; font-weight:bold; cursor:pointer }
 
-#top { margin: auto; position: relative; text-align: left; z-index: 100; height:60px; width:1200px }
-#top h1 { margin: 0; padding: 0; text-align: center; margin: 5px 0 -50px 0; }
+#top { margin: 0px auto; position: relative; text-align: left; z-index: 100; height:60px; width:1200px }
+#top h1 { padding: 0; text-align: center; margin: 5px 0 -50px 0; }
 h2 { font-size: 25px; margin: 0 0 -5px 0 }
 h2, h3 { color: #0c7147 }
 
@@ -35,7 +36,6 @@ div.menu li { display: inline; margin: 0 20px 0 0; position: relative }
 .menu a { cursor: pointer; }
 div.menu li ul { position: absolute; display: none; margin: 6px 0 0 0; padding: 0; left: 0 }
 div.menu li li a { display: block; width: 140px; position: relative; z-index: 1000; margin-bottom: -1px }
-div.menu li ul li a:hover { background: #fff }
 div.menu li:hover ul { display: block }
 
 #controls, button { 
@@ -54,10 +54,12 @@ div.menu li:hover ul { display: block }
 #controls li a { padding: 10px 20px; color: #fff; font-weight:bold; text-shadow: 0px 1px #000; height:30px; line-height:28px }
 
 #tools { margin: 12px 0 0px 20px; font-size:12px }
-#tools li { margin: 0 -3px; }
-#tools a { padding-left: 25px; border: 1px solid #b2b1b1; background: #e9e9e9; padding: 6px 14px }
-#tools a:hover { background:#fff }
-#tools ul li ul li a { font-weight:normal; text-transform:none; }
+	#tools li { margin: 0 -3px }
+	#tools a { padding-left: 25px; border: 1px solid #b2b1b1; background: #e9e9e9; padding: 6px 14px }
+		#tools a:hover, #tools ul li:hover a { background:#fff }
+			#tools ul ul a:hover, #tools ul li ul li:hover a { background:#e9e9e9 }
+		#tools ul li ul li a { font-weight:normal; text-transform:none; }
+			#tools li ul li { margin:0px }
 	
 .events ul { list-style: none; padding: 0; margin: 0 }
 
@@ -109,13 +111,14 @@ label span { display:block; text-transform:none; margin-bottom:4px; font-size: 1
 #money { border-bottom: 1px dashed #0022FF }
 
 #dialog {
-	width: 1184px;
+	width: 1190px;
 	margin: auto;
-	background: #111;
+	background: #0c7147;
 	opacity: 0.9;
 	height: 30px;
-	border: 3px solid #666;
-	border-radius: 4px;
+	border: 1px solid #b2b1b1;
+	/*border-radius: 4px;*/
+	font-weight: 700;
 	display: none;
 	position: fixed;
 	color: #eee;

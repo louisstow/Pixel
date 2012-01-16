@@ -15,6 +15,7 @@
 #define RED         0
 #define GREEN       1
 #define BLUE        2
+#define USER_SIZE	65535
 
 #define get_dominant(r,g,b) (\
                             (r > g && r > b ? RED : \
@@ -59,7 +60,9 @@ init_journal(void)
 	TAILQ_INIT(&head);
 }
 
-void strip_nl(char *s) {
+void 
+strip_nl(char *s) 
+{
 	int i;
 
 	for (i = 0; i < strlen(s); i++) { 
@@ -150,7 +153,8 @@ set_meta(int row, int col, char *type, char *val, struct pixel **board)
 }
 
 void 
-print_board(int s, struct pixel **b) {
+print_board(int s, struct pixel **b) 
+{
 	FILE *f;
 	struct pixel *p;
 	unsigned int i, j;
@@ -174,7 +178,8 @@ print_board(int s, struct pixel **b) {
 }
 
 void 
-run_cron(int s, struct pixel **board) {
+run_cron(int s, struct pixel **board) 
+{
     struct pixel *p, *o;
     unsigned int i, j, k, row, col;
 
@@ -193,7 +198,11 @@ run_cron(int s, struct pixel **board) {
     unsigned int color, r, g, b, dominant; //player colors
     unsigned int ocolor, or, og, ob, odominant; //opponent colors
     unsigned int odds = 0;
-
+	
+	struct summary sum[USER_SIZE]; //because fuck queues
+	struct summary *owner;
+	unsigned int len = 0;
+	
     srand(time(NULL));
 
     for (i = 0; i < ROWS; i++) {
@@ -270,12 +279,41 @@ run_cron(int s, struct pixel **board) {
                     //they win, change owner!
                     strcpy(board[row][col].oid, p->oid);
                     fprintf(stderr, "WIN, change owner\n");
+					
+					//update winner
+					owner = find_owner(p->oid, sum, &len);
+					owner->wins++;
+					
+					owner = find_owner(board[row][col].oid, sum, &len);
+					owner->loses++;
+					
+					strcpy(board[row][col].oid, p->oid);
+					
                     //TODO: for the user who lost, update their lose count
                     //TODO: for the user who won, update their win count
                 }
             }
         }
     }
+}
+
+/* find the summary struct or create another */
+struct summary*
+find_owner(char *oid, struct summary* sum, unsigned int *len)
+{
+	for(int i = 0; i < (*len); ++i) {
+		if(strcmp(sum[i].oid, oid) == 0) {
+			return &sum[i];
+		}
+	}
+	
+	(*len)++;
+	struct summary s;
+	strcpy(s.oid, oid);
+	s.wins = 0;
+	s.loses = 0;
+	
+	sum[(*len)] = s;
 }
 
 /* parse PQL command from the web server */

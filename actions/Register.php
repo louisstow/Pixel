@@ -46,7 +46,7 @@ if(!$player) {
 
 $_SESSION['id'] = $player->userID;
 
-queryDaemon("{$list} w {$color} 500 " . $player->userID . " " . time());
+queryDaemon("{$list} w {$color} 1f4 " . dechex($player->userID) . " " . time());
 
 unset($player->userPass);
 unset($player->_updateFlag);

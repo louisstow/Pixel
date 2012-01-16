@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <link href="assets/global.css" type="text/css" rel="stylesheet" />
@@ -171,6 +172,6 @@ will be Red.</p>
 <div id="tooltip"></div>
 <canvas id="canvas" width="1200" height="1000"></canvas>
 </div>
-<div id="footer">Pixenomics brought to you by Saul</div>
+<div id="footer">&copy; Pixenomics 2012</div>
 </body>
 </html>
