@@ -90,6 +90,7 @@ main(int argc, char *argv[])
 	sock = create_listen("5607");
 	board = init_board(1000, 1200);
 	init_journal();
+	read_board(board);
 
 	for(;;) {
 		sin_size = sizeof r_addr;

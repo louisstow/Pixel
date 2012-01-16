@@ -34,8 +34,9 @@ struct summary {
     TAILQ_ENTRY(summary) summaries;
 };
 
-int *extract_pixels(char *qry);
 void init_journal(void);
+int *extract_pixels(char *qry);
+int read_board(struct pixel **bp);
 int parse_query(int sock, char *qry, struct pixel **board);
 struct pixel  **init_board(unsigned int rows, unsigned int cols);
 struct summary* find_owner(char *oid);

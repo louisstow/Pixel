@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include <fcntl.h>
 #include <sys/queue.h>
 #include <time.h>
@@ -90,6 +91,7 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 {
 	int i, j, fd, val;
 	struct pixel *pp = &b[r][c];
+	struct pixel **mp, **fp;
 
 	if (p == NULL) {
 		pp->colour[0] = '.';
@@ -112,12 +114,33 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 
 	for (i = 0; i < ROWS; i++) {
 		for (j = 0; j < COLS; j++) {
-			/* val = write(fd, &b[r][c], sizeof(struct journal));
+			val = write(fd, &b[i][j], sizeof(struct journal));
 
 			if (val < sizeof(struct journal)) {
 				perror("write");
 				exit(-1);
-			}*/
+			}
+		}
+	}
+
+	close(fd);
+
+	return 1;
+}
+
+int 
+read_board(struct pixel **bp)
+{
+	int i, j, fd;
+
+	fd = open("journal.data", O_RDONLY);
+
+	if (fd == -1)
+		return 0;
+
+	for (i = 0; i < ROWS; i++) {
+		for (j = 0; j < COLS; j++) {
+			read(fd, &bp[i][j], sizeof(struct journal));
 		}
 	}
 
