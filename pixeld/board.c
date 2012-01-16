@@ -298,9 +298,11 @@ run_cron(int sock, struct pixel **board)
 	struct summary *s;
 	FILE *fp = fdopen(sock, "w+");
 	
-	for (s = sumhead.tqh_first; s != NULL; s = s->summaries.tqe_next) {
+	for (s = sumhead.tqh_first; s != NULL; s = s->summaries.tqe_next)
 		fprintf(fp, "%s,%u,%u|", s->oid, s->wins, s->loses);
-	}
+
+	while (sumhead.tqh_first != NULL)
+		TAILQ_REMOVE(&sumhead, sumhead.tqh_first, summaries);
 	
 	fflush(fp);
 }
