@@ -59,6 +59,7 @@ void
 init_journal(void)
 {
 	TAILQ_INIT(&head);
+	TAILQ_INIT(&sumhead);
 }
 
 void 
@@ -298,8 +299,8 @@ run_cron(int sock, struct pixel **board)
 	struct summary *s;
 	FILE *fp = fdopen(sock, "w+");
 	
-	for (s = sumhead.tqh_first; s != NULL; s = s->entries.tqe_next) {
-		fprintf(fp, "%s%s%s|", s->oid, s->wins, s->loses);
+	for (s = sumhead.tqh_first; s != NULL; s = s->summaries.tqe_next) {
+		fprintf(fp, "%s,%u,%u|", s->oid, s->wins, s->loses);
 	}
 	
 	fflush(fp);
@@ -310,8 +311,9 @@ struct summary*
 find_owner(char *oid)
 {
 	struct summary *s;
+	fprintf(stderr, "%s\n", oid);
 
-	for (s = sumhead.tqh_first; s != NULL; s = s->entries.tqe_next)
+	for (s = sumhead.tqh_first; s != NULL; s = s->summaries.tqe_next)
 		if (!strcmp(s->oid, oid))
 			return s;
 	
@@ -320,7 +322,7 @@ find_owner(char *oid)
 	s->wins = 0;
 	s->loses = 0;
 
-	TAILQ_INSERT_TAIL(&sumhead, s, entries);
+	TAILQ_INSERT_TAIL(&sumhead, s, summaries);
 
 	return s;
 }

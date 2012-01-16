@@ -31,7 +31,7 @@ struct summary {
     unsigned int wins;
     unsigned int loses;
     
-    TAILQ_ENTRY(summary) entries;
+    TAILQ_ENTRY(summary) summaries;
 };
 
 int *extract_pixels(char *qry);
