@@ -35,6 +35,7 @@
                             ))))
 
 TAILQ_HEAD(tailhead, journal) head;
+TAILQ_HEAD(penishead, summary) sumhead;
 
 struct pixel 
 **init_board(unsigned int rows, unsigned int cols)
@@ -199,7 +200,6 @@ run_cron(int s, struct pixel **board)
     unsigned int ocolor, or, og, ob, odominant; //opponent colors
     unsigned int odds = 0;
 	
-	struct summary sum[USER_SIZE]; //because fuck queues
 	struct summary *owner;
 	unsigned int len = 0;
 	
@@ -281,10 +281,10 @@ run_cron(int s, struct pixel **board)
                     fprintf(stderr, "WIN, change owner\n");
 					
 					//update winner
-					owner = find_owner(p->oid, sum, &len);
+					owner = find_owner(p->oid);
 					owner->wins++;
 					
-					owner = find_owner(board[row][col].oid, sum, &len);
+					owner = find_owner(board[row][col].oid);
 					owner->loses++;
 					
 					strcpy(board[row][col].oid, p->oid);
@@ -299,21 +299,22 @@ run_cron(int s, struct pixel **board)
 
 /* find the summary struct or create another */
 struct summary*
-find_owner(char *oid, struct summary* sum, unsigned int *len)
+find_owner(char *oid)
 {
-	for(int i = 0; i < (*len); ++i) {
-		if(strcmp(sum[i].oid, oid) == 0) {
-			return &sum[i];
-		}
-	}
+	struct summary *s;
+
+	for (s = sumhead.tqh_first; s != NULL; s = s->entries.tqe_next)
+		if (!strcmp(s->oid, oid))
+			return s;
 	
-	(*len)++;
-	struct summary s;
-	strcpy(s.oid, oid);
-	s.wins = 0;
-	s.loses = 0;
-	
-	sum[(*len)] = s;
+	s = xmalloc(sizeof(struct summary));
+	strcpy(s->oid, oid);
+	s->wins = 0;
+	s->loses = 0;
+
+	TAILQ_INSERT_TAIL(&sumhead, s, entries);
+
+	return s;
 }
 
 /* parse PQL command from the web server */
