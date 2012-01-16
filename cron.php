@@ -5,6 +5,8 @@ include 'objects/Cycle.php';
 include 'objects/Pixel.php';
 include 'MassPayment.php';
 
+$TO = "louisstow+pixenomics@gmail.com";
+
 //get the latest cycle information
 $cycle = Cycle::getCurrent();
 
@@ -65,7 +67,13 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
 print_r($req);
 //send seperate payment requests
 foreach($req as $r) {
-	MassPay($nvp . $r);
+	$res = MassPay($nvp . $r);
+	if($res['ACK'] == "Failure") {
+		$message = print_r($res, true) . "\r\n\r\n";
+		$message .= print_r($req, true);
+		
+		mail();
+	}
 }
 
 ORM::query("UPDATE users SET money = 0 WHERE money >= 2000");

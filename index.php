@@ -1,77 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link href="assets/global.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" media="screen" type="text/css" href="assets/colorpicker/css/colorpicker.css" />
-<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+	<link href="assets/global.css" type="text/css" rel="stylesheet" />
+	<link rel="stylesheet" media="screen" type="text/css" href="assets/colorpicker/css/colorpicker.css" />
+	<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 
-<script src="api.php?action=GetBoard" type="text/javascript"></script>
-<script src="assets/jquery.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="assets/colorpicker/js/colorpicker.js"></script>
-<script src="assets/pixel.js" type="text/javascript"></script>
-<script src="assets/html5slider.js" type="text/javascript"></script>
+	<script src="api.php?action=GetBoard" type="text/javascript"></script>
+	<script src="assets/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="assets/colorpicker/js/colorpicker.js"></script>
+	<script src="assets/pixel.js" type="text/javascript"></script>
+	<script src="assets/html5slider.js" type="text/javascript"></script>
 
-<title>Pixenomics</title>
+	<title>Pixenomics</title>
 </head>
 <body>
+
 <div id="dialog"></div>
 
 <div id="controls" class="menu">
-<ul>
-	<li><a class="instructions"><u>I</u>nstructions</a></li>
-	<li><a class="mypixels"><u>M</u>y Pixels</a></li>
-	<li><a class="buypixel"><u>B</u>uy</a></li>
-	<li><a class="sellpixel">S<u>e</u>ll</a></li>
-</ul>
+	<ul>
+		<li><a class="instructions"><u>I</u>nstructions</a></li>
+		<li><a class="mypixels"><u>M</u>y Pixels</a></li>
+		<li><a class="buypixel"><u>B</u>uy</a></li>
+		<li><a class="sellpixel">S<u>e</u>ll</a></li>
+	</ul>
 </div>
 
 <div id="top">
 
-<h1><img src="assets/images/logo.png" alt="Pixenomics" /></h1>
+	<div id="details">
+		<a id="login">Login</a>
+		<a id="register">Register</a>
+		<span id="welcome"></span>
+		<span id="money" title="You will be paid via PayPal once your money reaches $20."></span>
+		<a id="events">Events</a>
+		<a id="change">Details</a>
+		<a id="logout">Logout</a>
+	</div>
 
-<div id="details" class="right">
-	<a id="login">Login</a>
-	<a id="register">Register</a>
-	<span id="welcome"></span>
-	<span id="money" title="You will be paid via PayPal once your money reaches $20."></span>
-	<a id="events">Events</a>
-	<a id="change">Details</a>
-	<a id="logout">Logout</a>
-</div>
+	<div id="hint">
+	Next cycle in <span class="hours"></span> <span class="minutes"></span> <span class="seconds"></span>.
+	</div>
 
-<div id="hint">
-Next cycle in <span class="hours"></span> <span class="minutes"></span> <span class="seconds"></span>.
-</div>
-
-<div id="tools" class="menu">
-<ul>
-	<li><a class="default"><u>D</u>efault</a></li>
-	<li><a class="select"><u>S</u>elect</a>
+	<div id="tools" class="menu">
 		<ul>
-			<li><a class="selectmypixels">Select My Pi<u>x</u>els</a></li>
-			<li><a class="clearselection"><u>C</u>lear Selection</a></li>
+			<li><a class="default"><u>D</u>efault</a></li>
+			<li><a class="select"><u>S</u>elect</a>
+				<ul>
+					<li><a class="selectmypixels">Select My Pi<u>x</u>els</a></li>
+					<li><a class="clearselection"><u>C</u>lear Selection</a></li>
+				</ul>
+			</li>
+			<li><a class="zoomin">Zoom In</a>
+				<ul>
+					<li><a class="x2"><u>2</u>x</a></li>
+					<li><a class="x4"><u>4</u>x</a></li>
+					<li><a class="x8"><u>8</u>x</a></li>
+					<li><a class="x16"><u>1</u>6x</a></li>
+				</ul>
+			</li>
+			<li><a class="move">Mo<u>v</u>e</a></li>
+			<li>
+				<a class="swatch">Colo<u>r</u> <span></span></a>
+			</li>
 		</ul>
-	</li>
-	<li><a class="zoomin">Zoom In</a>
-		<ul>
-			<li><a class="x2"><u>2</u>x</a></li>
-			<li><a class="x4"><u>4</u>x</a></li>
-			<li><a class="x8"><u>8</u>x</a></li>
-			<li><a class="x16"><u>1</u>6x</a></li>
-		</ul>
-	</li>
-	<li><a class="move">Mo<u>v</u>e</a></li>
-	<li>
-		<a class="swatch">Colo<u>r</u> <span></span></a>
-	</li>
-</ul>
-</div>
+	</div>
+	
+	<h1><img src="assets/images/logo.png" alt="Pixenomics" /></h1>
 
-<div class="box login">
-<label>Email: <input type="text" class="email" /></label>
-<label>Password: <input type="password" class="pass" /></label>
-<button>Login</button>
-</div>
+	<div class="box login">
+		<label>Email: <input type="text" class="email" /></label>
+		<label>Password: <input type="password" class="pass" /></label>
+		<button>Login</button>
+	</div>
 
 <div class="box register">
 
@@ -170,7 +171,9 @@ will be Red.</p>
 <div id="stage">
 
 <div id="tooltip"></div>
-<canvas id="canvas" width="1200" height="1000"></canvas>
+<canvas id="canvas" width="1200" height="1000">
+	<p class="browser">To use Pixenomics, please update or switch your browser to one of the following: Chrome, Firefox, Opera, IE10</p>
+</canvas>
 </div>
 <div id="footer">&copy; Pixenomics 2012</div>
 </body>
