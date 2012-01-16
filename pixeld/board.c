@@ -277,7 +277,6 @@ run_cron(int sock, struct pixel **board)
                 //are they lucky enough to win?
                 if ((rand() % 1000) < odds) {
                     //they win, change owner!
-                    strcpy(board[row][col].oid, p->oid);
                     fprintf(stderr, "WIN, change owner\n");
 					
 					//update winner
