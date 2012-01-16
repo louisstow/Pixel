@@ -28,7 +28,7 @@ input { outline: none }
 
 #top { margin: 0px auto; position: relative; text-align: left; z-index: 100; /*height:60px;*/ width:1200px }
 #top h1 { float:left; width:264px; padding: 8px 0px 0px 0px; text-align: center; margin:0px /*margin: 5px 0 -50px 0;*/ }
-h2 { font-size: 25px; margin: 0 0 -5px 0 }
+h2 { font-size: 20px; margin: 0 0 5px 0 }
 h2, h3 { color: #0c7147 }
 
 div.menu ul { padding: 0; margin: 0; list-style: none }
@@ -68,12 +68,8 @@ div.menu li:hover ul { display: block }
 a.active, #tools a.active { background: #222; color: #eee; border-color: #444; text-shadow:none }
 a.swatch span { background: black; border: 1px solid #111; width: 10px; height: 10px; display: inline-block; position: relative; left: 2px; top: 1px }
 
-a.default { border-top-left-radius: 6px; border-bottom-left-radius: 6px; background-image: url('images/cursor.png'); background-repeat: no-repeat;
-	background-position: 4px 3px }
-a.swatch { border-top-right-radius: 6px; border-bottom-right-radius: 6px; background-image: url('images/color_wheel.png'); background-repeat: no-repeat;
-	background-position: 4px 3px }
-a.select { background-image: url('images/shape_square.png'); background-repeat: no-repeat; background-position: 4px 3px }
-a.zoomin { background-image: url('images/zoom.png'); background-repeat: no-repeat; background-position: 4px 3px }
+a.default { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+a.swatch { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
 
 span.green { color: green; font-weight: 700 }
 span.red { color: red; font-weight: 700; }
@@ -108,7 +104,7 @@ button { clear: both; font-family: 'Droid Sans', Arial, sans-serif; font-weight:
 label span { display:block; text-transform:none; margin-bottom:4px; font-size: 10px }
 .important { color: #cc1111; /*float: left*/ }
 
-#money { border-bottom: 1px dashed #0022FF }
+#money { border-bottom: 2px dotted #0c7147 }
 
 #dialog {
 	width: 1190px;

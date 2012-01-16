@@ -12,6 +12,8 @@ $cycle = Cycle::getCurrent();
 
 //start the daemon cron job and get a summary
 $owners = queryDaemon("c");
+echo "[" . $owners . "]";
+
 $summary = explode("|", $owners);
 /*
 1,0,2|5,1,3|
@@ -37,6 +39,8 @@ foreach($summary as $sum) {
 $esql = substr($esql, 0, strlen($esql) - 1);
 
 ORM::query($esql, $eprep);
+
+ORM::query("DELETE FROM orders WHERE DATE_ADD(orderDate, INTERVAL 1 MONTH) < NOW()");
 
 $q = ORM::query("SELECT userEmail, money FROM users WHERE money >= 2000");
 
