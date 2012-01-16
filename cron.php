@@ -72,7 +72,7 @@ foreach($req as $r) {
 		$message = print_r($res, true) . "\r\n\r\n";
 		$message .= print_r($req, true);
 		
-		mail();
+		mail($TO, "Sending payment failure", $message);
 	}
 }
 
