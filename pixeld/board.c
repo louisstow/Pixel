@@ -310,7 +310,7 @@ run_cron(int sock, struct pixel **board)
 					owner->loses++;
 					
 					strcpy(board[row][col].oid, p->oid);
-					board[row][col].cost = 5000;
+					strcpy(board[row][col].cost, "500");
 					
                     //TODO: for the user who lost, update their lose count
                     //TODO: for the user who won, update their win count
