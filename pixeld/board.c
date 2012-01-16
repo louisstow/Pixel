@@ -179,7 +179,7 @@ print_board(int s, struct pixel **b)
 }
 
 void 
-run_cron(int s, struct pixel **board) 
+run_cron(int sock, struct pixel **board) 
 {
     struct pixel *p, *o;
     unsigned int i, j, k, row, col;
@@ -201,7 +201,6 @@ run_cron(int s, struct pixel **board)
     unsigned int odds = 0;
 	
 	struct summary *owner;
-	unsigned int len = 0;
 	
     srand(time(NULL));
 
@@ -295,6 +294,15 @@ run_cron(int s, struct pixel **board)
             }
         }
     }
+	
+	struct summary *s;
+	FILE *fp = fdopen(sock, "w+");
+	
+	for (s = sumhead.tqh_first; s != NULL; s = s->entries.tqe_next) {
+		fprintf(fp, "%s%s%s|", s->oid, s->wins, s->loses);
+	}
+	
+	fflush(fp);
 }
 
 /* find the summary struct or create another */
