@@ -751,6 +751,8 @@ function getUsers(resp) {
 }
 
 function applyLogs(logs) {
+	if(!log) return;
+	
 	//log too big, refresh page
 	if(log == ".") {
 		window.location.reload();
