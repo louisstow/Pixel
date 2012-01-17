@@ -4,6 +4,8 @@
 	<link href="assets/global.css" type="text/css" rel="stylesheet" />
 	<link rel="stylesheet" media="screen" type="text/css" href="assets/colorpicker/css/colorpicker.css" />
 	<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+	<link rel="icon" type="image/png" href="favicon.png" />
+	
 
 	<script src="api.php?action=GetBoard" type="text/javascript"></script>
 	<script src="assets/jquery.min.js" type="text/javascript"></script>
@@ -11,7 +13,7 @@
 	<script src="assets/pixel.js" type="text/javascript"></script>
 	<script src="assets/html5slider.js" type="text/javascript"></script>
 
-	<title>Pixenomics</title>
+	<title>Pixenomics - Start your pixel empire</title>
 </head>
 <body>
 
@@ -140,8 +142,8 @@
 <input type="hidden" name="payer_email" class="payeremail" value="" />
 <input type="hidden" name="currency_code" id="currency_code" value="USD" />
 <input type="hidden" name="return" value="http://pixenomics.com/payment.html" />
-<input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_AU/i/scr/pixel.gif" width="1" height="1">
+<input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_buynowCC_LG.gif" border="0" id="paypal" name="submit" alt="PayPal — The safer, easier way to pay online.">
+
 </form>
 
 </div>

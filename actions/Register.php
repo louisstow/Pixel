@@ -18,12 +18,16 @@ if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
     error("Invalid pixels");
 }
 
+if(count($pixel) > 10) {
+	$pixel = array_slice($pixel, 0, 10);
+}
+
 //validate the selected pixels
 $list = implode($pixel, "|");
 
 $q = queryDaemon("{$list} g");
 //should be 10 dots
-if(strlen($q) >= 10) {
+if(strlen($q) > 10) {
 	error("Pixels taken");
 }
 
