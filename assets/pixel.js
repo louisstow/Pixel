@@ -225,7 +225,7 @@ $(function() {
 			
 			//as long as none of the above
 			count++;
-			if(count >= 9) break;
+			if(count > 9) break;
 		}
 		
 		data.pixel = list;
@@ -443,7 +443,7 @@ $(function() {
 			if(moveSelected) {
 				//if someone owns it
 				if(pixel) {
-					showError("That pixel is taken. You may purchase this pixel for $" + (+pixel.cost).toFixed(2));
+					showError("That pixel is taken. You may purchase this pixel for $" + (pixel.cost / 100).toFixed(2));
 					return;
 				}
 				
@@ -452,6 +452,15 @@ $(function() {
 				});
 				
 				pixels = {length: 0};
+				
+				board[key] = {
+					color: board[moveSelected].color,
+					cost: board[moveSelected].cost,
+					owner: board[moveSelected].owner
+				};
+				
+				delete board[moveSelected];
+				
 				moveSelected = false;
 			} else {
 				if(!pixel || (pixel && pixel.owner != me.userID)) {
@@ -540,6 +549,7 @@ $(function() {
 		
 		if(pixels.length < 10000) {
 			$("div.list a.remove").click(function() {
+				$("#paypal").hide();
 				var id = $(this).parent().find("b").text();
 				var pixel = board[id];
 				console.log(id);
@@ -557,9 +567,15 @@ $(function() {
 					total -= 0.1;
 				}
 				
-				$("div.buy span.total").text(total.toFixed(2));
-				$("div.buy input.amount").val(total.toFixed(2));
-				$("input.item").val(buyList.join(' '));
+				api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
+					$("div.buy span.total").text(total.toFixed(2));
+					$("div.buy input.amount").val(total.toFixed(2));
+					$("input.item").val(resp.orderID);
+					$("input.payer").val(me.userID);
+					$("input.payeremail").val(me.userEmail);
+					$("#paypal").show();
+				});
+				
 				$(this).parent().remove();
 				
 				delete pixels[id];
@@ -703,18 +719,14 @@ function updateBoard(data) {
 		}
 		
 		board[key].color = parse.substr(i, 6);
-		board[key].cost = parseInt(parse.substr(i + 6, 3), 16);
+		board[key].cost = parseInt(parse.substr(i + 6, 3), 16) * 10;
 		board[key].owner = parseInt(parse.substr(i + 9, 4), 16);
-		if(isNaN(board[key].owner)) {
-			console.log(parse.substr(i, 13));
-		}
-		ownr[board[key].owner] = true;
+		
+		if(!owners[board[key].owner]) ownr[board[key].owner] = true;
 		
 		x++;
 		i += 12;
 	}
-	
-	console.log("OWNERS", owners);
 	
 	//convert owners object to param array
 	params.owners = [];
@@ -723,7 +735,8 @@ function updateBoard(data) {
 	}
 	
 	//grab the information about owners
-	api("GetUsers", params, getUsers);
+	if(params.owners.length)
+		api("GetUsers", params, getUsers);
 	
 	redraw();
 }
@@ -791,7 +804,8 @@ function applyLogs(logs) {
 	}
 	
 	redraw();
-	api("GetUsers", param, getUsers);
+	if(param.owners.length)
+		api("GetUsers", param, getUsers);
 }
 
 function tick() {
