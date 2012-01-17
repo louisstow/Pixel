@@ -91,7 +91,7 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 {
 	int i, j, fd, val;
 	struct pixel *pp = &b[r][c];
-	struct pixel **mp, **fp;
+	struct pixel *mp, *fp;
 
 	if (p == NULL) {
 		pp->colour[0] = '.';
@@ -101,9 +101,9 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 	if (p->colour[0] != '.')
 		strcpy(pp->colour, p->colour);
 	if (p->cost[0] != '.')
-		sprintf(pp->cost, "%03d", atoi(p->cost));
+		sprintf(pp->cost, "%03x", strtoul(p->cost, NULL, 16));
 	if (p->oid[0] != '.')
-		sprintf(pp->oid, "%04d", atoi(p->oid));
+		sprintf(pp->oid, "%04x", strtoul(p->oid, NULL, 16));
 	
 	fd = open("journal.data", O_CREAT | O_RDWR);
 
@@ -112,17 +112,16 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 		exit(-1);
 	}
 
+	fp = mp = (struct pixel *)xmalloc(sizeof(struct pixel) * ROWS * COLS);
 	for (i = 0; i < ROWS; i++) {
 		for (j = 0; j < COLS; j++) {
-			val = write(fd, &b[i][j], sizeof(struct journal));
-
-			if (val < sizeof(struct journal)) {
-				perror("write");
-				exit(-1);
-			}
+			memcpy(mp, &b[i][j], sizeof(struct pixel));
+			mp++;
 		}
 	}
+	write(fd, fp, sizeof(struct pixel) * ROWS * COLS);
 
+	free(fp);
 	close(fd);
 
 	return 1;
@@ -140,7 +139,7 @@ read_board(struct pixel **bp)
 
 	for (i = 0; i < ROWS; i++) {
 		for (j = 0; j < COLS; j++) {
-			read(fd, &bp[i][j], sizeof(struct journal));
+			read(fd, &bp[i][j], sizeof(struct pixel));
 		}
 	}
 
