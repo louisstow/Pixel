@@ -155,6 +155,12 @@ $(function() {
     $("#logout").click(function() {
         if(me) {
             api("Logout", function() {
+				if(mypixelsSelected) {
+					$(this).removeClass("active");
+					$("#stage").css("background", "#fff");
+					mypixelsSelected = false;
+				}
+				
                 $("#login, #register").show();
                 $("#welcome, #money").text("").hide();
                 $("#logout, #events, div.events, #change, div.change").hide();
@@ -270,6 +276,7 @@ $(function() {
 					url = "http://" + url;
 				}
 				
+				$("#tooltip").hide();
 				window.open(url);
 			}
 		});
@@ -751,7 +758,7 @@ function getUsers(resp) {
 }
 
 function applyLogs(logs) {
-	if(!log) return;
+	if(!logs) return;
 	
 	//log too big, refresh page
 	if(log == ".") {
