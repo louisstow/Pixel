@@ -150,7 +150,7 @@ else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 	mail($TO, "Too much", $message);
 	
 	$profit += $_POST['mc_fee'] * 100;
-	User::updateCredit($_POST['payer_id'], ($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100);
+	User::updateCredit($_POST['payer_id'], min(0, ($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100));
 }
 
 //update the pixel data

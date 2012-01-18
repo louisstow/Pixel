@@ -172,7 +172,7 @@ won or lost under 'Events'.</p>
 
 <p>To invade a neighbouring pixel you need to increase your odds by choosing a dominant color channel that can beat the opponent's dominant color channel. 
 Each color is made up of different amounts of Red, Green and Blue (we call these color channels). If your color is mostly Red, its dominant color channel
-will be Red.</p>
+will be Red. If your color channels are the same value, it will randomly choose a dominant channel.</p>
 
 <p><span class="red">Red</span> beats <span class="green">Green</span>, <span class="blue">Blue</span> beats <span class="red">Red</span> and 
 <span class="green">Green</span> beats <span class="blue">Blue</span> (similar to Paper, Scissors, Rock).</p>
@@ -185,7 +185,12 @@ will be Red.</p>
 
 <div id="stage">
 
-<div id="tooltip"></div>
+<div id="tooltip">
+<span class="message"></span>
+<span class="url"></span>
+<span class="price"></span>
+</div>
+
 <canvas id="canvas" width="1200" height="1000">
 	<p class="browser">To use Pixenomics, please update or switch your browser to one of the following: Chrome, Firefox, Opera, IE10</p>
 </canvas>

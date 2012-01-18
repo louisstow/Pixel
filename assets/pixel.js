@@ -251,13 +251,18 @@ $(function() {
 			var pixel = board[Math.floor(pos.x) + ',' + Math.floor(pos.y)];
 			
 			if(!pixel) {
-				$("#tooltip").hide().text("");
+				$("#tooltip").hide();
+				$("#tooltip span").text("");
 				return;
 			}
 			
 			var info = owners[+pixel.owner];
 			var globalPos = translateGlobal(e.clientX, e.clientY);
-			$("#tooltip").text(info.message).show().css({
+			$("#tooltip .message").text(info.message);
+			$("#tooltip .url").text(info.url);
+			$("#tooltip .price").text("$" + (pixel.cost / 100).toFixed(2));
+			
+			$("#tooltip").show().css({
 				left: globalPos.left + 15,
 				top: globalPos.top
 			});
@@ -823,6 +828,11 @@ function tick() {
 	var hours = ~~(diff / 60 / 60);
 	var minutes = ~~(diff / 60) % 60;
 	var seconds = diff % 60;
+	
+	if(hours < 0 && minutes < 0 && seconds <= -5) {
+		window.location.reload();
+		return;
+	}
 	
 	if(hours < 0) hours = 0;
 	if(minutes < 0) minutes = 0;
