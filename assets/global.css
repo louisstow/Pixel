@@ -87,6 +87,12 @@ span.hintcolor { font-weight: 700 }
 #tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000; max-width: 200px;
 text-align: left; }
 
+#tooltip span { margin: 2px }
+
+#tooltip .message { font-weight: bold }
+#tooltip .url { display: block; font-style: italic; color: #444; }
+#tooltip .price { font-family: Georgia; }
+
 .list { max-height: 100px; overflow: auto; }
 .list ul { padding: 0; margin: 0; list-style: none }
 .list li { padding: 5px }
@@ -104,7 +110,7 @@ button { clear: both; font-family: 'Droid Sans', Arial, sans-serif; font-weight:
 label span { display:block; text-transform:none; margin-bottom:4px; font-size: 10px }
 .important { color: #cc1111; /*float: left*/ }
 
-#money { border-bottom: 2px dotted #0c7147 }
+#money { border-bottom: 2px dotted #0c7147; font-family: Georgia; }
 
 #dialog {
 	width: 1190px;

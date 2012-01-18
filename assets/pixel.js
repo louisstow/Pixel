@@ -829,7 +829,7 @@ function tick() {
 	var minutes = ~~(diff / 60) % 60;
 	var seconds = diff % 60;
 	
-	if(hours < 0 && minutes < 0 && seconds <= -5) {
+	if(hours < 0 && minutes < 0 && seconds <= -15) {
 		window.location.reload();
 		return;
 	}

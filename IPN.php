@@ -62,7 +62,7 @@ if($_POST['mc_currency'] !== "USD") {
 	exit;
 }
 
-$q = ORM::query("SELECT * FROM orders WHERE orderID = ? AND userID = ?", array($_POST['item_number'], $_POST['payer_id']));
+$q = ORM::query("SELECT * FROM orders WHERE orderID = ?", array($_POST['item_number']));
 $data = $q->fetch(PDO::FETCH_ASSOC);
 
 if(!$data) {
@@ -72,6 +72,8 @@ if(!$data) {
 	mail($TO, "Invalid user or order ID", $message);
 	exit;
 }
+
+$user = $data['userID'];
 
 $pixels = explode(' ', $data['pixels']);
 
@@ -139,7 +141,7 @@ if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 	$message .= $cost;
 	
 	mail($TO, "Incorrect price", $message);
-	//User::updateCredit($_POST['payer_id'], ($_POST['mc_gross'] * 100));
+	//User::updateCredit($user, ($_POST['mc_gross'] * 100));
 	exit;
 } //paid too much, credit the difference
 else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
@@ -150,12 +152,12 @@ else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 	mail($TO, "Too much", $message);
 	
 	$profit += $_POST['mc_fee'] * 100;
-	User::updateCredit($_POST['payer_id'], min(0, ($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100));
+	User::updateCredit($user, min(0, ($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100));
 }
 
 //update the pixel data
-$user = dechex($_POST['payer_id']);
-queryDaemon("{$list} w AAAAAA 1f4 {$user} " . time());
+$huser = dechex($user);
+queryDaemon("{$list} w AAAAAA 1f4 {$huser} " . time());
 
 //give the pixels immunity
 queryDaemon("{$list} s immunity 1");
@@ -165,7 +167,7 @@ $profit -= ($_POST['mc_fee'] * 100);
 Stat::updateProfit($profit);
 
 //log as events
-I("Event")->create($_POST['payer_id'], NOW(), 0, "You bought {$count} pixels");
+I("Event")->create($user, NOW(), 0, "You bought {$count} pixels");
 
 foreach($owners as $id => $data) {
 	I("Event")->create($id, NOW(), 0, "You sold {$data['sold']} pixels");
