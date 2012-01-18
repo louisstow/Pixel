@@ -22,7 +22,7 @@ $data = toArray($get);
 
 foreach($data as $pixel) {
 	if($pixel['owner'] != USER) {
-		error("Not your pixels (" . $pixel['owner'] . ") vs (" . USER . ")");
+		error("Not your pixels");
 	}
 }
 

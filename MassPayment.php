@@ -1,11 +1,11 @@
 <?php
 function MassPay($nvpStr_) {
-	$environment = "sandbox";
+	$environment = "notsandbox";
 
 	// Set up your API credentials, PayPal end point, and API version.
-	$API_UserName = urlencode('louiss_1325993264_biz_api1.gmail.com');
-	$API_Password = urlencode('1325993289');
-	$API_Signature = urlencode('A00vXqh.LZyEwG.O.JDIt52uJlP6A7XfVGKzZXK9wJLDrKE4e6u8ESPN');
+	$API_UserName = urlencode('louisstow_api1.gmail.com');
+	$API_Password = urlencode('PW7MA7YV6ZM5MS6V');
+	$API_Signature = urlencode('ActcUiQKPs9BXzkGx1aLSemWSlWSAy9aQEEjQ-lM6L-cCCA73S16HUkM');
 	$API_Endpoint = "ssl://api-3t.paypal.com";
 	
 	if("sandbox" === $environment || "beta-sandbox" === $environment) {

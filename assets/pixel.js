@@ -537,16 +537,16 @@ $(function() {
 				}
 			} else {
 				//add 10 cents to the price
-				cost = 0.1;
+				cost = 10;
 			}
 			
 			total += cost;
 			buyList.push(pix);
 			
-			if(pixels.length < 10000) html += "<li><b>" + pix + "</b><i>$" + cost.toFixed(2) + "</i><a class='remove'>remove</a></li>";
+			if(pixels.length < 10000) html += "<li><b>" + pix + "</b><i>$" + (cost / 100).toFixed(2) + "</i><a class='remove'>remove</a></li>";
 		}
 		
-		if(total < 2) {
+		if(total < 200) {
 			showError("You must buy at least $2.00 worth of pixels.");
 			$(this).removeClass("active");
 			return;
@@ -571,12 +571,12 @@ $(function() {
 				if(pixel) {
 					total -= pixel.cost;
 				} else {
-					total -= 0.1;
+					total -= 10;
 				}
 				
 				api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
-					$("div.buy span.total").text(total.toFixed(2));
-					$("div.buy input.amount").val(total.toFixed(2));
+					$("div.buy span.total").text((total / 100).toFixed(2));
+					$("div.buy input.amount").val((total / 100).toFixed(2));
 					$("input.item").val(resp.orderID);
 					$("input.payer").val(me.userID);
 					$("input.payeremail").val(me.userEmail);
@@ -591,8 +591,8 @@ $(function() {
 		}
 		
 		api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
-			$("div.buy span.total").text(total.toFixed(2));
-			$("div.buy input.amount").val(total.toFixed(2));
+			$("div.buy span.total").text((total / 100).toFixed(2));
+			$("div.buy input.amount").val((total / 100).toFixed(2));
 			$("input.item").val(resp.orderID);
 			$("input.payer").val(me.userID);
 			$("input.payeremail").val(me.userEmail);
@@ -716,9 +716,6 @@ function updateBoard(data) {
 			y++;
 		}
 		
-		if(x === 1000) {
-			console.log("WTF", i, x, y, parse.substr(i, 13));
-		}
 		var key = x + "," + y;
 		
 		if(!board[key]) {
@@ -819,7 +816,7 @@ function applyLogs(logs) {
 
 function tick() {
 	//convert current time to UTC+0
-	var date = unixtime(new Date());
+	var date = ~~(+ new Date / 1000);
 
 	var diff = nextCycle - date;
 	

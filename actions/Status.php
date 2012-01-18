@@ -6,7 +6,7 @@ $logs = queryDaemon("l {$time}");
 //grab the latest cycle
 $q = ORM::query("SELECT * FROM cycles WHERE cycleID = (SELECT MAX(cycleID) FROM cycles)");
 $cycle = $q->fetch(PDO::FETCH_ASSOC);
-$cycle['cycleTime'] .= " UTC+10:00";
+$cycle['cycleTime'] .= " UTC+0:00";
 
 $json = array(
 	"log" => $logs,
