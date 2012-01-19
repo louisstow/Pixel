@@ -14,7 +14,8 @@ class Event extends ORM {
         $q = ORM::query("SELECT eventDate, cycleID, event 
                         FROM events 
                         WHERE userID = ? 
-                        ORDER BY eventDate desc", array($user));
+                        ORDER BY eventDate desc
+						LIMIT 30", array($user));
         return $q;
     }
 }
