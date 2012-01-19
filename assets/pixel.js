@@ -465,6 +465,7 @@ $(function() {
 				
 				pixels = {length: 0};
 				
+				/*
 				board[key] = {
 					color: board[moveSelected].color,
 					cost: board[moveSelected].cost,
@@ -472,6 +473,7 @@ $(function() {
 				};
 				
 				delete board[moveSelected];
+				*/
 				
 				moveSelected = false;
 			} else {
