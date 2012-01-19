@@ -36,7 +36,7 @@
 	<ul>
 		<li><a class="instructions"><u>I</u>nstructions</a></li>
 		<li><a class="mypixels"><u>M</u>y Pixels</a></li>
-		<li><a class="buypixel"><u>B</u>uy</a></li>
+		<li><a class="buypixel"><u>B</u>uy</a><span id="counter"></span></li>
 		<li><a class="sellpixel">S<u>e</u>ll</a></li>
 	</ul>
 </div>
@@ -195,6 +195,6 @@ will be Red. If your color channels are the same value, it will randomly choose 
 	<p class="browser">To use Pixenomics, please update or switch your browser to one of the following: Chrome, Firefox, Opera, IE10</p>
 </canvas>
 </div>
-<div id="footer">&copy; Pixenomics 2012 - <a href="mailto:contact@pixenomics.com">contact@pixenomics.com</a></div>
+<div id="footer">&copy; Pixenomics 2012 - <a href="mailto:saul@pixenomics.com">saul@pixenomics.com</a></div>
 </body>
 </html>
