@@ -12,9 +12,18 @@ if(preg_match("/[^0-9,]/i", $to)) {
 
 //get pixel data
 $f = queryDaemon($from . " g");
+
+if($f == ".") {
+	error("Invalid pixels");
+}
+
 $color = substr($f, 0, 6);
 $cents = substr($f, 6, 3);
 $owner = substr($f, 9, 4);
+
+if(hexdec($owner) != USER) {
+	error("Not your pixel " . USER . " vs " . hexdec($owner));
+}
 
 $t = queryDaemon($to . " g");
 if($t !== ".") {
