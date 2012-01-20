@@ -24,12 +24,13 @@ var canvas,
 	sellList,
 	buyList,
 	total,
-	nextCycle = unixtime(new Date()),
+	nextCycle = ~~(new Date / 1000),
 	currentTimestamp;
 
 var $hours,
 	$minutes,
-	$seconds;
+	$seconds,
+	$cycleNum;
 	
 var RecaptchaOptions = {
     theme : 'white'
@@ -118,6 +119,7 @@ $(function() {
 	$hours = $("span.hours");
 	$minutes = $("span.minutes");
 	$seconds = $("span.seconds");
+	$cycleNum = $("span.num");
 	
 	if(window.DATA) updateBoard(DATA);
 	
@@ -134,7 +136,7 @@ $(function() {
 	//check if the user is logged in
 	api("IsLogged", function(resp) {
 		if(resp.error) {
-			$("#login,#register").show();
+			$("#login,#register,#lostp").show();
 			$("a.instructions").trigger("click");
 		} else {
 			updateUser(resp);
@@ -143,12 +145,29 @@ $(function() {
 	
 	$("#login").click(function() {
 		$("div.login").show();
-		$("div.register").hide();
+		$("div.register, div.lostpass").hide();
 	});
 	
 	$("#register").click(function() {
-		$("div.login").hide();
 		$("div.register").show();
+		$("div.login, div.lostpass").hide();
+	});
+	
+	$("#lostp").click(function() {
+		$("div.lostpass").show();
+		$("div.login, div.register").hide();
+	});
+	
+	$("div.lostpass button").click(function() {
+		var param = {
+			email: $("div.lostpass input.email").val()
+		};
+		
+		api("LostPass", param, function() {
+			$("div.lostpass input.email").val("");
+			$("#lostp").trigger("click");
+			showError("An email has been sent with details to change your password.");
+		});
 	});
 
     $("#logout").click(function() {
@@ -160,7 +179,7 @@ $(function() {
 					mypixelsSelected = false;
 				}
 				
-                $("#login, #register").show();
+                $("#login, #register, #lostp").show();
                 $("#welcome, #money").text("").hide();
                 $("#logout, #events, div.events, #change, div.change").hide();
 				me = null;
@@ -238,8 +257,14 @@ $(function() {
 		data.pixel = list;
 		
 		api("Register", data, function(resp) {
+			if(resp.error) {
+				showError(resp.error);
+				Recaptcha.reload()
+				return;
+			}
+			
 			updateUser(resp);
-		});
+		}, false);
 	});
 	
 	$("a.default").click(function() {
@@ -287,23 +312,6 @@ $(function() {
 			}
 		});
 	}).trigger("click");
-	
-	$("#lostpass").hide();
-	$("a.lostpass").click(function() {
-		$("#lostpass").toggle();
-		window.scrollTo(0, $(document).height());
-	});
-	
-	$("#lostpass button").click(function() {
-		var param = {
-			email: $("#lostpass input.email").val()
-		};
-		
-		api("LostPass", param, function() {
-			$("#lostpass input.email").val("");
-			$("a.lostpass").trigger("click");
-		});
-	});
 	
 	$("a.instructions").click(function() {
 		if($("div.instr").is(":visible")) {
@@ -694,6 +702,7 @@ $(function() {
 	});
 	
 	tick();
+	status();
 	setInterval(tick, 1000);
 	setInterval(status, 1000 * 10);
 });
@@ -701,12 +710,14 @@ $(function() {
 //should grab logs
 function status() {
 	api("Status", {time: currentTimestamp}, function(resp) {
-		nextCycle = ~~(Date.parse(resp.cycle.cycleTime) / 1000);
+		nextCycle = +resp.cycle.cycleTime;
 		currentTimestamp = resp.time;
 		
 		if(resp.events) {
 			updateEvents(resp.events);
 		}
+		
+		$cycleNum.text(resp.cycle.cycleID);
 		
 		applyLogs(resp.log);
 	});
@@ -868,7 +879,7 @@ function updateUser(user) {
 	$("div.login").hide();
 	$("div.login input").val("");
 	$("div.register input").val("");
-	$("#login,#register").hide();
+	$("#login,#register,#lostp").hide();
 	$("#welcome").text(user.userEmail).show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
 	$("#events,#logout,#change").show();

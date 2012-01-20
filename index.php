@@ -38,7 +38,10 @@
 		<li><a class="mypixels"><u>M</u>y Pixels</a></li>
 		<li><a class="buypixel"><u>B</u>uy</a><span id="counter"></span></li>
 		<li><a class="sellpixel">S<u>e</u>ll</a></li>
+		<li id="logos"></li>
+		<li id="welcome"></li>
 	</ul>
+
 </div>
 
 <div id="top">
@@ -46,7 +49,8 @@
 	<div id="details">
 		<a id="login">Login</a>
 		<a id="register">Register</a>
-		<span id="welcome"></span>
+		<a id="lostp">Lost Password</a>
+		
 		<span id="money" title="You will be paid via PayPal once your money reaches $20."></span>
 		<a id="events">Events</a>
 		<a id="change">Details</a>
@@ -54,6 +58,7 @@
 	</div>
 
 	<div id="hint">
+	Cycle <span class="num"></span> -
 	Next cycle in <span class="hours"></span> <span class="minutes"></span> <span class="seconds"></span>.
 	</div>
 
@@ -83,11 +88,18 @@
 	
 	<h1><img src="assets/images/logo.png" alt="Pixenomics" /></h1>
 
-	<div class="box login">
-		<label>Email: <input type="text" class="email" /></label>
-		<label>Password: <input type="password" class="pass" /></label>
-		<button>Login</button>
-	</div>
+<div class="box lostpass">
+<label>Email: <input type="text" class="email" /></label>
+<p class="important">An email will be sent to the provided address with a new password. Login and change it as soon as you recieve it. Contact support if
+the email does not appear.</p>
+<button>Recover</button>
+</div>
+	
+<div class="box login">
+	<label>Email: <input type="text" class="email" /></label>
+	<label>Password: <input type="password" class="pass" /></label>
+	<button>Login</button>
+</div>
 
 <div class="box register">
 
@@ -198,12 +210,11 @@ will be Red. If your color channels are the same value, it will randomly choose 
 	<p class="browser">To use Pixenomics, please update or switch your browser to one of the following: Chrome, Firefox, Opera, IE10</p>
 </canvas>
 </div>
-<div id="footer">&copy; Pixenomics 2012 - <a href="mailto:saul@pixenomics.com">saul@pixenomics.com</a> | 
-<a class="lostpass">Lost Password</a>
-<div id="lostpass">
-<input type="text" class="email" />
-<button>Recover</button>
-</div>
+<div id="footer">&copy; Pixenomics 2012 - 
+
+Contact
+<a href="mailto:saul@pixenomics.com">Saul</a> or
+<a href="mailto:jgs@pixenomics.com">Jim</a>
 </div>
 </body>
 </html>

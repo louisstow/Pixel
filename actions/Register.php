@@ -18,6 +18,15 @@ if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
     error("Invalid pixels");
 }
 
+$email = trim($email);
+$url = trim($url);
+$message = trim($message);
+
+//basic field validation
+if($email == "" || $url == "" || $message == "" || $password == "") {
+	error("Please fill in all fields.");
+}
+
 if(count($pixel) > 10) {
 	$pixel = array_slice($pixel, 0, 10);
 }
