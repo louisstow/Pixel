@@ -112,7 +112,7 @@ the email does not appear.</p>
 		<h3>2. Pixel Properties</h3>
 		<label>URL: <input type="text" class="url" /></label>
 		<label>Hover Text: <input type="text" class="message" /></label>
-		<label>Color: <input type="text" class="color" /></label>
+		<label>Color: <input type="text" class="color" maxlength="6" value="ff0000" /></label>
 		<span>These settings will apply to your first 10 pixels.</span>
 	</div>
 
