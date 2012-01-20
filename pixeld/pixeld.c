@@ -44,7 +44,6 @@ create_listen(char *port)
 		if (sfd == -1)
 			continue;
 		optval = 1;
-		setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval); 
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 
