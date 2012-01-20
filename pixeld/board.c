@@ -457,7 +457,8 @@ parse_query(int sock, char *qry, struct pixel **board)
 		
 		free(key);
 		free(value);
-	}
+	} else
+		return 1;
 
 	free(c);
 	free(s);
