@@ -119,7 +119,7 @@ $(function() {
 	$minutes = $("span.minutes");
 	$seconds = $("span.seconds");
 	
-	updateBoard(DATA);
+	if(window.DATA) updateBoard(DATA);
 	
 	$(".color").each(function() {
 		var self = $(this);
@@ -133,7 +133,6 @@ $(function() {
 	
 	//check if the user is logged in
 	api("IsLogged", function(resp) {
-		console.log(resp);
 		if(resp.error) {
 			$("#login,#register").show();
 			$("a.instructions").trigger("click");
@@ -183,6 +182,8 @@ $(function() {
 		var data = {};
 		data.message = $("div.change input.message").val();
 		data.url = $("div.change input.url").val();
+		data.oldp = $("div.change input.old").val();
+		data.newp = $("div.change input.newp").val();
 		
 		api("Details", data, function() {
 			showError("Details updated");
@@ -281,11 +282,28 @@ $(function() {
 					url = "http://" + url;
 				}
 				
-				$("#tooltip").hide();
 				window.open(url);
+				$("#tooltip").hide();
 			}
 		});
 	}).trigger("click");
+	
+	$("#lostpass").hide();
+	$("a.lostpass").click(function() {
+		$("#lostpass").toggle();
+		window.scrollTo(0, $(document).height());
+	});
+	
+	$("#lostpass button").click(function() {
+		var param = {
+			email: $("#lostpass input.email").val()
+		};
+		
+		api("LostPass", param, function() {
+			$("#lostpass input.email").val("");
+			$("a.lostpass").trigger("click");
+		});
+	});
 	
 	$("a.instructions").click(function() {
 		if($("div.instr").is(":visible")) {
@@ -479,7 +497,6 @@ $(function() {
 			} else {
 				if(!pixel || (pixel && pixel.owner != me.userID)) {
 					showError("You can only move your own pixels.");
-					console.log(pixel, me);
 					return;
 				}
 				
@@ -566,7 +583,6 @@ $(function() {
 				$("#paypal").hide();
 				var id = $(this).parent().find("b").text();
 				var pixel = board[id];
-				console.log(id);
 				
 				//loop over list
 				for(var i = 0; i < buyList.length; ++i) {
@@ -699,7 +715,6 @@ function status() {
 function updateBoard(data) {
 	currentTimestamp = data.substr(0, 10);
 	parse = data.substr(10);
-	console.log(parse.length);
 	var len = parse.length;
 	var x = 0, y = 0;
 	var params = {};
@@ -753,10 +768,12 @@ function updateBoard(data) {
 }
 
 function getUsers(resp) {
-	console.log(resp);
 	var i = 0, l = resp.length, user;
 	for(;i < l; ++i) {
 		user = resp[i];
+		if(user.url.substr(0, 7) !== "http://" && user.url.substr(0, 8) !== "https://") {
+			user.url = "http://" + user.url;
+		}
 		owners[+user.userID] = {message: user.message, url: user.url};
 	}
 }
@@ -849,16 +866,19 @@ function updateUser(user) {
 	me = user;
 	$("div.register").hide();
 	$("div.login").hide();
+	$("div.login input").val("");
+	$("div.register input").val("");
 	$("#login,#register").hide();
 	$("#welcome").text(user.userEmail).show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
 	$("#events,#logout,#change").show();
 	$("div.instr").hide();
+	$("div.change input.url").val(user.url);
+	$("div.change input.message").val(user.message);
 	status();
 }
 
 function updateEvents(data) {
-	console.log(data);
     //loop over all events and create html
     var i = 0, len = data.length;
     var html = "";
@@ -894,7 +914,6 @@ function selectPixel(x, y) {
 	}
 		
 	var key = x + "," + y;
-	console.log(key);
 	if(pixels[key]) {
 		delete pixels[key];
 		pixels.length--;
@@ -926,7 +945,6 @@ function startZoomer(level) {
 			top: (e.clientY - stagePos.top + body.scrollTop) - h / 2
 		});
 	}).click(function(e) {
-		console.log(e, stagePos);
 		drawZoom(
 			((e.clientX - stagePos.left + body.scrollLeft) - w / 2),
 			((e.clientY - stagePos.top + body.scrollTop) - h / 2),
@@ -1020,7 +1038,6 @@ function drawBoard(owner) {
 function drawZoom(startX, startY, level, owner) {
 	var endX = startX + canvasWidth / level;
 	var endY = startY + canvasHeight / level;
-	console.log(startX, startY, endX, endY);
 	var x, y, pixel, index;
 	
 	zoomPos.left = startX;
@@ -1043,7 +1060,6 @@ function drawZoom(startX, startY, level, owner) {
 			
 			//if only draw the specified owner
 			if(owner && pixel.owner != owner) {
-				console.log(owner, pixel.owner);
 				continue;
 			}
 			
@@ -1085,7 +1101,6 @@ function translateGlobal(x, y) {
 }
 
 function showError(msg) {
-	console.error(msg);
 	var $d = $("#dialog");
 	$d.css("left", ($(window).width() - 1200) / 2).show().html(msg).animate({bottom: 0}, 150).delay(msg.length * 100)
 		.animate({bottom: -50}, 150, function() {
@@ -1127,7 +1142,7 @@ function api(action, data, callback, showErrorFlag) {
 			if(callback) callback(data);
 		},
 		error: function(a,e,c) {
-			console.log(a,e,c);
+			console.error(a,e,c);
 		}
 	});
 };

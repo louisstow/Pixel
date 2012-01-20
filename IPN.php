@@ -79,7 +79,10 @@ $pixels = explode(' ', $data['pixels']);
 
 //check for sql injection
 if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
-    error("Invalid pixels");
+    $message = print_r($_POST, true) . "\r\n";
+	
+	mail($TO, "Invalid pixels", $message);
+	exit;
 }
 
 //grab pixels
@@ -98,9 +101,8 @@ $count = 0;
 //loop over every specified pixel and double check
 foreach($pixels as $pix) {
     //skip if not for sale
-	if(isset($result[$i])) {
+	if(isset($result[$i]) && $result[$i] !== false) {
 		$pixel = $result[$i];
-		if(!$pixel) continue;
 		
 		//increase the total cost
 		$cost += $pixel['cost'];
