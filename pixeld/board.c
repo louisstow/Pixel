@@ -261,7 +261,10 @@ run_cron(int sock, struct pixel **board)
 
 
                 //if the pixel has immunity skip them and take away immunity
-                if (get_meta(row, col, "immunity", board) == 1) {
+                fprintf(stderr, "%d %d immunity %d\n", col, row, get_meta(row, col, "immunity", board));
+				
+				if (get_meta(row, col, "immunity", board) == 1) {
+					fprintf(stderr, "%d %d Has immunity\n", col, row);
                     set_meta(row, col, "immunity", "0", board);
                     continue;
                 }

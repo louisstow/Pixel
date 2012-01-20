@@ -24,12 +24,13 @@ var canvas,
 	sellList,
 	buyList,
 	total,
-	nextCycle = unixtime(new Date()),
+	nextCycle = ~~(new Date / 1000),
 	currentTimestamp;
 
 var $hours,
 	$minutes,
-	$seconds;
+	$seconds,
+	$cycleNum;
 	
 var RecaptchaOptions = {
     theme : 'white'
@@ -118,8 +119,9 @@ $(function() {
 	$hours = $("span.hours");
 	$minutes = $("span.minutes");
 	$seconds = $("span.seconds");
+	$cycleNum = $("span.num");
 	
-	updateBoard(DATA);
+	if(window.DATA) updateBoard(DATA);
 	
 	$(".color").each(function() {
 		var self = $(this);
@@ -133,9 +135,8 @@ $(function() {
 	
 	//check if the user is logged in
 	api("IsLogged", function(resp) {
-		console.log(resp);
 		if(resp.error) {
-			$("#login,#register").show();
+			$("#login,#register,#lostp").show();
 			$("a.instructions").trigger("click");
 		} else {
 			updateUser(resp);
@@ -144,12 +145,29 @@ $(function() {
 	
 	$("#login").click(function() {
 		$("div.login").show();
-		$("div.register").hide();
+		$("div.register, div.lostpass").hide();
 	});
 	
 	$("#register").click(function() {
-		$("div.login").hide();
 		$("div.register").show();
+		$("div.login, div.lostpass").hide();
+	});
+	
+	$("#lostp").click(function() {
+		$("div.lostpass").show();
+		$("div.login, div.register").hide();
+	});
+	
+	$("div.lostpass button").click(function() {
+		var param = {
+			email: $("div.lostpass input.email").val()
+		};
+		
+		api("LostPass", param, function() {
+			$("div.lostpass input.email").val("");
+			$("#lostp").trigger("click");
+			showError("An email has been sent with details to change your password.");
+		});
 	});
 
     $("#logout").click(function() {
@@ -161,7 +179,7 @@ $(function() {
 					mypixelsSelected = false;
 				}
 				
-                $("#login, #register").show();
+                $("#login, #register, #lostp").show();
                 $("#welcome, #money").text("").hide();
                 $("#logout, #events, div.events, #change, div.change").hide();
 				me = null;
@@ -183,6 +201,8 @@ $(function() {
 		var data = {};
 		data.message = $("div.change input.message").val();
 		data.url = $("div.change input.url").val();
+		data.oldp = $("div.change input.old").val();
+		data.newp = $("div.change input.newp").val();
 		
 		api("Details", data, function() {
 			showError("Details updated");
@@ -237,8 +257,14 @@ $(function() {
 		data.pixel = list;
 		
 		api("Register", data, function(resp) {
+			if(resp.error) {
+				showError(resp.error);
+				Recaptcha.reload()
+				return;
+			}
+			
 			updateUser(resp);
-		});
+		}, false);
 	});
 	
 	$("a.default").click(function() {
@@ -281,8 +307,8 @@ $(function() {
 					url = "http://" + url;
 				}
 				
-				$("#tooltip").hide();
 				window.open(url);
+				$("#tooltip").hide();
 			}
 		});
 	}).trigger("click");
@@ -479,7 +505,6 @@ $(function() {
 			} else {
 				if(!pixel || (pixel && pixel.owner != me.userID)) {
 					showError("You can only move your own pixels.");
-					console.log(pixel, me);
 					return;
 				}
 				
@@ -566,7 +591,6 @@ $(function() {
 				$("#paypal").hide();
 				var id = $(this).parent().find("b").text();
 				var pixel = board[id];
-				console.log(id);
 				
 				//loop over list
 				for(var i = 0; i < buyList.length; ++i) {
@@ -678,6 +702,7 @@ $(function() {
 	});
 	
 	tick();
+	status();
 	setInterval(tick, 1000);
 	setInterval(status, 1000 * 10);
 });
@@ -685,12 +710,14 @@ $(function() {
 //should grab logs
 function status() {
 	api("Status", {time: currentTimestamp}, function(resp) {
-		nextCycle = ~~(Date.parse(resp.cycle.cycleTime) / 1000);
+		nextCycle = +resp.cycle.cycleTime;
 		currentTimestamp = resp.time;
 		
 		if(resp.events) {
 			updateEvents(resp.events);
 		}
+		
+		$cycleNum.text(resp.cycle.cycleID);
 		
 		applyLogs(resp.log);
 	});
@@ -699,7 +726,6 @@ function status() {
 function updateBoard(data) {
 	currentTimestamp = data.substr(0, 10);
 	parse = data.substr(10);
-	console.log(parse.length);
 	var len = parse.length;
 	var x = 0, y = 0;
 	var params = {};
@@ -753,10 +779,12 @@ function updateBoard(data) {
 }
 
 function getUsers(resp) {
-	console.log(resp);
 	var i = 0, l = resp.length, user;
 	for(;i < l; ++i) {
 		user = resp[i];
+		if(user.url.substr(0, 7) !== "http://" && user.url.substr(0, 8) !== "https://") {
+			user.url = "http://" + user.url;
+		}
 		owners[+user.userID] = {message: user.message, url: user.url};
 	}
 }
@@ -849,16 +877,19 @@ function updateUser(user) {
 	me = user;
 	$("div.register").hide();
 	$("div.login").hide();
-	$("#login,#register").hide();
+	$("div.login input").val("");
+	$("div.register input").val("");
+	$("#login,#register,#lostp").hide();
 	$("#welcome").text(user.userEmail).show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
 	$("#events,#logout,#change").show();
 	$("div.instr").hide();
+	$("div.change input.url").val(user.url);
+	$("div.change input.message").val(user.message);
 	status();
 }
 
 function updateEvents(data) {
-	console.log(data);
     //loop over all events and create html
     var i = 0, len = data.length;
     var html = "";
@@ -894,7 +925,6 @@ function selectPixel(x, y) {
 	}
 		
 	var key = x + "," + y;
-	console.log(key);
 	if(pixels[key]) {
 		delete pixels[key];
 		pixels.length--;
@@ -926,7 +956,6 @@ function startZoomer(level) {
 			top: (e.clientY - stagePos.top + body.scrollTop) - h / 2
 		});
 	}).click(function(e) {
-		console.log(e, stagePos);
 		drawZoom(
 			((e.clientX - stagePos.left + body.scrollLeft) - w / 2),
 			((e.clientY - stagePos.top + body.scrollTop) - h / 2),
@@ -1020,7 +1049,6 @@ function drawBoard(owner) {
 function drawZoom(startX, startY, level, owner) {
 	var endX = startX + canvasWidth / level;
 	var endY = startY + canvasHeight / level;
-	console.log(startX, startY, endX, endY);
 	var x, y, pixel, index;
 	
 	zoomPos.left = startX;
@@ -1043,7 +1071,6 @@ function drawZoom(startX, startY, level, owner) {
 			
 			//if only draw the specified owner
 			if(owner && pixel.owner != owner) {
-				console.log(owner, pixel.owner);
 				continue;
 			}
 			
@@ -1085,7 +1112,6 @@ function translateGlobal(x, y) {
 }
 
 function showError(msg) {
-	console.error(msg);
 	var $d = $("#dialog");
 	$d.css("left", ($(window).width() - 1200) / 2).show().html(msg).animate({bottom: 0}, 150).delay(msg.length * 100)
 		.animate({bottom: -50}, 150, function() {
@@ -1127,7 +1153,7 @@ function api(action, data, callback, showErrorFlag) {
 			if(callback) callback(data);
 		},
 		error: function(a,e,c) {
-			console.log(a,e,c);
+			console.error(a,e,c);
 		}
 	});
 };
