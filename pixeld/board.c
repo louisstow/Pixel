@@ -105,7 +105,7 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 	if (p->oid[0] != '.')
 		sprintf(pp->oid, "%04x", strtoul(p->oid, NULL, 16));
 	
-	fd = open("journal.data", O_CREAT | O_RDWR);
+	fd = open("journal.data", O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
 
 	if (fd == -1) {
 		perror("open");
