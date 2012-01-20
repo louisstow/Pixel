@@ -355,9 +355,9 @@ find_owner(char *oid)
 int
 parse_query(int sock, char *qry, struct pixel **board)
 {
-	int i, *c, *cp;
+	int i, *c = NULL, *cp;
 	FILE *f;
-	char *s,  *qp, timestamp[32], *key, *value;
+	char *s = NULL,  *qp, timestamp[32], *key, *value;
 	struct pixel *bp;
 	struct journal *jp;
 
@@ -457,11 +457,13 @@ parse_query(int sock, char *qry, struct pixel **board)
 		
 		free(key);
 		free(value);
-	} else
-		return 1;
+	}
 
-	free(c);
-	free(s);
+	if (c != NULL)
+		free(c);
+	if (c != NULL)
+		free(s);
+
 	return 1;
 }
 
