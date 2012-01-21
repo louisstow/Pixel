@@ -19,11 +19,9 @@
 int
 create_listen(char *port)
 {
-	int sfd, s, optval;
+	int sfd, s;
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
-	struct sockaddr_storage peer_addr;
-	socklen_t l;
 
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_UNSPEC;
@@ -43,7 +41,6 @@ create_listen(char *port)
 		            rp->ai_protocol);
 		if (sfd == -1)
 			continue;
-		optval = 1;
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 
@@ -83,7 +80,6 @@ main(int argc, char *argv[])
 	int fd, sock, r;
 	socklen_t sin_size;
 	struct pixel **board;
-	struct journal **j;
 	struct sockaddr_storage r_addr;
 
 	sock = create_listen("5607");
