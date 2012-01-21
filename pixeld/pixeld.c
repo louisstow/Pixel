@@ -14,7 +14,7 @@
 #include "pixeld.h"
 #include "board.h"
 
-#define BUF_SIZE 4096
+#define BUF_SIZE (4096 * 1024)
 
 int
 create_listen(char *port)
