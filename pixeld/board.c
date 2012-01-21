@@ -48,13 +48,24 @@ struct pixel
 	
 	for (i = 0; i < rows; i++) {
 		board[i] = xmalloc(sizeof(struct pixel) * cols);
-		for (j = 0; j < cols; j++) {
+		for (j = 0; j < cols; j++)
 			board[i][j].colour[0] = '.';
-			board[i][j].immunity = '0';
-		}
 	}
 
 	return board;
+}
+
+void
+init_metadata(struct pixel **board, unsigned int rows, unsigned int cols)
+{
+	int i, j;
+
+	for (i = 0; i < rows; i++) {
+		for (j = 0; j < cols; j++) {
+			board[i][j].mdata = xmalloc(sizeof(struct metadata));
+			board[i][j].mdata->immunity = '0';
+		}
+	}
 }
 
 void 
@@ -156,7 +167,7 @@ get_meta(int row, int col, char *type, struct pixel **board)
 	bp = &board[row][col];
 
 	if (!strcmp(type, "immunity")) {
-		if (bp->immunity == '1')
+		if (bp->mdata->immunity == '1')
 			return 1;
 		else
 			return 0;
@@ -172,7 +183,7 @@ set_meta(int row, int col, char *type, char *val, struct pixel **board)
 	bp = &board[row][col];
 
 	if (!strcmp(type, "immunity")) {
-		bp->immunity = val[0];
+		bp->mdata->immunity = val[0];
 		return 1;
 	}
 
@@ -457,7 +468,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 			sscanf(qp + 2, "%s %s", key, value);
 			
 			if (!strcmp("immunity", key))
-				bp->immunity = value[0];
+				bp->mdata->immunity = value[0];
 
 			cp += 2;
 		}

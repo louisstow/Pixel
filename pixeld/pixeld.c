@@ -86,6 +86,7 @@ main(int argc, char *argv[])
 	board = init_board(1000, 1200);
 	init_journal();
 	read_board(board);
+	init_metadata(board, ROWS, COLS);
 
 	for(;;) {
 		sin_size = sizeof r_addr;
