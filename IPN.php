@@ -162,7 +162,7 @@ $huser = dechex($user);
 queryDaemon("{$list} w AAAAAA 1f4 {$huser} " . time());
 
 //give the pixels immunity
-queryDaemon("{$list} s immunity 1");
+queryDaemon("{$list} m immunity 1");
 
 //our profit will be deducted by the fee
 $profit -= ($_POST['mc_fee'] * 100);

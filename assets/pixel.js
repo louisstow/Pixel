@@ -126,6 +126,10 @@ $(function() {
 	$(".color").each(function() {
 		var self = $(this);
 		
+		self.focus(function() {
+			$(this).click();
+		});
+		
 		self.ColorPicker({
 			onChange: function(hsb, hex, rgb) {
 				self.val(hex);
@@ -144,17 +148,38 @@ $(function() {
 	}, false);
 	
 	$("#login").click(function() {
-		$("div.login").show();
+		if($("div.login").is(":visible")) {
+			$("div.login").hide();
+		} else {
+			$("div.login").show();
+		}
 		$("div.register, div.lostpass").hide();
 	});
 	
 	$("#register").click(function() {
-		$("div.register").show();
+		
+		if($("div.register").is(":visible")) {
+			$("div.register").hide();
+		} else {
+			//player must choose a pixel
+			if(pixels.length < 10) {
+				showError("Select 10 free pixels with the select tool.");
+				return;
+			}
+			
+			$("div.register").show();
+		}
+				
 		$("div.login, div.lostpass").hide();
 	});
 	
 	$("#lostp").click(function() {
-		$("div.lostpass").show();
+		if($("div.lostpass").is(":visible")) {
+			$("div.lostpass").hide();
+		} else {
+			$("div.lostpass").show();
+		}
+		
 		$("div.login, div.register").hide();
 	});
 	
