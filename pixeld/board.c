@@ -14,9 +14,9 @@
 
 #define ROWS		1000
 #define COLS		1200
-#define RED         0
-#define GREEN       1
-#define BLUE        2
+#define RED         	0
+#define GREEN       	1
+#define BLUE        	2
 #define USER_SIZE	65535
 
 #define get_dominant(r,g,b) (\
