@@ -18,8 +18,9 @@ $message  = "Here is a link to renew your password for the {$email} account at P
 $message .= "http://pixenomics.com/renew.php?key={$key}\r\n\r\n";
 $message .= "Please click the link for a random password then login to your account at http://pixenomics.com and change your password immediately!\r\n\r\n";
 $message .= "Thanks,\r\nThe Pixenomics Team";
+$header = "From: Pixenomics <noreply@pixenomics.com>";
 
-mail($email, "Forgotten Password - Pixenomics", $message);
+mail($email, "Forgotten Password - Pixenomics", $message, $header);
 
 ok();
 ?>

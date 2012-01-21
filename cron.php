@@ -40,7 +40,7 @@ $esql = substr($esql, 0, strlen($esql) - 1);
 
 ORM::query($esql, $eprep);
 
-ORM::query("DELETE FROM orders WHERE DATE_ADD(orderDate, INTERVAL 1 MONTH) < NOW()");
+ORM::query("DELETE FROM orders WHERE DATE_ADD(orderDate, INTERVAL 1 DAY) < NOW()");
 
 $q = ORM::query("SELECT userEmail, money FROM users WHERE money >= 2000");
 
