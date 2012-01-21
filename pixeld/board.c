@@ -437,7 +437,6 @@ parse_query(int sock, char *qry, struct pixel **board)
 						      bp->oid,
 						      timestamp);
 			if (write_pixel(board, bp, *cp, *(cp+1)) == 1) {
-				add_journal(qry, timestamp);
 				printf("write success\n");
 			} else
 				printf("write fail\n");
@@ -445,16 +444,16 @@ parse_query(int sock, char *qry, struct pixel **board)
 			cp += 2;
 			free(bp);
 		}
-		
+		add_journal(qry, timestamp);
 	} else if (qp[0] == 'd') {
 		cp = c = extract_pixels(qry);
 
 		while(*cp != -1) {
 			bp = &board[*cp][*(cp+1)];
 			bp->colour[0] = '.';
-			add_journal(qry, qp + 2);
 			cp += 2;
 		}
+		add_journal(qry, qp + 2);
 		fprintf(stderr, "delete success\n");
 	} else if (qp[0] == 'm') {
 		printf("METADATA\n");
