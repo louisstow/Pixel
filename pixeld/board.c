@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -49,7 +50,7 @@ struct pixel
 		board[i] = xmalloc(sizeof(struct pixel) * cols);
 		for (j = 0; j < cols; j++) {
 			board[i][j].colour[0] = '.';
-			board[i][j].mdata = xmalloc(sizeof(struct metadata));
+			board[i][j].immunity = '0';
 		}
 	}
 
@@ -89,7 +90,7 @@ add_journal(char *query, char *ts)
 int
 write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 {
-	int i, j, fd, val;
+	int i, j, fd;
 	struct pixel *pp = &b[r][c];
 	struct pixel *mp, *fp;
 
@@ -101,9 +102,9 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 	if (p->colour[0] != '.')
 		strcpy(pp->colour, p->colour);
 	if (p->cost[0] != '.')
-		sprintf(pp->cost, "%03x", strtoul(p->cost, NULL, 16));
+		sprintf(pp->cost, "%03lx", strtoul(p->cost, NULL, 16));
 	if (p->oid[0] != '.')
-		sprintf(pp->oid, "%04x", strtoul(p->oid, NULL, 16));
+		sprintf(pp->oid, "%04lx", strtoul(p->oid, NULL, 16));
 	
 	fd = open("journal.data", O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
 
@@ -155,11 +156,13 @@ get_meta(int row, int col, char *type, struct pixel **board)
 	bp = &board[row][col];
 
 	if (!strcmp(type, "immunity")) {
-		if (bp->mdata->immunity == '1')
+		if (bp->immunity == '1')
 			return 1;
 		else
 			return 0;
 	}
+
+	return 0;
 }
 
 int
@@ -169,7 +172,7 @@ set_meta(int row, int col, char *type, char *val, struct pixel **board)
 	bp = &board[row][col];
 
 	if (!strcmp(type, "immunity")) {
-		bp->mdata->immunity = val[0];
+		bp->immunity = val[0];
 		return 1;
 	}
 
@@ -280,9 +283,9 @@ run_cron(int sock, struct pixel **board)
                 fprintf(stderr, "Opponent %d %d (%d) R[%d] G[%d] B[%d]\n", col, row, odominant, or, og, ob);
                 
                 //if the players dominant color beats the opponent
-                if (dominant == RED && odominant == GREEN ||
-                   dominant == GREEN && odominant == BLUE ||
-                   dominant == BLUE && odominant == RED) {
+                if ((dominant == RED && odominant == GREEN) ||
+                   (dominant == GREEN && odominant == BLUE) ||
+                   (dominant == BLUE && odominant == RED)) {
 
                     odds += 600;
                     fprintf(stderr, "Dominant color\n");
@@ -358,16 +361,16 @@ find_owner(char *oid)
 int
 parse_query(int sock, char *qry, struct pixel **board)
 {
-	int i, *c, *cp;
+	int *c = NULL, *cp;
 	FILE *f;
-	char *s,  *qp, timestamp[32], *key, *value;
+	char *s = NULL,  *qp, timestamp[32], *key, *value;
 	struct pixel *bp;
 	struct journal *jp;
 
 	if (qry[0] == 'l') {
 		f = fdopen(sock, "r+");
 		for (jp = head.tqh_first; jp != NULL; jp = jp->entries.tqe_next) {
-			fprintf(stderr, "journal: %u %u\n", atol(qry + 2), atol(jp->timestamp));
+			fprintf(stderr, "journal: %ld %ld\n", atol(qry + 2), atol(jp->timestamp));
 			if (atol(qry + 2) <= atol(jp->timestamp))
 				break;
 		}
@@ -443,28 +446,31 @@ parse_query(int sock, char *qry, struct pixel **board)
 		}
 		fprintf(stderr, "delete success\n");
 	} else if (qp[0] == 'm') {
+		printf("METADATA\n");
 		cp = c = extract_pixels(qry);
+
+		key = xmalloc(strlen(qry));
+		value = xmalloc(strlen(qry));
 
 		while(*cp != -1) {
 			bp = &board[*cp][*(cp+1)];	
-			key = xmalloc(strlen(qry));
-			value = xmalloc(strlen(qry));
-
 			sscanf(qp + 2, "%s %s", key, value);
-
+			
 			if (!strcmp("immunity", key))
-				bp->mdata->immunity = value[0];
+				bp->immunity = value[0];
 
-			c += 2;
+			cp += 2;
 		}
-		
+
 		free(key);
 		free(value);
-	} else
-		return 1;
+	}
 
-	free(c);
-	free(s);
+	if (c != NULL)
+		free(c);
+	if (c != NULL)
+		free(s);
+
 	return 1;
 }
 
@@ -472,7 +478,7 @@ int
 *extract_pixels(char *qry)
 {
 	char *s, *p, *orig;
-	int i, j, n, *coods;
+	int i, n, *coods;
 
 	p = s = orig = strdup(qry);
 
@@ -487,13 +493,15 @@ int
 	for (i = 0; *s != ' '; s++) {
 		if (*s == '|') {
 			*s = '\0';
-			if (sscanf(p, "%d,%d", &coods[i++], &coods[i++]) < 2)
+			if (sscanf(p, "%d,%d", &coods[i], &coods[i+1]) < 2)
 				goto finish;
+			i += 2;
 			p = s+1;
 		}
 	}
 	s = '\0';
-	sscanf(p, "%d,%d", &coods[i++], &coods[i++]);
+	sscanf(p, "%d,%d", &coods[i], &coods[i+1]);
+	i += 2;
 
 finish:
 	coods[i] = -1;

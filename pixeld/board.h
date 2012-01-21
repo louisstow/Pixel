@@ -12,7 +12,7 @@ struct pixel {
 	char colour[COLOUR_SIZE + 1];
 	char cost[COST_SIZE + 1];
 	char oid[OID_SIZE + 1];
-	struct metadata *mdata;
+	char immunity;
 };
 
 struct metadata {
