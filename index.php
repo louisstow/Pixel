@@ -168,6 +168,7 @@ the email does not appear.</p>
 <input type="hidden" name="item_name" value="Pixels at Pixenomics" />
 <input type="hidden" name="payer_id" class="payer" value="" />
 <input type="hidden" name="payer_email" class="payeremail" value="" />
+<input type="hidden" name="no_shipping" value="1" />
 <input type="hidden" name="currency_code" id="currency_code" value="USD" />
 <input type="hidden" name="return" value="http://pixenomics.com/complete.html" />
 <input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_buynowCC_LG.gif" border="0" id="paypal" name="submit" alt="PayPal — The safer, easier way to pay online.">
