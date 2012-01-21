@@ -472,6 +472,9 @@ $(function() {
 						if(!pixels[x + "," + y] && x >= 0 && y >= 0) {
 							pixels[x + "," + y] = true;
 							pixels.length++;
+						} else {
+							delete pixels[x + "," + y];
+							pixels.length--;
 						}
 						y += diffy;
 					}
