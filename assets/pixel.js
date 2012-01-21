@@ -25,7 +25,8 @@ var canvas,
 	buyList,
 	total,
 	nextCycle = ~~(new Date / 1000),
-	currentTimestamp;
+	currentTimestamp,
+	currentCycle = -1;
 
 var $hours,
 	$minutes,
@@ -182,17 +183,26 @@ $(function() {
 		
 		$("div.login, div.register").hide();
 	});
-	
+
 	$("div.lostpass button").click(function() {
+		if(disableButton(this)) return;
+		
 		var param = {
 			email: $("div.lostpass input.email").val()
 		};
 		
-		api("LostPass", param, function() {
+		var self = this;
+		
+		api("LostPass", param, function(resp) {
+			disableButton(self, true);
+			if(resp.error) {
+				return showError(resp.error);
+			}
+		
 			$("div.lostpass input.email").val("");
 			$("#lostp").trigger("click");
 			showError("An email has been sent with details to change your password.");
-		});
+		}, false);
 	});
 
     $("#logout").click(function() {
@@ -238,16 +248,27 @@ $(function() {
 	
 	//user logged in
 	$(".login button").click(function() {
+		if(disableButton(this)) return;
+	
 		var email = $("div.login .email").val(),
-			pass = $("div.login .pass").val();
+			pass = $("div.login .pass").val(),
+			self = this;
 			
 		api("Login", {email: email, password: pass}, function(resp) {
+			disableButton(self, true);
+			
+			if(resp.error) {
+				return showError(resp.error);
+			}
+			
 			updateUser(resp);
-		});
+		}, false);
 	});
 	
 	//user registered
 	$(".register button").click(function() {
+		if(disableButton(this)) return;
+		
 		var data = {}
 		data.password = $("div.register .pass").val();
 		data.email = $("div.register .email").val();
@@ -256,6 +277,8 @@ $(function() {
 		data.color = $("div.register .color").val();
 		data.respfield = $("#recaptcha_response_field").val();
 		data.chafield = $("#recaptcha_challenge_field").val();
+		
+		var self = this;
 		
 		//player must choose a pixel
 		if(pixels.length < 10) {
@@ -282,10 +305,11 @@ $(function() {
 		data.pixel = list;
 		
 		api("Register", data, function(resp) {
+			disableButton(self, true);
+			
 			if(resp.error) {
-				showError(resp.error);
 				Recaptcha.reload()
-				return;
+				return showError(resp.error);
 			}
 			
 			updateUser(resp);
@@ -716,14 +740,23 @@ $(function() {
 	});
 	
 	$("button.sellb").click(function() {
+		if(disableButton(this)) return;
+		
 		var value = $("input.display").val();
 		var data = {pixels: sellList, cost: value};
+		var self = this;
 		
-		api("Sell", data, function() {
+		api("Sell", data, function(resp) {
+			disableButton(self, true);
+			
+			if(resp.error) {
+				return showError(resp.error);
+			}
+		
 			showError("Your pixels are now on the market");
 			$("div.sell").hide();
 			$("a.sellpixel").removeClass("active");
-		});
+		}, false);
 	});
 	
 	tick();
@@ -743,6 +776,15 @@ function status() {
 		}
 		
 		$cycleNum.text(resp.cycle.cycleID);
+		
+		//if current cycle has been set and we have a new one, reload
+		if(currentCycle !== -1 && currentCycle !== +resp.cycle.cycleID) {
+			window.location.reload();
+			return;
+		}
+		
+		//set the current cycle
+		currentCycle = +resp.cycle.cycleID;
 		
 		applyLogs(resp.log);
 	});
@@ -884,11 +926,6 @@ function tick() {
 	var minutes = ~~(diff / 60) % 60;
 	var seconds = diff % 60;
 	
-	if(hours < 0 && minutes < 0 && seconds <= -15) {
-		window.location.reload();
-		return;
-	}
-	
 	if(hours < 0) hours = 0;
 	if(minutes < 0) minutes = 0;
 	if(seconds < 0) seconds = 0;
@@ -933,6 +970,22 @@ function unixtime(time) {
 	var newtime = +time;
 	newtime = ~~((newtime + time.getTimezoneOffset() * 60000) / 1000);
 	return newtime;
+}
+
+function disableButton(obj, restore) {
+	var $obj = $(obj);
+	
+	if(restore) {
+		$obj.removeClass("disabled");
+		return true;
+	}
+	
+	if($obj.hasClass("disabled")) {
+		return true;
+	}
+	
+	$obj.addClass("disabled");
+	return false;
 }
 
 function clearSelection() {
@@ -1138,7 +1191,7 @@ function translateGlobal(x, y) {
 
 function showError(msg) {
 	var $d = $("#dialog");
-	$d.css("left", ($(window).width() - 1200) / 2).show().html(msg).animate({bottom: 0}, 150).delay(msg.length * 100)
+	$d.css("left", ($(window).width() - 1200) / 2).show().text(msg).animate({bottom: 0}, 150).delay(msg.length * 100)
 		.animate({bottom: -50}, 150, function() {
 			$(this).hide().html("");
 		});
@@ -1169,6 +1222,7 @@ function api(action, data, callback, showErrorFlag) {
 		type: format,
 		data: data,
 		success: function(data) {
+
 			//if there is an error, automatically display
 			if(showErrorFlag && data.error) {
 				showError(data.error);

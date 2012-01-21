@@ -137,3 +137,7 @@ p { line-height:18px }
 p.feature { font-size:18px; line-height:24px }
 
 span.num { font-weight: bold }
+
+button.disabled {
+	opacity: 0.3;
+}
