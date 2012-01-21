@@ -948,7 +948,7 @@ function updateUser(user) {
 	$("#welcome").text(user.userEmail).show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
 	$("#events,#logout,#change").show();
-	$("div.instr").hide();
+	$("a.instructions").click();
 	$("div.change input.url").val(user.url);
 	$("div.change input.message").val(user.message);
 	status();
