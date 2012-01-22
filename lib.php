@@ -59,14 +59,13 @@ function ok() {
 * Send PQL to reth's shitty daemon
 */
 function queryDaemon($req) {
-	return false;
 	$fp = fsockopen("localhost", 5607, $errno, $errstr, 2);
 	
 	if(!$fp) {
 		return FALSE;
 	}
 	
-	$len = fwrite($fp, $req);
+	$len = fwrite($fp, $req, strlen($req));
 	
 	//shit wnet wrong
 	if($len !== strlen($req)) {
