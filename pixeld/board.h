@@ -12,7 +12,7 @@ struct pixel {
 	char colour[COLOUR_SIZE + 1];
 	char cost[COST_SIZE + 1];
 	char oid[OID_SIZE + 1];
-	char immunity;
+	struct metadata *mdata;
 };
 
 struct metadata {
@@ -41,3 +41,4 @@ int parse_query(int sock, char *qry, struct pixel **board);
 struct pixel  **init_board(unsigned int rows, unsigned int cols);
 struct summary* find_owner(char *oid);
 void run_cron(int s, struct pixel **board);
+void init_metadata(struct pixel **board, unsigned int rows, unsigned int cols);

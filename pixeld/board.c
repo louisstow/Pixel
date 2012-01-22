@@ -14,9 +14,9 @@
 
 #define ROWS		1000
 #define COLS		1200
-#define RED         0
-#define GREEN       1
-#define BLUE        2
+#define RED         	0
+#define GREEN       	1
+#define BLUE        	2
 #define USER_SIZE	65535
 
 #define get_dominant(r,g,b) (\
@@ -48,13 +48,24 @@ struct pixel
 	
 	for (i = 0; i < rows; i++) {
 		board[i] = xmalloc(sizeof(struct pixel) * cols);
-		for (j = 0; j < cols; j++) {
+		for (j = 0; j < cols; j++)
 			board[i][j].colour[0] = '.';
-			board[i][j].immunity = '0';
-		}
 	}
 
 	return board;
+}
+
+void
+init_metadata(struct pixel **board, unsigned int rows, unsigned int cols)
+{
+	int i, j;
+
+	for (i = 0; i < rows; i++) {
+		for (j = 0; j < cols; j++) {
+			board[i][j].mdata = xmalloc(sizeof(struct metadata));
+			board[i][j].mdata->immunity = '0';
+		}
+	}
 }
 
 void 
@@ -156,7 +167,7 @@ get_meta(int row, int col, char *type, struct pixel **board)
 	bp = &board[row][col];
 
 	if (!strcmp(type, "immunity")) {
-		if (bp->immunity == '1')
+		if (bp->mdata->immunity == '1')
 			return 1;
 		else
 			return 0;
@@ -172,7 +183,7 @@ set_meta(int row, int col, char *type, char *val, struct pixel **board)
 	bp = &board[row][col];
 
 	if (!strcmp(type, "immunity")) {
-		bp->immunity = val[0];
+		bp->mdata->immunity = val[0];
 		return 1;
 	}
 
@@ -426,7 +437,6 @@ parse_query(int sock, char *qry, struct pixel **board)
 						      bp->oid,
 						      timestamp);
 			if (write_pixel(board, bp, *cp, *(cp+1)) == 1) {
-				add_journal(qry, timestamp);
 				printf("write success\n");
 			} else
 				printf("write fail\n");
@@ -434,16 +444,16 @@ parse_query(int sock, char *qry, struct pixel **board)
 			cp += 2;
 			free(bp);
 		}
-		
+		add_journal(qry, timestamp);
 	} else if (qp[0] == 'd') {
 		cp = c = extract_pixels(qry);
 
 		while(*cp != -1) {
 			bp = &board[*cp][*(cp+1)];
 			bp->colour[0] = '.';
-			add_journal(qry, qp + 2);
 			cp += 2;
 		}
+		add_journal(qry, qp + 2);
 		fprintf(stderr, "delete success\n");
 	} else if (qp[0] == 'm') {
 		printf("METADATA\n");
@@ -457,7 +467,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 			sscanf(qp + 2, "%s %s", key, value);
 			
 			if (!strcmp("immunity", key))
-				bp->immunity = value[0];
+				bp->mdata->immunity = value[0];
 
 			cp += 2;
 		}

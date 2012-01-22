@@ -14,7 +14,7 @@
 #include "pixeld.h"
 #include "board.h"
 
-#define BUF_SIZE 4096
+#define BUF_SIZE (4096 * 1024)
 
 int
 create_listen(char *port)
@@ -86,6 +86,7 @@ main(int argc, char *argv[])
 	board = init_board(1000, 1200);
 	init_journal();
 	read_board(board);
+	init_metadata(board, ROWS, COLS);
 
 	for(;;) {
 		sin_size = sizeof r_addr;
