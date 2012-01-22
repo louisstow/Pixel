@@ -198,8 +198,8 @@ print_board(int s, struct pixel **b)
 	if ((f = fdopen(s, "w+")) == NULL)
 		return;
 
-	for (i = 0; i < COLS; i++) {
-		for (j = 0; j < ROWS; j++) {
+	for (i = 0; i < ROWS; i++) {
+		for (j = 0; j < COLS; j++) {
 			p = &b[i][j];
 			if (p->colour[0] == '.') {
 				fprintf(f, ".");
