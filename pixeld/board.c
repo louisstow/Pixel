@@ -12,8 +12,6 @@
 #include "board.h"
 #include "pixeld.h"
 
-#define ROWS		1000
-#define COLS		1200
 #define RED         	0
 #define GREEN       	1
 #define BLUE        	2
@@ -200,8 +198,8 @@ print_board(int s, struct pixel **b)
 	if ((f = fdopen(s, "w+")) == NULL)
 		return;
 
-	for (i = 0; i < 1000; i++) {
-		for (j = 0; j < 1200; j++) {
+	for (i = 0; i < COLS; i++) {
+		for (j = 0; j < ROWS; j++) {
 			p = &b[i][j];
 			if (p->colour[0] == '.') {
 				fprintf(f, ".");

@@ -83,7 +83,7 @@ main(int argc, char *argv[])
 	struct sockaddr_storage r_addr;
 
 	sock = create_listen("5607");
-	board = init_board(1000, 1200);
+	board = init_board(ROWS, COLS);
 	init_journal();
 	read_board(board);
 	init_metadata(board, ROWS, COLS);
