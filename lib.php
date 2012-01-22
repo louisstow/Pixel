@@ -65,11 +65,14 @@ function queryDaemon($req) {
 		return FALSE;
 	}
 	
-	$len = fwrite($fp, $req, strlen($req));
+	$i = 0;
+	$l = strlen($req);
+	$max = 8000;
+	$n = ceil($l / $max);
 	
-	//shit wnet wrong
-	if($len !== strlen($req)) {
-		echo $len . " (" . $req . ")";
+	while($i < $n) {
+		fwrite($fp, substr($req, $i * $max, $max), $max);
+		$i++;
 	}
 	
 	$r = "";

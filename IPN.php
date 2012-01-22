@@ -64,11 +64,11 @@ if($_POST['mc_currency'] !== "USD") {
 
 $q = ORM::query("SELECT * FROM orders WHERE orderID = ?", array($_POST['item_number']));
 $data = $q->fetch(PDO::FETCH_ASSOC);
+unset($q);
 
 if(!$data) {
 	//log error
 	$message = print_r($_POST, true) . "\r\n";
-	$message .= print_r($data, true);
 	
 	mail($TO, "Invalid user or order ID", $message);
 	exit;
@@ -78,14 +78,7 @@ $user = (int) $data['userID'];
 
 $pixels = explode(' ', $data['pixels']);
 
-//check for sql injection
-if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
-    $message = print_r($_POST, true) . "\r\n";
-	$message .= print_r($data, true);
-	
-	mail($TO, "Invalid pixels", $message);
-	exit;
-}
+unset($data['pixels']);
 
 //grab pixels
 $list = implode($pixels, "|");
@@ -143,7 +136,7 @@ if($_POST['mc_gross'] < 2) {
 if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 	$message = "";
 	$message .= print_r($_POST, true) . "\r\n";
-	$message .= print_r($data, true) . "\r\n";
+	//$message .= print_r($data, true) . "\r\n";
 	$message .= $cost;
 	
 	mail($TO, "Incorrect price", $message);
@@ -152,7 +145,7 @@ if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 } //paid too much, credit the difference
 else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 	$message = print_r($_POST, true) . "\r\n";
-	$message .= print_r($data, true) . "\r\n";
+	//$message .= print_r($data, true) . "\r\n";
 	$message .= "Paid: " . $cost . "\r\n";
 	$message .= "Gave: " . (($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100) . "\r\n";
 	
@@ -186,8 +179,8 @@ foreach($owners as $id => $data) {
 ORM::query("DELETE FROM orders WHERE orderID = ?", array($_POST['item_number']));
 
 //send a payment email as a log of the transaction
-$message = print_r($data, true) . "\r\n";
-$message .= print_r($_POST, true) . "\r\n";
+//$message = print_r($data, true) . "\r\n";
+$message = print_r($_POST, true) . "\r\n";
 $message .= "{$list} w AAAAAA 1f4 {$huser} " . time() . "\r\n";
 $message .= "{$list} m immunity 1" . "\r\n";
 $message .= "Profit: {$profit}\r\n";
