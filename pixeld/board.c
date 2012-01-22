@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <sys/queue.h>
 #include <time.h>
+#include <aio.h>
 
 #include "board.h"
 #include "pixeld.h"
@@ -102,6 +103,7 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 	int i, j, fd;
 	struct pixel *pp = &b[r][c];
 	struct pixel *mp, *fp;
+	struct aiocb aio;
 
 	if (p == NULL) {
 		pp->colour[0] = '.';
@@ -129,7 +131,12 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 			mp++;
 		}
 	}
-	write(fd, fp, sizeof(struct pixel) * ROWS * COLS);
+
+	aio.aio_fildes = fd;
+	aio.aio_buf = fp;
+	aio.aio_nbytes = sizeof(struct pixel) * ROWS * COLS;
+	aio.aio_offset = 0;
+	aio_write(&aio);
 
 	free(fp);
 	close(fd);
