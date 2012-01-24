@@ -746,7 +746,7 @@ $(function() {
 		if(disableButton(this)) return;
 		
 		var value = $("input.display").val();
-		var data = {pixels: sellList, cost: value};
+		var data = {pixels: sellList.join(" "), cost: value, POST: true};
 		var self = this;
 		
 		api("Sell", data, function(resp) {
@@ -770,6 +770,8 @@ $(function() {
 
 //should grab logs
 function status() {
+	if(!currentTimestamp) return;
+	
 	api("Status", {time: currentTimestamp}, function(resp) {
 		nextCycle = +resp.cycle.cycleTime;
 		currentTimestamp = resp.time;
@@ -1062,7 +1064,8 @@ function updateColors() {
 	
 	var data = {};
 	data.color = swatch;
-	data.pixels = [];
+	data.pixels = "";
+	data.POST = true;
 	
 	//loop selected pixels
 	for(var pix in pixels) {
@@ -1070,7 +1073,7 @@ function updateColors() {
 		if(!pixel || pixel.owner != me.userID) continue;
 		
 		pixel.color = swatch;
-		data.pixels.push(pix);
+		data.pixels += pix + " ";
 	}
 	
 	if(data.pixels.length === 0) return;

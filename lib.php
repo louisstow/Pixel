@@ -59,21 +59,14 @@ function ok() {
 * Send PQL to reth's shitty daemon
 */
 function queryDaemon($req) {
+	return false;
 	$fp = fsockopen("localhost", 5607, $errno, $errstr, 2);
 	
 	if(!$fp) {
 		return FALSE;
 	}
 	
-	$i = 0;
-	$l = strlen($req);
-	$max = 8000;
-	$n = ceil($l / $max);
-	
-	while($i < $n) {
-		fwrite($fp, substr($req, $i * $max, $max), $max);
-		$i++;
-	}
+	fwrite($fp, $req, strlen($req));
 	
 	$r = "";
 	$str = "";
@@ -111,6 +104,41 @@ function toArray($resp) {
 	}
 	
 	return $result;
+}
+
+function chunk($req) {
+	$cmd = strstr($req, ' ');
+	$i = 0;
+	$l = strpos($req, ' ');
+	$max = 1024;
+	$n = ceil($l / $max);
+	$next = 0;
+
+	while($i < $n) {
+		$tail = ($i + 1) * $max;
+		$head = $next;
+		
+		if(substr($req, $tail, 1) !== '|') {
+			$next = $tail;
+			
+			while(substr($req, $next, 1) !== '|' && substr($req, $next, 1) !== ' ' && $next < $l) {
+				$next++;
+			}
+			
+			$tail = $next;
+			$next += 1;
+		} else {
+			$next = $tail + 1;
+			$start = $i;
+		}
+		
+		$tail = min($l, $tail);
+		
+		$str = substr($req, $head, $tail - $head) . $cmd;
+		queryDaemon($str);
+		
+		$i++;
+	}
 }
 
 if(isset($_SESSION['id'])) define("USER", $_SESSION['id']);

@@ -157,10 +157,10 @@ else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 
 //update the pixel data
 $huser = dechex($user);
-queryDaemon("{$list} w AAAAAA 1f4 {$huser} " . time());
+chunk("{$list} w AAAAAA 1f4 {$huser} " . time());
 
 //give the pixels immunity
-queryDaemon("{$list} m immunity 1");
+chunk("{$list} m immunity 1");
 
 //our profit will be deducted by the fee
 $profit -= ($_POST['mc_fee'] * 100);

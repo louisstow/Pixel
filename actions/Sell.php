@@ -2,6 +2,8 @@
 load("Pixel, Transaction");
 data("pixels, cost");
 
+$pixels = explode(" ", $pixels);
+
 //detect SQL injection 
 if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
     error("Invalid pixels");

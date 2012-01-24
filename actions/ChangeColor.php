@@ -2,6 +2,8 @@
 load("Pixel");
 data("color, pixels");
 
+$pixels = explode(" ", $pixels);
+
 $pix = implode($pixels, "|");
 if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
     error("Invalid pixels");
