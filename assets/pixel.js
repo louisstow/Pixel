@@ -961,7 +961,11 @@ function updateEvents(data) {
     var i = 0, len = data.length;
     var html = "";
     for(; i < len; ++i) {
-        html += "<li><b>Cycle "+data[i].cycleID+"</b> "+data[i].event+"</li>";
+		if(data[i].cycleID == 0) {
+			html += "<li>"+data[i].event+"</li>";
+		} else {
+			html += "<li><b>Cycle "+data[i].cycleID+"</b> "+data[i].event+"</li>";
+		}
     }
 
 	if(i === 0) {
