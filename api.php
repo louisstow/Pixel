@@ -3,13 +3,21 @@ include 'lib.php';
 include 'ORM.php';
 
 $a = trim($_GET['action']);
-//if the action contains non-alpha hacking attempt
+$readonly = false;
+
+//if the action contains non-alpha, error
 if($a === "" && preg_match("/[^a-zA-Z\-]/", $a)) {
 	error("Action not available: " . $a);
 }
-//if the action does not exist, label as hacking attempt
+//if the action does not exist, error
 if(!file_exists("actions/" . $a . ".php")) {
 	error("Action not available: " . $a);
+}
+
+if($readonly) {
+	if($a != "Status" && $a != "GetBoard") {
+		error("We are currently in read-only mode during maintanence.");
+	}
 }
 
 if(!isset($_SESSION['id'])) {
