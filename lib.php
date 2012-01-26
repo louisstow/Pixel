@@ -1,4 +1,6 @@
 <?php
+include 'config.php';
+
 session_start();
 
 define("SALT", "AND PEPPER");
@@ -59,8 +61,8 @@ function ok() {
 * Send PQL to reth's shitty daemon
 */
 function queryDaemon($req) {
-	return false;
-	$fp = fsockopen("localhost", 5607, $errno, $errstr, 2);
+	
+	$fp = fsockopen($daemon, 5607, $errno, $errstr, 2);
 	
 	if(!$fp) {
 		return FALSE;

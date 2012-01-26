@@ -6,10 +6,11 @@ function MassPay($nvpStr_) {
 	$API_UserName = urlencode('louisstow_api1.gmail.com');
 	$API_Password = urlencode('PW7MA7YV6ZM5MS6V');
 	$API_Signature = urlencode('ActcUiQKPs9BXzkGx1aLSemWSlWSAy9aQEEjQ-lM6L-cCCA73S16HUkM');
-	$API_Endpoint = "ssl://api-3t.paypal.com";
 	
-	if("sandbox" === $environment || "beta-sandbox" === $environment) {
-		$API_Endpoint = "ssl://api-3t.$environment.paypal.com";
+	if($paypal === "sandbox") {
+		$API_Endpoint = "ssl://api-3t.sandbox.paypal.com";
+	} else {
+		$API_Endpoint = "ssl://api-3t.paypal.com";
 	}
 	
 	$version = urlencode('51.0');
