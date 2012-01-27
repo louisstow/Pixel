@@ -62,7 +62,7 @@ function ok() {
 */
 function queryDaemon($req) {
 	
-	$fp = fsockopen($daemon, 5607, $errno, $errstr, 2);
+	$fp = fsockopen($GLOBALS['daemon'], 5607, $errno, $errstr, 2);
 	
 	if(!$fp) {
 		return FALSE;

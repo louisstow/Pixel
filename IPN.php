@@ -18,7 +18,7 @@ $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 $header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 
 //If testing on Sandbox use:
-if($paypal == "sandbox") {
+if($GLOBALS['paypal'] == "sandbox") {
 	$fp = fsockopen('ssl://www.sandbox.paypal.com', 443, $errno, $errstr, 30);
 } else {
 	$fp = fsockopen('ssl://ipnpb.paypal.com', 443, $errno, $errstr, 30);

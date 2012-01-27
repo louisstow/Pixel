@@ -7,7 +7,7 @@ function MassPay($nvpStr_) {
 	$API_Password = urlencode('PW7MA7YV6ZM5MS6V');
 	$API_Signature = urlencode('ActcUiQKPs9BXzkGx1aLSemWSlWSAy9aQEEjQ-lM6L-cCCA73S16HUkM');
 	
-	if($paypal === "sandbox") {
+	if($GLOBALS['paypal'] === "sandbox") {
 		$API_Endpoint = "ssl://api-3t.sandbox.paypal.com";
 	} else {
 		$API_Endpoint = "ssl://api-3t.paypal.com";

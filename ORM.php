@@ -44,7 +44,7 @@ class ORM {
 	static function query($sql, $vars=array()) {
 		if(self::$db == null) {
 			//local versus server
-			self::$db = new PDO("mysql:host=localhost; dbname=pixel","root",$mysql_pass);
+			self::$db = new PDO("mysql:host=localhost; dbname=pixel","root",$GLOBALS['mysql_pass']);
 		}
 		
 		self::$SQL = $sql;
