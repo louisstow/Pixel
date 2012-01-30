@@ -97,14 +97,29 @@ add_journal(char *query, char *ts)
 	TAILQ_INSERT_TAIL(&head, jp, entries);
 }
 
+void
+save_board(struct pixel **b)
+{
+	int i, j, fd;
+	struct pixel *fp, *mp;
+	
+	fp = mp = (struct pixel *)xmalloc(sizeof(struct pixel) * ROWS * COLS);
+	for (i = 0; i < ROWS; i++)
+		for (j = 0; j < COLS; j++)
+			memcpy(mp++, &b[i][j], sizeof(struct pixel));
+	
+	fd = open("journal.data", O_CREAT | O_RDWR | O_TRUNC, 
+		  S_IRUSR | S_IWUSR); 
+	write(fd, fp, sizeof(struct pixel) * ROWS * COLS);
+	close(fd);
+	free(fp);
+}
+
 int
 write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 {
-	int i, j, fd;
 	struct pixel *pp = &b[r][c];
-	struct pixel *mp, *fp;
-	struct aiocb aio;
-
+	
 	if (p == NULL) {
 		pp->colour[0] = '.';
 		return 0;
@@ -117,30 +132,6 @@ write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 	if (p->oid[0] != '.')
 		sprintf(pp->oid, "%04lx", strtoul(p->oid, NULL, 16));
 	
-	fd = open("journal.data", O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
-
-	if (fd == -1) {
-		perror("open");
-		exit(-1);
-	}
-
-	fp = mp = (struct pixel *)xmalloc(sizeof(struct pixel) * ROWS * COLS);
-	for (i = 0; i < ROWS; i++) {
-		for (j = 0; j < COLS; j++) {
-			memcpy(mp, &b[i][j], sizeof(struct pixel));
-			mp++;
-		}
-	}
-
-	aio.aio_fildes = fd;
-	aio.aio_buf = fp;
-	aio.aio_nbytes = sizeof(struct pixel) * ROWS * COLS;
-	aio.aio_offset = 0;
-	aio_write(&aio);
-
-	free(fp);
-	close(fd);
-
 	return 1;
 }
 
@@ -441,11 +432,8 @@ parse_query(int sock, char *qry, struct pixel **board)
 			                              bp->cost, 
 						      bp->oid,
 						      timestamp);
-			if (write_pixel(board, bp, *cp, *(cp+1)) == 1) {
-				printf("write success\n");
-			} else
-				printf("write fail\n");
-
+			write_pixel(board, bp, *cp, *(cp+1));
+			save_board(board);
 			cp += 2;
 			free(bp);
 		}
