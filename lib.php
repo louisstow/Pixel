@@ -112,7 +112,7 @@ function chunk($req) {
 	$cmd = strstr($req, ' ');
 	$i = 0;
 	$l = strpos($req, ' ');
-	$max = 1024;
+	$max = 8000;
 	$n = ceil($l / $max);
 	$next = 0;
 
