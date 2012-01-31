@@ -433,10 +433,10 @@ parse_query(int sock, char *qry, struct pixel **board)
 						      bp->oid,
 						      timestamp);
 			write_pixel(board, bp, *cp, *(cp+1));
-			save_board(board);
 			cp += 2;
 			free(bp);
 		}
+		save_board(board);
 		add_journal(qry, timestamp);
 	} else if (qp[0] == 'd') {
 		cp = c = extract_pixels(qry);
