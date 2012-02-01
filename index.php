@@ -215,7 +215,9 @@ will be Red. If your color channels are the same value, it will randomly choose 
 
 Contact
 <a href="mailto:saul@pixenomics.com">Saul</a> or
-<a href="mailto:jgs@pixenomics.com">Jim</a>
+<a href="mailto:jgs@pixenomics.com">Jim</a> - 
+<a href="http://twitter.com/pixenomics">@Pixenomics</a> - 
+<a href="http://pixenomics.tumblr.com">Blog</a>
 </div>
 </body>
 </html>
