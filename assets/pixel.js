@@ -332,6 +332,8 @@ $(function() {
 			}
 			
 			var info = owners[+pixel.owner];
+			if(!info) return;
+			
 			var globalPos = translateGlobal(e.clientX, e.clientY);
 			$("#tooltip .message").text(info.message);
 			$("#tooltip .url").text(info.url);
