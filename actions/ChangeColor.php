@@ -28,7 +28,7 @@ foreach($data as $row) {
 	}
 }
 
-queryDaemon("{$pix} w {$color} . . " . time());
+chunk("{$pix} w {$color} . . " . time());
 
 ok();
 ?>
