@@ -162,7 +162,7 @@ the email does not appear.</p>
 
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_xclick" />
-<input type="hidden" name="business" value="louisstow@gmail.com" />
+<input type="hidden" name="business" value="jgs@pixenomics.com" />
 <input type="hidden" name="amount" class="amount" value="" />
 <input type="hidden" name="item_number" class="item" value="" />
 <input type="hidden" name="item_name" value="Pixels at Pixenomics" />
