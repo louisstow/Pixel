@@ -2,10 +2,12 @@
 load("Pixel, Transaction");
 data("pixels, cost");
 
-$pixels = explode(" ", $pixels);
+$pixels = trim($pixels);
+
+$pix = str_replace(" ", "|", $pixels);
 
 //detect SQL injection 
-if(preg_match("/[^0-9,]/i", implode("", $pixels))) {
+if(preg_match("/[^0-9,\|]/i", $pix)) {
     error("Invalid pixels");
 }
 
@@ -16,10 +18,9 @@ if($cost < 1 || $cost > 500) {
 }
 
 $cost = dechex($cost);
-$list = implode($pixels, "|");
 
 //grab the pixels
-$get = queryDaemon("{$list} g");
+$get = queryDaemon("{$pix} g");
 $data = toArray($get);
 
 foreach($data as $pixel) {
@@ -28,7 +29,7 @@ foreach($data as $pixel) {
 	}
 }
 
-queryDaemon("{$list} w . {$cost} . " . time());
+chunk("{$pix} w . {$cost} . " . time());
 
 ok();
 ?>
