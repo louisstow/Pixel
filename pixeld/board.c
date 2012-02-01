@@ -446,6 +446,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 			bp->colour[0] = '.';
 			cp += 2;
 		}
+		save_board(board);
 		add_journal(qry, qp + 2);
 		fprintf(stderr, "delete success\n");
 	} else if (qp[0] == 'm') {
