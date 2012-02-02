@@ -108,7 +108,7 @@ save_board(struct pixel **b)
 		for (j = 0; j < COLS; j++)
 			memcpy(mp++, &b[i][j], sizeof(struct pixel));
 	
-	fd = open("journal.data", O_CREAT | O_RDWR | O_TRUNC, 
+	fd = open("/dev/shm/journal.data", O_CREAT | O_RDWR | O_TRUNC, 
 		  S_IRUSR | S_IWUSR); 
 	write(fd, fp, sizeof(struct pixel) * ROWS * COLS);
 	close(fd);
@@ -140,7 +140,7 @@ read_board(struct pixel **bp)
 {
 	int i, j, fd;
 
-	fd = open("journal.data", O_RDONLY);
+	fd = open("/dev/shm/journal.data", O_RDONLY);
 
 	if (fd == -1)
 		return 0;
