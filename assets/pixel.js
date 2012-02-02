@@ -842,11 +842,12 @@ function updateBoard(data) {
 	//convert owners object to param array
 	params.owners = [];
 	for(var id in ownr) {
+		if(!ownr.hasOwnProperty(id) || !ownr[id]) continue;
 		params.owners.push(+id);
 	}
 	
 	//grab the information about owners
-	if(params.owners.length)
+	if(params.owners && params.owners.length)
 		api("GetUsers", params, getUsers);
 	
 	redraw();
@@ -915,11 +916,12 @@ function applyLogs(logs) {
 	
 	param.owners = [];
 	for(var ow in ownr) {
+		if(!ownr.hasOwnProperty(ow) || !ownr[ow]) continue;
 		param.owners.push(ow);
 	}
 	
 	redraw();
-	if(param.owners.length)
+	if(param.owners && param.owners.length)
 		api("GetUsers", param, getUsers);
 }
 
