@@ -20,7 +20,7 @@ if($cost < 1 || $cost > 500) {
 $cost = dechex($cost);
 
 //grab the pixels
-$get = queryDaemon("{$pix} g");
+$get = chunk("{$pix} g");
 $data = toArray($get);
 
 foreach($data as $pixel) {
