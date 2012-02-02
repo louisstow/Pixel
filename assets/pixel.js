@@ -361,6 +361,8 @@ $(function() {
 				window.open(url);
 				$("#tooltip").hide();
 			}
+		}).mouseleave(function() {
+			$("#tooltip").hide();
 		});
 	}).trigger("click");
 	
@@ -1008,7 +1010,7 @@ function clearSelection() {
 	$("#tools a").removeClass("active");
 	selected = null;
 	stopZoomer();
-	$("#stage").unbind("mousedown");
+	$("#stage").unbind("mousedown").unbind("click").unbind("mouseleave");
 	moveSelected = false;
 }
 
