@@ -2,7 +2,7 @@
 include 'lib.php';
 include 'ORM.php';
 load("User, Event, Stat");
-$TO = "louisstow+pixenomics@gmail.com";
+$TO = "saul+payment@pixenomics.com";
 
 // read the post from PayPal system and add 'cmd'
 $req = 'cmd=_notify-validate';
@@ -184,9 +184,8 @@ ORM::query("DELETE FROM orders WHERE orderID = ?", array($_POST['item_number']))
 //send a payment email as a log of the transaction
 //$message = print_r($data, true) . "\r\n";
 $message = print_r($_POST, true) . "\r\n";
-$message .= "{$list} w AAAAAA 1f4 {$huser} " . time() . "\r\n";
-$message .= "{$list} m immunity 1" . "\r\n";
 $message .= "Profit: {$profit}\r\n";
+$message .= "{$list} w AAAAAA 1f4 {$huser} " . time() . "\r\n";
 
 mail($TO, "Pixels bought", $message);
 ?>
