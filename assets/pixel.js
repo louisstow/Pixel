@@ -845,7 +845,7 @@ function updateBoard(data) {
 		if(!ownr.hasOwnProperty(id) || !ownr[id]) continue;
 		params.owners.push(+id);
 	}
-	
+	console.log("GETBOARD", param, params.owner, params.owners.length);
 	//grab the information about owners
 	if(params.owners && params.owners.length)
 		api("GetUsers", params, getUsers);
@@ -919,7 +919,7 @@ function applyLogs(logs) {
 		if(!ownr.hasOwnProperty(ow) || !ownr[ow]) continue;
 		param.owners.push(ow);
 	}
-	
+	console.log("LOGS", param, params.owner, params.owners.length);
 	redraw();
 	if(param.owners && param.owners.length)
 		api("GetUsers", param, getUsers);
