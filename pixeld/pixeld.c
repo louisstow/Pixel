@@ -90,6 +90,8 @@ main(int argc, char *argv[])
 	read_board(board);
 	init_metadata(board, ROWS, COLS);
 
+	daemon(0, 0);
+
 	for(;;) {
 		sin_size = sizeof r_addr;
 		fd = accept(sock, (struct sockaddr *)&r_addr, &sin_size);
