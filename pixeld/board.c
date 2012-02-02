@@ -9,6 +9,7 @@
 #include <sys/queue.h>
 #include <time.h>
 #include <aio.h>
+#include <syslog.h>
 
 #include "board.h"
 #include "pixeld.h"
@@ -271,10 +272,7 @@ run_cron(int sock, struct pixel **board)
 
 
                 //if the pixel has immunity skip them and take away immunity
-                fprintf(stderr, "%d %d immunity %d\n", col, row, get_meta(row, col, "immunity", board));
-				
 				if (get_meta(row, col, "immunity", board) == 1) {
-					fprintf(stderr, "%d %d Has immunity\n", col, row);
                     set_meta(row, col, "immunity", "0", board);
                     continue;
                 }
@@ -287,15 +285,12 @@ run_cron(int sock, struct pixel **board)
 
                 odominant = get_dominant(or, og, ob);
 
-                fprintf(stderr, "Opponent %d %d (%d) R[%d] G[%d] B[%d]\n", col, row, odominant, or, og, ob);
-                
                 //if the players dominant color beats the opponent
                 if ((dominant == RED && odominant == GREEN) ||
                    (dominant == GREEN && odominant == BLUE) ||
                    (dominant == BLUE && odominant == RED)) {
 
                     odds += 600;
-                    fprintf(stderr, "Dominant color\n");
                 }
 
                 //reward brighter colours
@@ -307,12 +302,9 @@ run_cron(int sock, struct pixel **board)
                     odds += ((b - r) + (b - g)) / 4;
                 }
 
-                fprintf(stderr, "Odds for %d %d  are %d (%d) R[%d] G[%d] B[%d]\n", j, i, odds, dominant, r, g, b);
-                
                 //are they lucky enough to win?
                 if ((rand() % 1000) < odds) {
                     //they win, change owner!
-                    fprintf(stderr, "WIN, change owner\n");
 					
 					//update winner
 					owner = find_owner(p->oid);
@@ -348,7 +340,6 @@ struct summary*
 find_owner(char *oid)
 {
 	struct summary *s;
-	fprintf(stderr, "%s\n", oid);
 
 	for (s = sumhead.tqh_first; s != NULL; s = s->summaries.tqe_next)
 		if (!strcmp(s->oid, oid))
@@ -373,11 +364,14 @@ parse_query(int sock, char *qry, struct pixel **board)
 	char *s = NULL,  *qp, timestamp[32], *key, *value;
 	struct pixel *bp;
 	struct journal *jp;
+	
+	openlog("pixeld", 0, LOG_USER);
+	syslog(LOG_NOTICE, "%s", qry);
+	closelog();
 
 	if (qry[0] == 'l') {
 		f = fdopen(sock, "r+");
 		for (jp = head.tqh_first; jp != NULL; jp = jp->entries.tqe_next) {
-			fprintf(stderr, "journal: %ld %ld\n", atol(qry + 2), atol(jp->timestamp));
 			if (atol(qry + 2) <= atol(jp->timestamp))
 				break;
 		}
@@ -448,9 +442,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		}
 		save_board(board);
 		add_journal(qry, qp + 2);
-		fprintf(stderr, "delete success\n");
 	} else if (qp[0] == 'm') {
-		printf("METADATA\n");
 		cp = c = extract_pixels(qry);
 
 		key = xmalloc(strlen(qry));
