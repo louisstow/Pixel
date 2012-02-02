@@ -51,14 +51,18 @@ $r = 0;
 $nvp = "&EMAILSUBJECT=Love%20Pixenomics&RECEIVERTYPE=EmailAddress&CURRENCYCODE=USD";
 
 $req = array();
+$ids = array();
+
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
 	//create empty request string
 	if(!isset($req[$r])) $req[$r] = "";
+	if(!isset($ids[$r])) $ids[$r] = array();
 	
 	//build the string
 	$receiverEmail = urlencode($row['userEmail']);
 	$amount = urlencode($row['money'] / 100);
 	$req[$r] .= "&L_EMAIL{$i}={$receiverEmail}&L_AMT{$i}={$amount}";
+	$ids[$r][] = $row['userID'];
 	
 	//split up requests in chunks of 100 payments
 	if($i == 200) {
@@ -70,18 +74,21 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
 }
 
 print_r($req);
+
 //send seperate payment requests
-foreach($req as $r) {
+foreach($req as $i=>$r) {
 	$res = MassPay($nvp . $r);
 	if($res['ACK'] == "Failure") {
 		$message = print_r($res, true) . "\r\n\r\n";
 		$message .= print_r($req, true);
 		
 		mail($TO, "Sending payment failure", $message);
+	} else {
+		$where = implode($ids[$i], ",");
+		ORM::query("UPDATE users SET money = 0 WHERE money >= 2000 AND userID IN({$where})");
 	}
 }
 
-ORM::query("UPDATE users SET money = 0 WHERE money >= 2000");
 
 //when the cycle starts
 $time = time() + (3 * 60 * 60);

@@ -842,11 +842,12 @@ function updateBoard(data) {
 	//convert owners object to param array
 	params.owners = [];
 	for(var id in ownr) {
+		if(!ownr.hasOwnProperty(id) || !ownr[id]) continue;
 		params.owners.push(+id);
 	}
 	
 	//grab the information about owners
-	if(params.owners.length)
+	if(params.owners && params.owners.length)
 		api("GetUsers", params, getUsers);
 	
 	redraw();
@@ -904,10 +905,11 @@ function applyLogs(logs) {
 			//update the board
 			if(opts[2] != '.') board[pixel].color = opts[2];
 			if(opts[3] != '.') board[pixel].cost = parseInt(opts[3], 16) * 10;
-			if(opts[4] != '.') board[pixel].owner = o = parseInt(opts[4], 16);
+			if(opts[4] != '.') board[pixel].owner = parseInt(opts[4], 16);
+			o = board[pixel].owner;
 			
 			//if we dont know about this owner, get it
-			if(!owners[o] && !ownr[o]) {
+			if(o && (!owners[o] && !ownr[o])) {
 				ownr[o] = true;
 			}
 		}
@@ -915,11 +917,12 @@ function applyLogs(logs) {
 	
 	param.owners = [];
 	for(var ow in ownr) {
+		if(!ownr.hasOwnProperty(ow) || !ownr[ow]) continue;
 		param.owners.push(ow);
 	}
 	
 	redraw();
-	if(param.owners.length)
+	if(param.owners && param.owners.length)
 		api("GetUsers", param, getUsers);
 }
 
