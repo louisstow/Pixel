@@ -85,7 +85,7 @@ unset($data['pixels']);
 
 //grab pixels
 $list = implode($pixels, "|");
-$result = queryDaemon("{$list} g");
+$result = chunk("{$list} g");
 $result = toArray($result);
 
 $cost = 0;

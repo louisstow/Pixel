@@ -761,6 +761,7 @@ $(function() {
 			showError("Your pixels are now on the market");
 			$("div.sell").hide();
 			$("a.sellpixel").removeClass("active");
+			status();
 		}, false);
 	});
 	

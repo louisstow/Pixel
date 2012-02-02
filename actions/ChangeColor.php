@@ -18,7 +18,7 @@ if($icolor < 0 || $icolor > 16777215) {
 $color = dechex($icolor);
 $color = str_repeat("0", 6 - strlen($color)) . $color;
 
-$q = queryDaemon("{$pix} g");
+$q = chunk("{$pix} g");
 $data = toArray($q);
 
 //validate the owner of the pixel

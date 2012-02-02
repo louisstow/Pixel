@@ -115,6 +115,8 @@ function chunk($req) {
 	$max = 8000;
 	$n = ceil($l / $max);
 	$next = 0;
+	
+	$resp = "";
 
 	while($i < $n) {
 		$tail = ($i + 1) * $max;
@@ -137,10 +139,12 @@ function chunk($req) {
 		$tail = min($l, $tail);
 		
 		$str = substr($req, $head, $tail - $head) . $cmd;
-		queryDaemon($str);
+		$resp .= queryDaemon($str);
 		
 		$i++;
 	}
+	
+	return $resp;
 }
 
 if(isset($_SESSION['id'])) define("USER", $_SESSION['id']);
