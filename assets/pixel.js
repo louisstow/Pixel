@@ -332,6 +332,8 @@ $(function() {
 			}
 			
 			var info = owners[+pixel.owner];
+			if(!info) return;
+			
 			var globalPos = translateGlobal(e.clientX, e.clientY);
 			$("#tooltip .message").text(info.message);
 			$("#tooltip .url").text(info.url);
@@ -950,7 +952,8 @@ function updateUser(user) {
 	$("#welcome").text(user.userEmail).show();
 	$("#money").text("$" + (+user.money).toFixed(2)).show();
 	$("#events,#logout,#change").show();
-	$("a.instructions").click();
+	$("a.instructions").removeClass("active");
+	$("div.instr").hide();
 	$("div.change input.url").val(user.url);
 	$("div.change input.message").val(user.message);
 	status();

@@ -2,7 +2,7 @@
 data("pixels");
 load("Order");
 
-$q = ORM::query("SELECT orderID FROM orders WHERE pixels = ? AND userID = ?", array($pixels, USER));
+$q = ORM::query("SELECT orderID FROM orders WHERE pixels = ? AND userID = ?", array(trim($pixels), USER));
 $data = $q->fetch(PDO::FETCH_ASSOC);
 
 if($data) {
