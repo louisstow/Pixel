@@ -10,6 +10,8 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <syslog.h>
+#include <stdarg.h>
 
 #include "pixeld.h"
 #include "board.h"
@@ -88,6 +90,8 @@ main(int argc, char *argv[])
 	read_board(board);
 	init_metadata(board, ROWS, COLS);
 
+	daemon(0, 0);
+
 	for(;;) {
 		sin_size = sizeof r_addr;
 		fd = accept(sock, (struct sockaddr *)&r_addr, &sin_size);
@@ -96,7 +100,6 @@ main(int argc, char *argv[])
 			perror("accept");
 			continue;
 		}
-		fprintf(stderr, "got connection from www\n");
 
 		if ((r = recv(fd, buf, sizeof(buf), 0)) == -1) {
 			close(fd);
@@ -109,7 +112,6 @@ main(int argc, char *argv[])
 
 		buf[r] = '\0';
 		parse_query(fd, buf, board);
-		fprintf(stderr, "finished\n");
 		close(fd);
 	}
 }
