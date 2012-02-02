@@ -920,7 +920,7 @@ function applyLogs(logs) {
 		if(!ownr.hasOwnProperty(ow) || !ownr[ow]) continue;
 		param.owners.push(ow);
 	}
-	console.log("LOGS", param, param.owners, param.owners.length);
+	
 	redraw();
 	if(param.owners && param.owners.length)
 		api("GetUsers", param, getUsers);
