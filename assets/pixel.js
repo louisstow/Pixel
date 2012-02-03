@@ -352,6 +352,7 @@ $(function() {
 				showError("This pixel is available");
 			} else {
 				var info = owners[+pixel.owner];
+				if(!info) return;
 				var url = info.url;
 				
 				if(url.substr(0, 7) !== "http://" && url.substr(0, 8) !== "https://") {
