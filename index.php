@@ -199,13 +199,13 @@ will be Red. If your color channels are the same value, it will randomly choose 
 
 </div>
 
-<div id="stage">
-
 <div id="tooltip">
 <span class="message"></span>
 <span class="url"></span>
 <span class="price"></span>
 </div>
+
+<div id="stage">
 
 <canvas id="canvas" width="1200" height="1000">
 	<p class="browser">To use Pixenomics, please update or switch your browser to one of the following: Chrome, Firefox, Opera, IE10</p>

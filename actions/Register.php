@@ -18,9 +18,13 @@ if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
     error("Invalid pixels");
 }
 
-$email = trim($email);
-$url = trim($url);
-$message = trim($message);
+if(strlen($password) > 250 || strlen($email) > 250) {
+	error("All fields must be less than 250 characters");
+}
+
+$email = substr(trim($email), 0, 250);
+$url = substr(trim($url), 0, 250);
+$message = substr(trim($message), 0, 250);
 
 //basic field validation
 if($email == "" || $url == "" || $message == "" || $password == "") {
