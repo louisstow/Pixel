@@ -634,8 +634,16 @@ $(function() {
 			if(pixels.length < 10000) html += "<li><b>" + pix + "</b><i>$" + (cost / 100).toFixed(2) + "</i><a class='remove'>remove</a></li>";
 		}
 		
+		//2 dollar minimum
 		if(total < 200) {
 			showError("You must buy at least $2.00 worth of pixels.");
+			$(this).removeClass("active");
+			return;
+		}
+		
+		//cant buy more than 100k pixels
+		if(buyList.length > 100000) {
+			showError("Maximum amount of pixels is 100,000");
 			$(this).removeClass("active");
 			return;
 		}
