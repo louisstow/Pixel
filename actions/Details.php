@@ -1,6 +1,9 @@
 <?php
 data("message, url, oldp, newp");
 
+$message = substr($message, 0, 250);
+$url = substr($url, 0, 250);
+
 ORM::query("UPDATE users SET message = ?, url = ? WHERE userID = ?",
 	array($message, $url, USER));
 

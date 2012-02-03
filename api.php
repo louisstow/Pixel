@@ -14,6 +14,10 @@ if(!file_exists("actions/" . $a . ".php")) {
 	error("Action not available: " . $a);
 }
 
+if(file_exists("/tmp/fucked")) {
+	$readonly = true;
+}
+
 if($readonly) {
 	if($a != "Status" && $a != "GetBoard") {
 		error("We are currently in read-only mode during maintanence.");
