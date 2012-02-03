@@ -651,6 +651,7 @@ $(function() {
 		$("div.buy div.list ul").html(html);
 		$("div.buy").show();
 		$("#paypal").hide();
+		$("#paypal_loading").text("Loading").show();
 		
 		if(pixels.length < 10000) {
 			$("div.list a.remove").click(function() {
@@ -690,6 +691,7 @@ $(function() {
 		api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
 			$("input.item").val(resp.orderID);
 			$("#paypal").show();
+			$("#paypal_loading").hide();
 		});
 		
 		$("input.payer").val(me.userID);
