@@ -649,6 +649,8 @@ $(function() {
 		}
 		
 		$("div.buy div.list ul").html(html);
+		$("div.buy").show();
+		$("#paypal").hide();
 		
 		if(pixels.length < 10000) {
 			$("div.list a.remove").click(function() {
@@ -686,14 +688,14 @@ $(function() {
 		}
 		
 		api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
-			$("div.buy span.total").text((total / 100).toFixed(2));
-			$("div.buy input.amount").val((total / 100).toFixed(2));
 			$("input.item").val(resp.orderID);
-			$("input.payer").val(me.userID);
-			$("input.payeremail").val(me.userEmail);
-			$("div.buy").show();
+			$("#paypal").show();
 		});
 		
+		$("input.payer").val(me.userID);
+		$("div.buy span.total").text((total / 100).toFixed(2));
+		$("div.buy input.amount").val((total / 100).toFixed(2));
+		$("input.payeremail").val(me.userEmail);
 		redraw();
 	});
 	
