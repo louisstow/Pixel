@@ -145,3 +145,5 @@ button.disabled {
 }
 
 #footer a { color: #044D2E; font-weight: bold; text-decoration: none; border-bottom: 1px dotted #044D2E; }
+
+#paypal_loading { text-align: center; font-weight: bold; font-size: 14px }
