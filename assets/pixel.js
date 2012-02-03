@@ -535,6 +535,14 @@ $(function() {
 			
 			//check if free pixel
 			if(moveSelected) {
+				//deselect if same key
+				if(key === moveSelected) {
+					moveSelected = false;
+					pixels = {length: 0};
+					redraw();
+					return;
+				}
+			
 				//if someone owns it
 				if(pixel) {
 					showError("That pixel is taken. You may purchase this pixel for $" + (pixel.cost / 100).toFixed(2));
@@ -546,16 +554,6 @@ $(function() {
 				});
 				
 				pixels = {length: 0};
-				
-				/*
-				board[key] = {
-					color: board[moveSelected].color,
-					cost: board[moveSelected].cost,
-					owner: board[moveSelected].owner
-				};
-				
-				delete board[moveSelected];
-				*/
 				
 				moveSelected = false;
 			} else {
@@ -612,7 +610,7 @@ $(function() {
 		var html = "";
 		buyList = [];
 		for(var pix in pixels) {
-			if(pix === "length") continue;
+			if(pix === "length" || !pixels.hasOwnProperty(pix)) continue;
 			
 			var pixel = board[pix];
 			var cost;
