@@ -1,3 +1,4 @@
+<pre>
 <?php
 function validate($pixels, $rep = true) {
 	$pix = trim($pixels);
@@ -19,8 +20,10 @@ function validate($pixels, $rep = true) {
 	return $pix;
 }
 
-echo validate("") . "<br>";
-echo validate("0,,0 0") . "<br>";
-echo validate("    ") . "<br>";
-echo validate("0,0 0,1", false) . "<br>";
+$pixs = explode(" ", "0,0    0,0 ");
+print_r($pixs);
+echo implode($pixs, "|");
+echo "<br>";
+echo preg_replace("/\s+/", " ", "0,0    0,0 ");
 ?>
+</pre>

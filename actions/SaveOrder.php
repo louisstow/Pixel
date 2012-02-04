@@ -7,6 +7,7 @@ if(strlen($pixels) > 1000000) {
 }
 
 $pixels = validate($pixels, false);
+$pixels = preg_replace("/\s+/", " ", $pixels);
 
 $q = ORM::query("SELECT orderID FROM orders WHERE userID = ?", array(USER));
 $data = $q->fetch(PDO::FETCH_ASSOC);
