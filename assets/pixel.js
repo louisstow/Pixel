@@ -340,7 +340,7 @@ $(function() {
 			$("#tooltip .price").text("$" + (pixel.cost / 100).toFixed(2));
 			
 			$("#tooltip").show().css({
-				left: e.clientX,
+				left: e.clientX + 15,
 				top: e.clientY
 			});
 			
