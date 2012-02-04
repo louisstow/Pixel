@@ -58,6 +58,29 @@ function ok() {
 }
 
 /**
+* Validate pixel string
+*/
+function validate($pixels, $rep = true) {
+	$pix = trim($pixels);
+	
+	if(strlen($pix) === 0) {
+		error("Invalid pixels");
+	}
+	
+	if($rep) {
+		$pix = preg_replace("/\s+/", "|", $pixels);
+	}
+	
+	if(preg_match("/[^0-9,\|\s]/i", $pix)) {
+		error("Invalid pixels");
+	}
+	
+	$pix = trim($pix, "|");
+	
+	return $pix;
+}
+
+/**
 * Send PQL to reth's shitty daemon
 */
 function queryDaemon($req) {

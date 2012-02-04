@@ -2,12 +2,7 @@
 load("Pixel");
 data("color, pixels");
 
-$pixels = trim($pixels);
-
-$pix = str_replace(" ", "|", $pixels);
-if(preg_match("/[^0-9,\|]/i", $pix)) {
-    error("Invalid pixels");
-}
+$pix = validate($pixels);
 
 //ensure color is valid
 $icolor = intval($color, 16);

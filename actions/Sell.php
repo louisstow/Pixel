@@ -2,14 +2,7 @@
 load("Pixel, Transaction");
 data("pixels, cost");
 
-$pixels = trim($pixels);
-
-$pix = str_replace(" ", "|", $pixels);
-
-//detect SQL injection 
-if(preg_match("/[^0-9,\|]/i", $pix)) {
-    error("Invalid pixels");
-}
+$pix = validate($pixels);
 
 //ensure cost is a number between 1,00 and 50,00
 $cost = floor(((float) $cost) * 10);

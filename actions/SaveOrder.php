@@ -6,7 +6,7 @@ if(strlen($pixels) > 1000000) {
 	error("Too many pixels. Limit of 100,000 pixels.");
 }
 
-$pixels = trim($pixels);
+$pixels = validate($pixels, false);
 
 $q = ORM::query("SELECT orderID FROM orders WHERE userID = ?", array(USER));
 $data = $q->fetch(PDO::FETCH_ASSOC);
