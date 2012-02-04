@@ -340,8 +340,8 @@ $(function() {
 			$("#tooltip .price").text("$" + (pixel.cost / 100).toFixed(2));
 			
 			$("#tooltip").show().css({
-				left: e.clientX + 15,
-				top: e.clientY
+				left: e.clientX + 15 + body.scrollLeft,
+				top: e.clientY + body.scrollTop
 			});
 			
 		}).click(function(e) {
