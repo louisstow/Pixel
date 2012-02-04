@@ -13,6 +13,10 @@ if(!$resp->is_valid) {
 	error("Invalid CAPTCHA. Please try again.");
 }
 
+if(!is_array($pixel)) {
+	error("Invalid pixels");
+}
+
 //detect SQL injection 
 if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
     error("Invalid pixels");
