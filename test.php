@@ -20,10 +20,10 @@ function validate($pixels, $rep = true) {
 	return $pix;
 }
 
-$pixs = explode(" ", "0,0    0,0 ");
-print_r($pixs);
-echo implode($pixs, "|");
-echo "<br>";
-echo preg_replace("/\s+/", " ", "0,0    0,0 ");
+$time = "2.5235";
+
+if(preg_match("/[^0-9]/i", $time)) {
+	echo("Invalid time");
+}
 ?>
 </pre>

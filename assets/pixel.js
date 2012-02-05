@@ -242,7 +242,9 @@ $(function() {
 		api("Details", data, function() {
 			showError("Details updated");
 			$("div.change").hide();
-			status();
+			
+			owners[+me.userID].message = data.message;
+			owners[+me.userID].url = data.url;
 		});
 	});
 	
