@@ -1,6 +1,11 @@
 <?php
 load("Event");
 data("time");
+
+if(preg_match("/[^0-9]/i", $time) || strlen($time) > 20) {
+	error("Invalid time");
+}
+
 $logs = queryDaemon("l {$time}");
 
 //grab the latest cycle
