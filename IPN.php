@@ -96,6 +96,8 @@ $profit = 0;
 $i = 0;
 $count = 0;
 
+$ownerList = array();
+
 //loop over every specified pixel and double check
 foreach($pixels as $pix) {
     //skip if not for sale
@@ -109,10 +111,12 @@ foreach($pixels as $pix) {
 		//map of owners to sold for event data
 		if(!isset($owners[$pixel['owner']])) {
 			$owners[$pixel['owner']] = array("sold" => 0, "credit" => 0);
+			$ownerList[] = $pixel['owner'];
 		}
 		
 		$owners[$pixel['owner']]['sold']++;
 		$owners[$pixel['owner']]['credit'] += floor($p * 0.75);
+		
 		$profit += ceil($p * 0.25); //minus 3% for paypal fees
 		$count++;
 	} else {
@@ -172,10 +176,22 @@ Stat::updateProfit($profit);
 //log as events
 I("Event")->create($user, NOW(), 0, "You bought {$count} pixels");
 
+$ownerList = implode($ownerList, ",");
+$q = ORM::query("SELECT userID, userEmail FROM users WHERE userID IN({$ownerList})");
+$ownerEmails = array();
+while($row = $q->fetch(PDO::FETCH_ASSOC)) $ownerEmails[(int) $row['userID']] = $row['userEmail'];
+
+$message  = "Congrats! You sold some pixels. Your account has been \r\ncredited and will be sent to you via PayPal.\r\n\r\n";
+$message .= "Visit http://pixenomics.com to see your account balance.\r\n\r\n";
+$message .= "Thanks,\r\nThe Pixenomics Team";
+$header = "From: Pixenomics <noreply@pixenomics.com>";
+
 foreach($owners as $id => $data) {
 	I("Event")->create($id, NOW(), 0, "You sold {$data['sold']} pixels");
 	//update the credit
 	User::updateCredit($id, $data['credit']);
+	
+	mail($ownerEmails[$id], "You sold {$data['sold']} pixels - Pixenomics", $message, $header);
 }
 
 //remove the order
