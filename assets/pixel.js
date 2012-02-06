@@ -165,6 +165,7 @@ $(function() {
 			//player must choose a pixel
 			if(pixels.length < 10) {
 				showError("Select 10 free pixels with the select tool.");
+				$("a.select").trigger("click");
 				return;
 			}
 			
