@@ -217,7 +217,8 @@ Contact
 <a href="mailto:saul@pixenomics.com">Saul</a> or
 <a href="mailto:jgs@pixenomics.com">Jim</a> - 
 <a href="http://twitter.com/pixenomics">@Pixenomics</a> - 
-<a href="http://pixenomics.tumblr.com">Blog</a>
+<a href="http://pixenomics.tumblr.com">Blog</a> - 
+<a href="http://reddit.com/r/pixenomics">/r/pixenomics</a>
 </div>
 </body>
 </html>
