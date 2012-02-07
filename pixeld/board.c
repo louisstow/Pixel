@@ -271,11 +271,13 @@ run_cron(int sock, struct pixel **board)
                     continue;
 
 
+		/*
                 //if the pixel has immunity skip them and take away immunity
-				if (get_meta(row, col, "immunity", board) == 1) {
-                    set_meta(row, col, "immunity", "0", board);
+				if (get_meta(col, row, "immunity", board) == 1) {
+                    set_meta(col, row, "immunity", "0", board);
                     continue;
                 }
+		*/
 
                 //extract opponent colors
                 ocolor = strtoul(o->colour, NULL, 16);
