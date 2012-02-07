@@ -46,8 +46,8 @@ if($res != "VERIFIED") {
 	exit;
 }
 
-//payment wasn't completed
-if($_POST['payment_status'] !== "Completed") {
+//if not pending and not complete
+if($_POST['payment_status'] !== "Complete" && $_POST['payment_status'] !== "Pending") {
 	//log error
 	$message = $res . "\r\n";
 	$message .= print_r($_POST, true) . "\r\n";
@@ -104,6 +104,12 @@ foreach($pixels as $pix) {
 	if(isset($result[$i]) && $result[$i] !== false) {
 		$pixel = $result[$i];
 		
+		//skip if pending
+		if($pixel['cost'] == 0) {
+			unset($pixels[$pix]);
+			continue;
+		}
+		
 		//increase the total cost
 		$cost += $pixel['cost'];
 		$p = $pixel['cost'];
@@ -127,6 +133,15 @@ foreach($pixels as $pix) {
     }
 
 	$i++;
+}
+
+//rebuild the list
+$list = implode($pixels, "|");
+
+//payment wasn't completed
+if($_POST['payment_status'] === "Pending") {
+	chunk("{$list} w AAAAAA 0 {$huser} " . time());
+	exit;
 }
 
 //if they paid under the threshold, we make no profit
@@ -164,6 +179,7 @@ else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 
 //update the pixel data
 $huser = dechex($user);
+
 chunk("{$list} w AAAAAA 1f4 {$huser} " . time());
 
 //give the pixels immunity

@@ -20,6 +20,10 @@ foreach($data as $pixel) {
 	if($pixel['owner'] != USER) {
 		error("Not your pixels");
 	}
+	
+	if($pixel['cost'] == 0) {
+		error("Pixels are still pending payment.");
+	}
 }
 
 chunk("{$pix} w . {$cost} . " . time());

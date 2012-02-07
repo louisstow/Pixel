@@ -620,7 +620,8 @@ $(function() {
 			var cost;
 			if(pixel) {
 				//if pixel for sale, add to total, else deselect
-				if(pixel.cost && pixel.owner != me.userID) cost = +pixel.cost;
+				if(pixel.cost && pixel.owner != me.userID) 
+					cost = +pixel.cost;
 				else {
 					delete pixels[pix];
 					continue;
