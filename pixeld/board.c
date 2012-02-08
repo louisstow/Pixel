@@ -271,11 +271,13 @@ run_cron(int sock, struct pixel **board)
                     continue;
 
 
+		/*
                 //if the pixel has immunity skip them and take away immunity
-				if (get_meta(row, col, "immunity", board) == 1) {
-                    set_meta(row, col, "immunity", "0", board);
+				if (get_meta(col, row, "immunity", board) == 1) {
+                    set_meta(col, row, "immunity", "0", board);
                     continue;
                 }
+		*/
 
                 //extract opponent colors
                 ocolor = strtoul(o->colour, NULL, 16);
@@ -406,6 +408,10 @@ parse_query(int sock, char *qry, struct pixel **board)
 		f = fdopen(sock, "r+");
 		cp = c = extract_pixels(qry);
 		while (*cp != -1) {
+			if (*cp < 0 || *cp > 1200 || *(cp+1) < 0 || *cp > 1000) {
+				cp += 2;
+				continue;
+			}
 			bp = &board[*cp][*(cp+1)];
 			if (bp->colour[0] == '.')
 				fprintf(f, "%c", bp->colour[0]);
@@ -419,8 +425,11 @@ parse_query(int sock, char *qry, struct pixel **board)
 		fflush(f);
 	} else if (qp[0] == 'w') {
 		cp = c = extract_pixels(qry);
-
 		while (*cp != -1) {
+			if (*cp < 0 || *cp > 1200 || *(cp+1) < 0 || *cp > 1000) {
+				cp += 2;
+				continue;
+			}   
 			bp = xmalloc(sizeof(struct pixel));
 			sscanf(qp + 2, "%s %s %s %s", bp->colour, 
 			                              bp->cost, 
@@ -436,6 +445,10 @@ parse_query(int sock, char *qry, struct pixel **board)
 		cp = c = extract_pixels(qry);
 
 		while(*cp != -1) {
+			if (*cp < 0 || *cp > 1200 || *(cp+1) < 0 || *cp > 1000) {
+				cp += 2;
+				continue;
+			}   
 			bp = &board[*cp][*(cp+1)];
 			bp->colour[0] = '.';
 			cp += 2;
@@ -449,6 +462,10 @@ parse_query(int sock, char *qry, struct pixel **board)
 		value = xmalloc(strlen(qry));
 
 		while(*cp != -1) {
+                        if (*cp < 0 || *cp > 1200 || *(cp+1) < 0 || *cp > 1000) {
+                                cp += 2;
+                                continue;
+                        }   
 			bp = &board[*cp][*(cp+1)];	
 			sscanf(qp + 2, "%s %s", key, value);
 			

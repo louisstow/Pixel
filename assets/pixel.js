@@ -165,6 +165,7 @@ $(function() {
 			//player must choose a pixel
 			if(pixels.length < 10) {
 				showError("Select 10 free pixels with the select tool.");
+				$("a.select").trigger("click");
 				return;
 			}
 			
@@ -242,7 +243,9 @@ $(function() {
 		api("Details", data, function() {
 			showError("Details updated");
 			$("div.change").hide();
-			status();
+			
+			owners[+me.userID].message = data.message;
+			owners[+me.userID].url = data.url;
 		});
 	});
 	
@@ -340,8 +343,8 @@ $(function() {
 			$("#tooltip .price").text("$" + (pixel.cost / 100).toFixed(2));
 			
 			$("#tooltip").show().css({
-				left: globalPos.left + 15,
-				top: globalPos.top
+				left: e.clientX + 15 + body.scrollLeft,
+				top: e.clientY + body.scrollTop
 			});
 			
 		}).click(function(e) {
@@ -352,6 +355,7 @@ $(function() {
 				showError("This pixel is available");
 			} else {
 				var info = owners[+pixel.owner];
+				if(!info) return;
 				var url = info.url;
 				
 				if(url.substr(0, 7) !== "http://" && url.substr(0, 8) !== "https://") {
@@ -361,6 +365,8 @@ $(function() {
 				window.open(url);
 				$("#tooltip").hide();
 			}
+		}).mouseleave(function() {
+			$("#tooltip").hide();
 		});
 	}).trigger("click");
 	
@@ -533,6 +539,14 @@ $(function() {
 			
 			//check if free pixel
 			if(moveSelected) {
+				//deselect if same key
+				if(key === moveSelected) {
+					moveSelected = false;
+					pixels = {length: 0};
+					redraw();
+					return;
+				}
+			
 				//if someone owns it
 				if(pixel) {
 					showError("That pixel is taken. You may purchase this pixel for $" + (pixel.cost / 100).toFixed(2));
@@ -544,16 +558,6 @@ $(function() {
 				});
 				
 				pixels = {length: 0};
-				
-				/*
-				board[key] = {
-					color: board[moveSelected].color,
-					cost: board[moveSelected].cost,
-					owner: board[moveSelected].owner
-				};
-				
-				delete board[moveSelected];
-				*/
 				
 				moveSelected = false;
 			} else {
@@ -610,13 +614,14 @@ $(function() {
 		var html = "";
 		buyList = [];
 		for(var pix in pixels) {
-			if(pix === "length") continue;
+			if(pix === "length" || !pixels.hasOwnProperty(pix)) continue;
 			
 			var pixel = board[pix];
 			var cost;
 			if(pixel) {
 				//if pixel for sale, add to total, else deselect
-				if(pixel.cost && pixel.owner != me.userID) cost = +pixel.cost;
+				if(pixel.cost && pixel.owner != me.userID) 
+					cost = +pixel.cost;
 				else {
 					delete pixels[pix];
 					continue;
@@ -632,13 +637,24 @@ $(function() {
 			if(pixels.length < 10000) html += "<li><b>" + pix + "</b><i>$" + (cost / 100).toFixed(2) + "</i><a class='remove'>remove</a></li>";
 		}
 		
+		//2 dollar minimum
 		if(total < 200) {
 			showError("You must buy at least $2.00 worth of pixels.");
 			$(this).removeClass("active");
 			return;
 		}
 		
+		//cant buy more than 100k pixels
+		if(buyList.length > 100000) {
+			showError("Maximum amount of pixels is 100,000");
+			$(this).removeClass("active");
+			return;
+		}
+		
 		$("div.buy div.list ul").html(html);
+		$("div.buy").show();
+		$("#paypal").hide();
+		$("#paypalloading").text("Loading").show();
 		
 		if(pixels.length < 10000) {
 			$("div.list a.remove").click(function() {
@@ -676,14 +692,15 @@ $(function() {
 		}
 		
 		api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
-			$("div.buy span.total").text((total / 100).toFixed(2));
-			$("div.buy input.amount").val((total / 100).toFixed(2));
 			$("input.item").val(resp.orderID);
-			$("input.payer").val(me.userID);
-			$("input.payeremail").val(me.userEmail);
-			$("div.buy").show();
+			$("#paypal").show();
+			$("#paypalloading").hide();
 		});
 		
+		$("input.payer").val(me.userID);
+		$("div.buy span.total").text((total / 100).toFixed(2));
+		$("div.buy input.amount").val((total / 100).toFixed(2));
+		$("input.payeremail").val(me.userEmail);
 		redraw();
 	});
 	
@@ -761,6 +778,7 @@ $(function() {
 			showError("Your pixels are now on the market");
 			$("div.sell").hide();
 			$("a.sellpixel").removeClass("active");
+			status();
 		}, false);
 	});
 	
@@ -1007,7 +1025,7 @@ function clearSelection() {
 	$("#tools a").removeClass("active");
 	selected = null;
 	stopZoomer();
-	$("#stage").unbind("mousedown");
+	$("#stage").unbind("mousedown").unbind("click").unbind("mouseleave");
 	moveSelected = false;
 }
 

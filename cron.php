@@ -5,7 +5,7 @@ include 'objects/Cycle.php';
 include 'objects/Pixel.php';
 include 'MassPayment.php';
 
-$TO = "louisstow+pixenomics@gmail.com";
+$TO = "saul+masspay@pixenomics.com";
 
 //get the latest cycle information
 $cycle = Cycle::getCurrent();

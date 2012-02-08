@@ -58,6 +58,29 @@ function ok() {
 }
 
 /**
+* Validate pixel string
+*/
+function validate($pixels, $rep = true) {
+	$pix = trim($pixels);
+	
+	if(strlen($pix) === 0) {
+		error("Invalid pixels");
+	}
+	
+	if($rep) {
+		$pix = preg_replace("/\s+/", "|", $pixels);
+	}
+	
+	if(preg_match("/[^0-9,\|\s]/i", $pix)) {
+		error("Invalid pixels");
+	}
+	
+	$pix = trim($pix, "|");
+	
+	return $pix;
+}
+
+/**
 * Send PQL to reth's shitty daemon
 */
 function queryDaemon($req) {
@@ -115,6 +138,8 @@ function chunk($req) {
 	$max = 8000;
 	$n = ceil($l / $max);
 	$next = 0;
+	
+	$resp = "";
 
 	while($i < $n) {
 		$tail = ($i + 1) * $max;
@@ -137,10 +162,12 @@ function chunk($req) {
 		$tail = min($l, $tail);
 		
 		$str = substr($req, $head, $tail - $head) . $cmd;
-		queryDaemon($str);
+		$resp .= queryDaemon($str);
 		
 		$i++;
 	}
+	
+	return $resp;
 }
 
 if(isset($_SESSION['id'])) define("USER", $_SESSION['id']);

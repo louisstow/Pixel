@@ -172,7 +172,7 @@ the email does not appear.</p>
 <input type="hidden" name="currency_code" id="currency_code" value="USD" />
 <input type="hidden" name="return" value="http://pixenomics.com/complete.html" />
 <input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_buynowCC_LG.gif" border="0" id="paypal" name="submit" alt="PayPal — The safer, easier way to pay online.">
-
+<div id="paypalloading"></div>
 </form>
 
 </div>
@@ -199,13 +199,13 @@ will be Red. If your color channels are the same value, it will randomly choose 
 
 </div>
 
-<div id="stage">
-
 <div id="tooltip">
 <span class="message"></span>
 <span class="url"></span>
 <span class="price"></span>
 </div>
+
+<div id="stage">
 
 <canvas id="canvas" width="1200" height="1000">
 	<p class="browser">To use Pixenomics, please update or switch your browser to one of the following: Chrome, Firefox, Opera, IE10</p>
@@ -217,7 +217,8 @@ Contact
 <a href="mailto:saul@pixenomics.com">Saul</a> or
 <a href="mailto:jgs@pixenomics.com">Jim</a> - 
 <a href="http://twitter.com/pixenomics">@Pixenomics</a> - 
-<a href="http://pixenomics.tumblr.com">Blog</a>
+<a href="http://pixenomics.tumblr.com">Blog</a> - 
+<a href="http://reddit.com/r/pixenomics">/r/pixenomics</a>
 </div>
 </body>
 </html>
