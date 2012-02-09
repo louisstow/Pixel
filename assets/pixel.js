@@ -88,6 +88,9 @@ $(function() {
 			//V
 			case 86: $("a.move").click(); break;
 			
+			//T
+			case 84: $("a.invert").click(); break;
+			
 			//1
 			case 49: $("a.x16").click(); break;
 			
@@ -413,6 +416,16 @@ $(function() {
 		}
 		
 		redraw();
+	});
+	
+	$("a.invert").click(function() {
+		if($(this).hasClass("active")) {
+			$(this).removeClass("active");
+			$("#stage").css("background", "#fff");
+		} else {
+			$(this).addClass("active");
+			$("#stage").css("background", shadowColor);
+		}
 	});
 	
 	$("a.select").click(function() {

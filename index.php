@@ -38,6 +38,7 @@
 		<li><a class="mypixels"><u>M</u>y Pixels</a></li>
 		<li><a class="buypixel"><u>B</u>uy</a><span id="counter"></span></li>
 		<li><a class="sellpixel">S<u>e</u>ll</a></li>
+		<li><a class="invert">Inver<u>t</u></a></li>
 		<li id="logos"></li>
 		<li id="welcome"></li>
 	</ul>
