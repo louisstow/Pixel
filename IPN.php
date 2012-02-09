@@ -47,7 +47,7 @@ if($res != "VERIFIED") {
 }
 
 //if not pending and not complete
-if($_POST['payment_status'] !== "Complete" && $_POST['payment_status'] !== "Pending") {
+if($_POST['payment_status'] !== "Completed" && $_POST['payment_status'] !== "Pending") {
 	//log error
 	$message = $res . "\r\n";
 	$message .= print_r($_POST, true) . "\r\n";
