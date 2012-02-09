@@ -407,11 +407,9 @@ $(function() {
 		
 		if(mypixelsSelected) {
 			$(this).removeClass("active");
-			$("#stage").css("background", "#fff");
 			mypixelsSelected = false;
 		} else {
 			$(this).addClass("active");
-			$("#stage").css("background", shadowColor);
 			mypixelsSelected = true;
 		}
 		
