@@ -5,8 +5,8 @@
 #define COST_SIZE 	3
 #define OID_SIZE	4
 
-#define ROWS		1200	
-#define COLS		1000
+#define ROWS		1000	
+#define COLS		1200
 
 struct pixel {
 	char colour[COLOUR_SIZE + 1];

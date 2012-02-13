@@ -197,9 +197,9 @@ print_board(int s, struct pixel **b)
 	if ((f = fdopen(s, "w+")) == NULL)
 		return;
 
-	for (i = 0; i < COLS; i++) {
-		for (j = 0; j < ROWS; j++) {
-			p = &b[j][i];
+	for (i = 0; i < ROWS; i++) {
+		for (j = 0; j < COLS; j++) {
+			p = &b[i][j];
 			if (p->colour[0] == '.') {
 				fprintf(f, ".");
 			} else
@@ -408,11 +408,11 @@ parse_query(int sock, char *qry, struct pixel **board)
 		f = fdopen(sock, "r+");
 		cp = c = extract_pixels(qry);
 		while (*cp != -1) {
-			if (*cp < 0 || *cp > 1200 || *(cp+1) < 0 || *cp > 1000) {
+			if (*cp < 0 || *cp > COLS || *(cp+1) < 0 || *(cp+1) > ROWS) {
 				cp += 2;
 				continue;
 			}
-			bp = &board[*cp][*(cp+1)];
+			bp = &board[*(cp+1)][*cp];
 			if (bp->colour[0] == '.')
 				fprintf(f, "%c", bp->colour[0]);
 			else
@@ -426,7 +426,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 	} else if (qp[0] == 'w') {
 		cp = c = extract_pixels(qry);
 		while (*cp != -1) {
-			if (*cp < 0 || *cp > 1200 || *(cp+1) < 0 || *cp > 1000) {
+			if (*cp < 0 || *cp > COLS || *(cp+1) < 0 || *(cp+1) > ROWS) {
 				cp += 2;
 				continue;
 			}   
@@ -435,7 +435,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 			                              bp->cost, 
 						      bp->oid,
 						      timestamp);
-			write_pixel(board, bp, *cp, *(cp+1));
+			write_pixel(board, bp, *(cp+1), *cp);
 			cp += 2;
 			free(bp);
 		}
@@ -445,11 +445,11 @@ parse_query(int sock, char *qry, struct pixel **board)
 		cp = c = extract_pixels(qry);
 
 		while(*cp != -1) {
-			if (*cp < 0 || *cp > 1200 || *(cp+1) < 0 || *cp > 1000) {
+			if (*cp < 0 || *cp > COLS || *(cp+1) < 0 || *(cp+1) > ROWS) {
 				cp += 2;
 				continue;
 			}   
-			bp = &board[*cp][*(cp+1)];
+			bp = &board[*(cp+1)][*cp];
 			bp->colour[0] = '.';
 			cp += 2;
 		}
@@ -462,11 +462,12 @@ parse_query(int sock, char *qry, struct pixel **board)
 		value = xmalloc(strlen(qry));
 
 		while(*cp != -1) {
-                        if (*cp < 0 || *cp > 1200 || *(cp+1) < 0 || *cp > 1000) {
-                                cp += 2;
-                                continue;
-                        }   
-			bp = &board[*cp][*(cp+1)];	
+            if (*cp < 0 || *cp > COLS || *(cp+1) < 0 || *cp > ROWS) {
+                cp += 2;
+                continue;
+            }   
+
+			bp = &board[*(cp+1)][*cp];	
 			sscanf(qp + 2, "%s %s", key, value);
 			
 			if (!strcmp("immunity", key))
