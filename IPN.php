@@ -46,6 +46,13 @@ if($res != "VERIFIED") {
 	exit;
 }
 
+if($_POST['receiver_email'] !== "jgs@pixenomics.com") {
+	$message = print_r($_POST, true) . "\r\n";
+	
+	mail($TO, "Not sent to us", $message);
+	exit;
+}
+
 //if not pending and not complete
 if($_POST['payment_status'] !== "Completed" && $_POST['payment_status'] !== "Pending") {
 	//log error
