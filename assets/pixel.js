@@ -280,7 +280,6 @@ $(function() {
 		data.email = $("div.register .email").val();
 		data.url = $("div.register .url").val();
 		data.message = $("div.register .message").val();
-		data.color = $("div.register .color").val();
 		data.respfield = $("#recaptcha_response_field").val();
 		data.chafield = $("#recaptcha_challenge_field").val();
 		

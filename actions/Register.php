@@ -1,6 +1,6 @@
 <?php
 load("User, Pixel");
-data("email, password, url, message, pixel, color, respfield, chafield");
+data("email, password, url, message, pixel, respfield, chafield");
 
 require_once('recaptchalib.php');
 $privatekey = "6Ldq1ssSAAAAAAjIAHb9K0OkYlac5AKFO77pD3Cr";
@@ -48,15 +48,6 @@ if(strlen($q) > 10) {
 	error("Pixels taken");
 }
 
-//ensure color is valid
-$icolor = intval($color, 16);
-if($icolor < 0 || $color > 16777215) {
-    error("Invalid color provided.");
-}
-
-$color = dechex($icolor);
-$color = str_repeat("0", 6 - strlen($color)) . $color;
-
 $password = encrypt($password);
 $player = I("User")->create(D, $password, $email, $url, $message, 0);
 
@@ -67,7 +58,7 @@ if(!$player) {
 
 $_SESSION['id'] = $player->userID;
 
-queryDaemon("{$list} w {$color} 1f4 " . dechex($player->userID) . " " . time());
+queryDaemon("{$list} w 000000 1f4 " . dechex($player->userID) . " " . time());
 
 unset($player->userPass);
 unset($player->_updateFlag);

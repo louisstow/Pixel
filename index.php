@@ -111,9 +111,9 @@ the email does not appear.</p>
 		<label>Password: <input type="password" class="pass" /></label>
 
 		<h3>2. Pixel Properties</h3>
-		<label>URL: <input type="text" class="url" /></label>
-		<label>Hover Text: <input type="text" class="message" /></label>
-		<label>Color: <input type="text" class="color" maxlength="6" value="ff0000" /></label>
+		<label>Link: <input type="text" class="url" /></label>
+		<label>Message: <input type="text" class="message" /></label>
+		
 		<span>These settings will apply to your first 10 pixels.</span>
 	</div>
 
@@ -181,7 +181,7 @@ the email does not appear.</p>
 <div class="box instr">
 <h2>Instructions</h2>
 
-<p class="feature">Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with 10 free pixels and take over neighbouring pixels by strategically choosing a
+<p class="feature">Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with <strong>10 free pixels</strong> and take over neighbouring pixels by strategically choosing a
 color. You can then sell your pixels for real money or use them as advertising space.</p>
 
 <p>The countdown displays the time until the next cycle where your pixels fight it out against others. After a cycle you will recieve a summary of how many pixels you
