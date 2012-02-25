@@ -197,7 +197,7 @@ will be Red. If your color channels are the same value, it will randomly choose 
 <p>Your odds will be increased by having a large difference between the dominant color channel and the other channels.</p>
 
 <p>
-<iframe width="560" height="315" src="http://www.youtube.com/embed/Thsfheuigrg" frameborder="0" allowfullscreen></iframe>
+<iframe width="500" height="284" src="http://www.youtube.com/embed/Thsfheuigrg" frameborder="0" allowfullscreen></iframe>
 </p>
 
 </div>
