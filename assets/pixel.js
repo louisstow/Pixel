@@ -31,7 +31,8 @@ var canvas,
 var $hours,
 	$minutes,
 	$seconds,
-	$cycleNum;
+	$cycleNum,
+	$counter;
 	
 var RecaptchaOptions = {
     theme : 'white'
@@ -124,6 +125,7 @@ $(function() {
 	$minutes = $("span.minutes");
 	$seconds = $("span.seconds");
 	$cycleNum = $("span.num");
+	$counter = $("#counter");
 	
 	if(window.DATA) updateBoard(DATA);
 	
@@ -166,8 +168,8 @@ $(function() {
 			$("div.register").hide();
 		} else {
 			//player must choose a pixel
-			if(pixels.length < 10) {
-				showError("Select 10 free pixels with the select tool.");
+			if(pixels.length < 30) {
+				showError("Select 30 free pixels with the select tool.");
 				$("a.select").trigger("click");
 				return;
 			}
@@ -286,8 +288,8 @@ $(function() {
 		var self = this;
 		
 		//player must choose a pixel
-		if(pixels.length < 10) {
-			showError("Select 10 free pixels with the select tool.");
+		if(pixels.length < 30) {
+			showError("Select 30 free pixels with the select tool.");
 			return;
 		}
 		
@@ -304,7 +306,7 @@ $(function() {
 			
 			//as long as none of the above
 			count++;
-			if(count > 9) break;
+			if(count > 29) break;
 		}
 		
 		data.pixel = list;
@@ -509,6 +511,7 @@ $(function() {
 	
 	$("a.clearselection").click(function() {
 		pixels = {length: 0 };
+		
 		redraw();
 	});
 	
@@ -1210,6 +1213,12 @@ function drawZoom(startX, startY, level, owner) {
 }
 
 function redraw() {
+	if(pixels.length) {
+		$counter.show().text("(" + pixels.length + ")");
+	} else {
+		$counter.hide();
+	}
+	
 	if(zoomLevel === 1) {
 		drawBoard(mypixelsSelected && me.userID);
 	} else {

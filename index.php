@@ -36,7 +36,7 @@
 	<ul>
 		<li><a class="instructions"><u>I</u>nstructions</a></li>
 		<li><a class="mypixels"><u>M</u>y Pixels</a></li>
-		<li><a class="buypixel"><u>B</u>uy</a><span id="counter"></span></li>
+		<li><a class="buypixel"><u>B</u>uy</a></li>
 		<li><a class="sellpixel">S<u>e</u>ll</a></li>
 		<li><a class="invert">Inver<u>t</u></a></li>
 		<li id="logos"></li>
@@ -66,7 +66,7 @@
 	<div id="tools" class="menu">
 		<ul>
 			<li><a class="default"><u>D</u>efault</a></li>
-			<li><a class="select"><u>S</u>elect</a>
+			<li><a class="select"><u>S</u>elect<span id="counter"></span></a>
 				<ul>
 					<li><a class="selectmypixels">Select My Pi<u>x</u>els</a></li>
 					<li><a class="clearselection"><u>C</u>lear Selection</a></li>
@@ -181,7 +181,7 @@ the email does not appear.</p>
 <div class="box instr">
 <h2>Instructions</h2>
 
-<p class="feature">Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with <strong>10 free pixels</strong> and take over neighbouring pixels by strategically choosing a
+<p class="feature">Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with <strong>30 free pixels</strong> and take over neighbouring pixels by strategically choosing a
 color. You can then sell your pixels for real money or use them as advertising space.</p>
 
 <p>The countdown displays the time until the next cycle where your pixels fight it out against others. After a cycle you will recieve a summary of how many pixels you

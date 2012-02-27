@@ -35,7 +35,7 @@ if($email == "" || $url == "" || $message == "" || $password == "") {
 	error("Please fill in all fields.");
 }
 
-if(count($pixel) > 10) {
+if(count($pixel) > 30) {
 	$pixel = array_slice($pixel, 0, 10);
 }
 
@@ -43,8 +43,9 @@ if(count($pixel) > 10) {
 $list = implode($pixel, "|");
 
 $q = queryDaemon("{$list} g");
+
 //should be 10 dots
-if(strlen($q) > 10) {
+if(strlen($q) > 30) {
 	error("Pixels taken");
 }
 
