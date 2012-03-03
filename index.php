@@ -12,6 +12,8 @@
 	<script type="text/javascript" src="assets/colorpicker/js/colorpicker.js"></script>
 	<script src="assets/pixel.js" type="text/javascript"></script>
 	<script src="assets/html5slider.js" type="text/javascript"></script>
+	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+	<script type="text/javascript">stLight.options({publisher: "ur-6f763b07-7f93-c877-7d5a-13c767491557"}); </script>
 
 	<title>Pixenomics - Start your pixel empire</title>
 	<script type="text/javascript">
@@ -39,7 +41,12 @@
 		<li><a class="buypixel"><u>B</u>uy</a></li>
 		<li><a class="sellpixel">S<u>e</u>ll</a></li>
 		<li><a class="invert">Inver<u>t</u></a></li>
-		<li id="logos"></li>
+		<li><a class="about" href="about.php">About</a></li>
+		<li>
+			<span class='st_twitter_hcount' st_url="http://pixenomics.com" displayText='Tweet'></span>
+			<span class='st_facebook_hcount' st_url="http://pixenomics.com" displayText='Facebook'></span>
+		</li>
+		
 		<li id="welcome"></li>
 	</ul>
 

@@ -149,3 +149,6 @@ button.disabled {
 #paypalloading { text-align: center; font-weight: bold; font-size: 14px }
 
 #counter { font-size: 10px; margin-left: 5px; position: relative; bottom: 2px }
+
+#content { border: 1px solid #B2B1B1; box-shadow: 0 2px 4px #939393; width: 800px; background: white; padding: 20px; margin: auto; text-align: left }
+#ntop { margin-top: 8px }
