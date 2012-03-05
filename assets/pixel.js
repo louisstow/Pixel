@@ -438,7 +438,12 @@ $(function() {
 			var pos = translate(e.clientX, e.clientY);
 			pos.x = ~~pos.x;
 			pos.y = ~~pos.y;
-			
+
+			if(pos.x < 0 || pos.x >= 1200 || pos.y < 0 || pos.y >= 1000) {
+                                $(this).unbind("mousemove").unbind("mouseup");
+                                return;
+                        }
+
 			var startZoomPos = translateGlobal(e.clientX, e.clientY);;
 			
 			var zoomOff = true;
@@ -470,11 +475,18 @@ $(function() {
 				var pos2 = translate(d.clientX, d.clientY);
 				pos2.x = ~~pos2.x;
 				pos2.y = ~~pos2.y;
+
+				$(zoomer).hide();
+
+                                if(pos2.x < 0 || pos2.x >= 1200 || pos2.y < 0 || pos2.y >= 1000) {
+                                    $(this).unbind("mousemove").unbind("mouseup");
+                                    return;
+                                }
+
 				var diffx = pos2.x < pos.x ? -1 : 1;
 				var diffy = pos2.y < pos.y ? -1 : 1;
 				var x = pos.x, y;
 				
-				$(zoomer).hide();
 				
 				//if the mouseup is the same position as down, it was a click
 				if(~~pos.x === ~~pos2.x && ~~pos.y === ~~pos2.y) {
@@ -549,6 +561,9 @@ $(function() {
 			var pos = translate(e.clientX, e.clientY);
 			var key = ~~pos.x + "," + ~~pos.y;
 			var pixel = board[key];
+
+                        if(~~pos.x < 0 || ~~pos.x >= 1200) return;
+                        if(~~pos.y < 0 || ~~pos.y >= 1000) return;
 			
 			//check if free pixel
 			if(moveSelected) {

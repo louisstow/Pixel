@@ -121,7 +121,7 @@ the email does not appear.</p>
 		<label>Link: <input type="text" class="url" /></label>
 		<label>Message: <input type="text" class="message" /></label>
 		
-		<span>These settings will apply to your first 10 pixels.</span>
+		<span>These settings will apply to your first 30 pixels.</span>
 	</div>
 
 	<div class="register_col_r">
@@ -204,7 +204,7 @@ will be Red. If your color channels are the same value, it will randomly choose 
 <p>Your odds will be increased by having a large difference between the dominant color channel and the other channels.</p>
 
 <p>
-<iframe width="500" height="284" src="http://www.youtube.com/embed/Thsfheuigrg" frameborder="0" allowfullscreen></iframe>
+<iframe width="500" height="284" src="http://www.youtube.com/embed/Thsfheuigrg?wmode=opaque" frameborder="0" allowfullscreen></iframe>
 </p>
 
 </div>
