@@ -17,11 +17,6 @@ if(!is_array($pixel)) {
 	error("Invalid pixels");
 }
 
-//detect SQL injection 
-if(preg_match("/[^0-9,]/i", implode("", $pixel))) {
-    error("Invalid pixels");
-}
-
 if(strlen($password) > 250 || strlen($email) > 250) {
 	error("All fields must be less than 250 characters");
 }
@@ -36,15 +31,18 @@ if($email == "" || $url == "" || $message == "" || $password == "") {
 }
 
 if(count($pixel) > 30) {
-	$pixel = array_slice($pixel, 0, 10);
+	$pixel = array_slice($pixel, 0, 30);
 }
+
+if(!realValidation($pixel))
+	error("Invalid pixels");
 
 //validate the selected pixels
 $list = implode($pixel, "|");
 
 $q = queryDaemon("{$list} g");
 
-//should be 10 dots
+//should be 30 dots
 if(strlen($q) > 30) {
 	error("Pixels taken");
 }

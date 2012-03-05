@@ -6,6 +6,9 @@ if(strlen($pixels) > 1000000) {
 	error("Too many pixels. Limit of 100,000 pixels.");
 }
 
+if(!realValidation(explode(" ", $pixels)))
+	error("Invalid pixels");
+
 $pixels = validate($pixels, false);
 $pixels = preg_replace("/\s+/", " ", $pixels);
 

@@ -81,6 +81,31 @@ function validate($pixels, $rep = true) {
 }
 
 /**
+* Take string and really validate it
+*/
+function realValidation($pixels) {
+	//pixel count must be at least 1
+	if(count($pixels) == 0) return false;
+
+	foreach($pixels as $pix) {
+		$comp = explode(",", $pix);
+		
+		//make sure exactly 2 components
+		if(count($comp) != 2) return false;
+		
+		//make sure both are numeric
+		if(!is_numeric($comp[0]) || !is_numeric($comp[1])) return false;
+		
+		//make sure they are within the range
+		if($comp[0] < 0 || $comp[1] < 0 || $comp[0] >= 1200 || $comp[1] >= 1000) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+/**
 * Send PQL to reth's shitty daemon
 */
 function queryDaemon($req) {
