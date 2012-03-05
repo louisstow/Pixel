@@ -10,6 +10,11 @@ if(preg_match("/[^0-9,]/i", $to)) {
     error("Invalid pixels");
 }
 
+$cto = explode(",", $to);
+if(count($cto) != 2 || $cto[0] >= 1200 || $cto[1] >= 1000) {
+    error("Invalid pixel range");
+}
+
 //get pixel data
 $f = queryDaemon($from . " g");
 
@@ -27,7 +32,7 @@ if(hexdec($owner) != USER) {
 
 $t = queryDaemon($to . " g");
 if($t !== ".") {
-	error("Pixel already there");
+	error("Pixel already there ({$to}) [{$t}]");
 }
 
 //write to daemon
