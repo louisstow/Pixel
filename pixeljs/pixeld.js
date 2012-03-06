@@ -115,11 +115,13 @@ function cron(socket) {
 				var col = y + circle[k][1];
 				var odds = 0;
 				
-				if(row < 0 || col < 0 || col >= COLS || row >= ROWS) continue;
+				if(row < 0 || col < 0 || col >= COLS || row >= ROWS)
+                    continue;
 				
 				var opp = board[col + "," + row];
 				
-				if(!opp || opp.owner === pixel.owner) continue;
+				if(!opp || opp.owner === pixel.owner) 
+                    continue;
 				
 				var or = parseInt(opp.color.substr(0, 2), 16);
 				var og = parseInt(opp.color.substr(2, 2), 16);
@@ -146,8 +148,10 @@ function cron(socket) {
 				if(rand(0, 1000) < odds) {
 					modified[col + "," + row] = pixel.owner;
 					
-					if(!owners[pixel.owner]) owners[pixel.owner] = {win: 0, lose: 0};
-					if(!owners[opp.owner]) owners[opp.owner] = {win: 0, lose: 0};
+					if(!owners[pixel.owner]) 
+                        owners[pixel.owner] = {win: 0, lose: 0};
+					if(!owners[opp.owner]) 
+                        owners[opp.owner] = {win: 0, lose: 0};
 					
 					owners[pixel.owner].win++;
 					owners[opp.owner].lose++;
