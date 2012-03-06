@@ -6,6 +6,7 @@ var COLS = 1200;
 
 var server = net.createServer(function(socket) {
     console.log("SERVER CONNECTED");
+    socket.setEncoding("ascii");
     socket.on("data", function(data) {
 		parseQuery(data, socket);
         socket.end();
@@ -15,6 +16,7 @@ var server = net.createServer(function(socket) {
 function parseQuery(qry, socket) {
 	var single = qry.charAt(0);
 	var spaceIndex = qry.indexOf(" ");
+    qry = qry.trim();
 	
 	//get the entire board
 	if(single === "g") {
@@ -85,6 +87,12 @@ function cron(socket) {
 function getLogs(timestamp, socket) {
 	var count = 0;
 	
+    //too much data to transmit
+    if(journal.length > 100) {
+        socket.write(".");
+        return;
+    }
+
 	for(var i = 0; i < journal.length; ++i) {
 		if(journal[i].timestamp >= timestamp) {
 			socket.write(journal[i] + "\n");
@@ -92,9 +100,9 @@ function getLogs(timestamp, socket) {
 		}
 	}
 	
-	//write a dot if no journal data
+	//write empty string
 	if(count == 0) {
-		socket.write(".");
+		socket.write("");
 	}
 }
 
@@ -109,7 +117,7 @@ function saveLog(qry, timestamp) {
 
 function getPixel(pixels, socket) {
 	var pixel;
-	
+    console.log("GET", pixels);	
 	for(var i = 0; i < pixels.length; ++i) {
 		pixel = board[pixels[i]];
 		
@@ -122,6 +130,7 @@ function getPixel(pixels, socket) {
 }
 
 function writePixel(pixels, cmd, socket) {
+    console.log("WRITE", pixels, cmd);
 	for(var i = 0; i < pixels.length; ++i) {
 		board[pixels[i]] = {
 			color: cmd[1],
@@ -139,6 +148,7 @@ function getMetaData(pixel, name) {
 
 function setMetaData(pixels, cmd) {
 	var pixel;
+    console.log("META", pixels, cmd);
 	
 	for(var i = 0; i < pixels.length; ++i) {
 		pixel = board[pixels[i]];
