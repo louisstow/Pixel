@@ -231,6 +231,14 @@ Contact
 <a href="http://twitter.com/pixenomics">@Pixenomics</a> - 
 <a href="http://pixenomics.tumblr.com">Blog</a> - 
 <a href="http://reddit.com/r/pixenomics">/r/pixenomics</a>
+
+<p><a href="terms.html">Terms &amp; Conditions</a></p>
+<p>
+<a href="https://www.iubenda.com/privacy-policy/648820" class="iubenda-white " id="iubenda-embed" title="Privacy Policy">Privacy Policy</a>
+<script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; w.addEventListener ? w.addEventListener("load", loader, false) : w.attachEvent("onload", loader);})(window, document);</script>
+</p>
 </div>
+
 </body>
+
 </html>
