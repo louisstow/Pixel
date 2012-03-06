@@ -857,14 +857,14 @@ function updateBoard(data) {
 		if(parse.charAt(i) === '.') {
 			x++;
 			
-			if(x >= 1200) {
+			if(x == 1200) {
 				x = 0;
 				y++;
 			}
 			continue;
 		}
 		
-		if(x >= 1200) {
+		if(x == 1200) {
 			x = 0;
 			y++;
 		}
