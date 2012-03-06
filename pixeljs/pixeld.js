@@ -3,6 +3,7 @@ var board = {};
 var journal = [];
 var ROWS = 1000;
 var COLS = 1200;
+var RED = 0, GREEN = 1, BLUE = 2;
 
 var server = net.createServer(function(socket) {
     console.log("SERVER CONNECTED");
@@ -81,7 +82,110 @@ function getBoard(socket) {
 }
 
 function cron(socket) {
+	var pixel;
+	var modified = {};
+	var owners = {};
+	
+	//directions of neighbouring pixels
+	var circle = [
+		[-1, -1],
+		[-1,  0],
+		[-1,  1],
+		[ 0, -1],
+		[ 0,  1],
+		[ 1, -1],
+		[ 1,  0],
+		[ 1,  1]
+    ];
+	
+	for(var x = 0; x < COLS; ++x) {
+		for(var y = 0; y < ROWS; ++y) {
+			pixel = board[x + "," + y];
+			
+			if(!pixel) continue;
+			
+			var r = parseInt(pixel.color.substr(0, 2), 16);
+			var g = parseInt(pixel.color.substr(2, 2), 16);
+			var b = parseInt(pixel.color.substr(4, 2), 16);
+			
+			var dominant = getDominant(r, g, b);
+			
+			for(var k = 0; k < 8; ++k) {
+				var row = x + circle[k][0];
+				var col = y + circle[k][1];
+				var odds = 0;
+				
+				if(row < 0 || col < 0 || col >= COLS || row >= ROWS) continue;
+				
+				var opp = board[col + "," + row];
+				
+				if(!opp || opp.owner === pixel.owner) continue;
+				
+				var or = parseInt(opp.color.substr(0, 2), 16);
+				var og = parseInt(opp.color.substr(2, 2), 16);
+				var ob = parseInt(opp.color.substr(4, 2), 16);
+				
+				var odominant = getDominant(or, og, ob);
+				
+				if((dominant == RED && odominant == GREEN) ||
+				   (dominant == GREEN && odominant == BLUE) ||
+				   (dominant == BLUE && odominant == RED))
+				
+					odds += 600;
+					
+				//boost odds for brighter colors
+				if(dominant == RED) {
+					odds += ~~((r - g) + (r - b)) / 5;
+				} else if(dominant == GREEN) {
+					odds += ~~((g - r) + (g - b)) / 5;
+				} else if(dominant == BLUE) {
+					odds += ~~((b - r) + (b - g)) / 5;
+				}
+				
+				//winner
+				if(rand(0, 1000) < odds) {
+					modified[col + "," + row] = pixel.owner;
+					
+					if(!owners[pixel.owner]) owners[pixel.owner] = {win: 0, lose: 0};
+					if(!owners[opp.owner]) owners[opp.owner] = {win: 0, lose: 0};
+					
+					owners[pixel.owner].win++;
+					owners[opp.owner].lose++;
+				}
+			}
+		}
+	}
+	
+	//copy ownership at the end
+	for(var pix in modified) {
+		board[pix].owner = modified[pix].owner;
+	}
+	
+	//build summary
+	var summary = "";
+	for(var own in owners) {
+		summary += own + "," + owners[own].win + "," + owners[own].lose + "|";
+	}
+	
+	socket.write(summary.substring(0, summary.length - 1));
+}
 
+function rand(min, max) {
+	var range = max - min + 1;
+	return Math.floor(Math.random() * range + min);
+}
+
+function getDominant(r, g, b) {
+	if(r > g && r > b) return RED;
+	if(g > r && g > b) return GREEN;
+	if(b > r && b > g) return BLUE;
+	
+	if(r == g && r == b) return rand(0, 2);
+	if(r == g) return rand(0, 1) ? RED : GREEN;
+	if(r == b) return rand(0, 1) ? RED : BLUE;
+	if(g == b) return rand(0, 1) ? GREEN : BLUE;
+	
+	return RED;
 }
 
 function getLogs(timestamp, socket) {
