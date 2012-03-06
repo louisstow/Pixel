@@ -119,6 +119,9 @@ save_board(struct pixel **b)
 int
 write_pixel(struct pixel **b, struct pixel *p, int r, int c)
 {
+    if(r >= ROWS || c >= COLS || r < 0 || c < 0)
+        return 0;
+
 	struct pixel *pp = &b[r][c];
 	
 	if (p == NULL) {
@@ -408,7 +411,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		f = fdopen(sock, "r+");
 		cp = c = extract_pixels(qry);
 		while (*cp != -1) {
-			if (*cp < 0 || *cp > COLS || *(cp+1) < 0 || *(cp+1) > ROWS) {
+			if (*cp < 0 || *cp >= COLS || *(cp+1) < 0 || *(cp+1) >= ROWS) {
 				cp += 2;
 				continue;
 			}
@@ -426,7 +429,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 	} else if (qp[0] == 'w') {
 		cp = c = extract_pixels(qry);
 		while (*cp != -1) {
-			if (*cp < 0 || *cp > COLS || *(cp+1) < 0 || *(cp+1) > ROWS) {
+			if (*cp < 0 || *cp >= COLS || *(cp+1) < 0 || *(cp+1) >= ROWS) {
 				cp += 2;
 				continue;
 			}   
@@ -445,7 +448,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		cp = c = extract_pixels(qry);
 
 		while(*cp != -1) {
-			if (*cp < 0 || *cp > COLS || *(cp+1) < 0 || *(cp+1) > ROWS) {
+			if (*cp < 0 || *cp >= COLS || *(cp+1) < 0 || *(cp+1) >= ROWS) {
 				cp += 2;
 				continue;
 			}   
@@ -462,7 +465,7 @@ parse_query(int sock, char *qry, struct pixel **board)
 		value = xmalloc(strlen(qry));
 
 		while(*cp != -1) {
-            if (*cp < 0 || *cp > COLS || *(cp+1) < 0 || *cp > ROWS) {
+            if (*cp < 0 || *cp >= COLS || *(cp+1) < 0 || *cp >= ROWS) {
                 cp += 2;
                 continue;
             }   
