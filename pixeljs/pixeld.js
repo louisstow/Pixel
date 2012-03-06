@@ -68,8 +68,8 @@ function parseQuery(qry, socket) {
 function getBoard(socket) {
 	var pixel;
 	
-	for(var x = 0; x < COLS; ++x) {
-		for(var y = 0; y < ROWS; ++y) {
+	for(var y = 0; y < ROWS; ++y) {
+		for(var x = 0; x < COLS; ++x) {
 			pixel = board[x + "," + y];
 			
 			if(pixel) {
@@ -158,7 +158,7 @@ function cron(socket) {
 	
 	//copy ownership at the end
 	for(var pix in modified) {
-		board[pix].owner = modified[pix].owner;
+		board[pix].owner = modified[pix];
 	}
 	
 	//build summary
