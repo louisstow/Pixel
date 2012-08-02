@@ -7,7 +7,6 @@
 	<link rel="icon" type="image/png" href="favicon.png" />
 	
 
-	<script src="api.php?action=GetBoard" type="text/javascript"></script>
 	<script src="assets/jquery.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="assets/colorpicker/js/colorpicker.js"></script>
 	<script src="assets/pixel.js" type="text/javascript"></script>
@@ -47,7 +46,7 @@
 			<span class='st_facebook_hcount' st_url="http://pixenomics.com" displayText='Facebook'></span>
 		</li>
 		
-		<li id="welcome"></li>
+		<li id="welcome">Register now for your FREE 30 pixels!</li>
 	</ul>
 
 </div>

@@ -19,7 +19,7 @@ $data = toArray($q);
 //validate the owner of the pixel
 foreach($data as $row) {
 	if($row['owner'] != USER) {
-		error("This is not your pixel");
+		error("This is not your pixel [{$row['owner']}] vs (" . USER . ") " . json_encode($data));
 	}
 }
 

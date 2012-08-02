@@ -127,7 +127,7 @@ function queryDaemon($req) {
 	
 	fclose($fp);
 	
-	return $str;
+	return substr($str, 0, strlen($str) - 1);
 }
 
 /**

@@ -1,18 +1,89 @@
 var net = require('net');
-var board = {};
+var fs 	= require('fs');
+
+var board 	= [];
 var journal = [];
+
 var ROWS = 1000;
 var COLS = 1200;
-var RED = 0, GREEN = 1, BLUE = 2;
+
+var RED 	= 0, 
+		GREEN = 1, 
+		BLUE 	= 2;
 
 var server = net.createServer(function(socket) {
     console.log("SERVER CONNECTED");
     socket.setEncoding("ascii");
     socket.on("data", function(data) {
-		parseQuery(data, socket);
-        socket.end();
+			parseQuery(data, socket);
+			socket.end("\n");
     });
 }).listen(5607);
+
+initBoard();
+
+function zeroPad(number, width) {
+  width -= number.toString().length;
+  if (width > 0) {
+    return new Array(width + 1).join('0') + number;
+  }
+  return number + ""; // always return a string
+}
+
+function initBoard() {
+	//create board objects
+	for(var x = 0; x < COLS; ++x) {
+		if(!board[x]) board[x] = [];
+
+		for(var y = 0; y < ROWS; ++y) {
+			board[x][y] = {
+				owner: null,
+				color: null,
+				price: 10
+			}
+		}
+	}
+
+	//if the board file exists, import it
+	if(fs.existsSync("board.js")) {
+		fs.readFile("board.js", function(err, out) {
+			out = out.toString();
+			readBoard(out.substring(22, out.length - 3));
+		});
+	} else {
+		//else save the state to a file
+		saveState();
+	}
+}
+
+function readBoard(parse) {
+  var len = parse.length;
+  var x = 0, y = 0;
+  var params = {};
+ 
+  for(var i = 0; i < len; i++) {
+    if(parse.charAt(i) === '') break;
+
+    if(x == 1200) {
+      x = 0;
+      y++;
+    }
+
+    if(parse.charAt(i) === '.') {
+      x++;
+      continue;
+    }
+
+    var key = board[x][y];
+
+    key.color = parse.substr(i, 6);
+    key.price = parse.substr(i + 6, 3);
+    key.owner = parse.substr(i + 9, 4);     
+		console.log(key);
+    x++;
+    i += 12;
+  }
+}
 
 function parseQuery(qry, socket) {
 	var single = qry.charAt(0);
@@ -67,18 +138,21 @@ function parseQuery(qry, socket) {
 
 function getBoard(socket) {
 	var pixel;
+	var buffer = "";
 	
 	for(var y = 0; y < ROWS; ++y) {
 		for(var x = 0; x < COLS; ++x) {
-			pixel = board[x + "," + y];
+			pixel = board[x][y];
 			
-			if(pixel) {
-				socket.write(pixel.color + pixel.price + pixel.owner);
+			if(pixel && pixel.owner !== null) {
+				buffer += pixel.color + zeroPad(pixel.price, 3) + zeroPad(pixel.owner, 4);
 			} else {
-				socket.write(".");
+				buffer += ".";
 			}
 		}
 	}
+
+	socket.write(buffer);
 }
 
 function cron(socket) {
@@ -100,7 +174,7 @@ function cron(socket) {
 	
 	for(var x = 0; x < COLS; ++x) {
 		for(var y = 0; y < ROWS; ++y) {
-			pixel = board[x + "," + y];
+			pixel = board[x][ y];
 			
 			if(!pixel) continue;
 			
@@ -118,7 +192,7 @@ function cron(socket) {
 				if(row < 0 || col < 0 || col >= COLS || row >= ROWS)
                     continue;
 				
-				var opp = board[col + "," + row];
+				var opp = board[col][row];
 				
 				if(!opp || opp.owner === pixel.owner) 
                     continue;
@@ -162,7 +236,10 @@ function cron(socket) {
 	
 	//copy ownership at the end
 	for(var pix in modified) {
-		board[pix].owner = modified[pix];
+		var dim = pix.split(",");
+		if(dim.length !== 2) continue;
+
+		board[+dim[0]][+dim[1]].owner = modified[pix];
 	}
 	
 	//build summary
@@ -201,9 +278,11 @@ function getLogs(timestamp, socket) {
         return;
     }
 
+	console.log("LOGS", journal.length, timestamp);
+
 	for(var i = 0; i < journal.length; ++i) {
-		if(journal[i].timestamp >= timestamp) {
-			socket.write(journal[i] + "\n");
+		if(journal[i].timestamp > timestamp) {
+			socket.write(journal[i].qry + "\n");
 			count++;
 		}
 	}
@@ -216,6 +295,7 @@ function getLogs(timestamp, socket) {
 
 function saveLog(qry, timestamp) {
 	if(journal.length > 100) {
+		saveState();
 		journal = [];
 	}
 	
@@ -227,10 +307,11 @@ function getPixel(pixels, socket) {
 	var pixel;
     console.log("GET", pixels);	
 	for(var i = 0; i < pixels.length; ++i) {
-		pixel = board[pixels[i]];
+		var dim = pixels[i].split(",");
+		pixel = board[+dim[0]][+dim[1]];
 		
-		if(pixel) {
-			socket.write(pixel.color + pixel.price + pixel.owner);
+		if(pixel && pixel.owner !== null) {
+			socket.write(pixel.color + zeroPad(pixel.price, 3) + zeroPad(pixel.owner, 4));
 		} else {
 			socket.write(".");
 		}
@@ -238,18 +319,21 @@ function getPixel(pixels, socket) {
 }
 
 function writePixel(pixels, cmd, socket) {
-    console.log("WRITE", pixels, cmd);
+	console.log("WRITE", pixels, cmd);
 	for(var i = 0; i < pixels.length; ++i) {
-		board[pixels[i]] = {
-			color: cmd[1],
-			price: cmd[2],
-			owner: cmd[3]
-		};
+		var dim = pixels[i].split(",");
+		var pixel = board[+dim[0]][+dim[1]];
+		if(cmd[1] !== ".") pixel.color = cmd[1];
+		if(cmd[2] !== ".") pixel.price = cmd[2];
+		if(cmd[3] !== ".") pixel.owner = cmd[3];
 	}
+
+	saveState();
 }
 
 function getMetaData(pixel, name) {
-	var pix = board[pixel];
+	var dim = pixel.split(",");
+	var pix = board[+dim[0]][+dim[1]];
 	if(!pix) return;
 	return pix[name];
 }
@@ -259,7 +343,8 @@ function setMetaData(pixels, cmd) {
     console.log("META", pixels, cmd);
 	
 	for(var i = 0; i < pixels.length; ++i) {
-		pixel = board[pixels[i]];
+		var dim = pixels[i].split(",");
+		var pixel = board[+dim[0]][+dim[1]];
 		
 		if(!pixel) continue;
 		
@@ -269,6 +354,26 @@ function setMetaData(pixels, cmd) {
 
 function deletePixel(pixels) {
 	for(var i = 0; i < pixels.length; ++i) {
-		delete board[pixels[i]];
+		var dim = pixels[i].split(",");
+		var pix = board[+dim[0]][+dim[1]];
+		pix.owner = null;
+		pix.price = 10;
+		pix.color = null;
 	}
+}
+
+//Save the board to a static JS file
+function saveState() {
+	console.log("SAVE STATE");
+	var start = Date.now();
+	var buffer = fs.createWriteStream("board.js");
+	
+	buffer.on("error", function(err) {
+		console.log(err);
+	});
+
+	buffer.write("var DATA = '" + (Date.now() / 1000 | 0));
+	getBoard(buffer);
+	buffer.end("';\n");
+	console.log("Save took ", Date.now() - start, "milliseconds");
 }

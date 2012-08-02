@@ -27,7 +27,7 @@ $cents = substr($f, 6, 3);
 $owner = substr($f, 9, 4);
 
 if(hexdec($owner) != USER) {
-	error("Not your pixel");
+	error("Not your pixel $f ($owner):" . hexdec($owner) . " = " . USER);
 }
 
 $t = queryDaemon($to . " g");

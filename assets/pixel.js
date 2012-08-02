@@ -37,8 +37,12 @@ var $hours,
 var RecaptchaOptions = {
     theme : 'white'
 };
-	
+
 $(function() {
+	var script = document.createElement("script");
+	script.src = "board.js?_=" + Date.now();
+	document.body.appendChild(script);
+
 	zoomer = document.createElement("div");
 	$("#stage").append(zoomer);
 	zoomer.setAttribute("class", "zoomer");
@@ -107,9 +111,9 @@ $(function() {
 	});
 	
 	//stop key shortcuts in a textbox
-	$("input").focus(function() {
+	$("input").live("focus", function() {
 		hasFocus = false;
-	}).blur(function() {
+	}).live("blur", function() {
 		hasFocus = true;
 	});
 	
@@ -126,8 +130,19 @@ $(function() {
 	$seconds = $("span.seconds");
 	$cycleNum = $("span.num");
 	$counter = $("#counter");
-	
-	if(window.DATA) updateBoard(DATA);
+
+	//board might not be loaded, keep checking	
+	var checkCounter = 0;
+	(function checkData() {
+		console.log("ATTEMPT AGAIN");
+		checkCounter++;
+		if(checkCounter > 10) {
+			console.log("COULD NOT FIND DATA");
+		} else if(window.DATA) { 
+			updateBoard(DATA);
+			status();
+		} else setTimeout(checkData, 0);
+	})()
 	
 	$(".color").each(function() {
 		var self = $(this);
@@ -811,7 +826,6 @@ $(function() {
 	});
 	
 	tick();
-	status();
 	setInterval(tick, 1000);
 	setInterval(status, 1000 * 10);
 });
@@ -853,22 +867,18 @@ function updateBoard(data) {
 	
 	for(var i = 0; i < len; i++) {
 		if(parse.charAt(i) === '') break;
-		
-		if(parse.charAt(i) === '.') {
-			x++;
-			
-			if(x == 1200) {
-				x = 0;
-				y++;
-			}
-			continue;
-		}
-		
+
 		if(x == 1200) {
 			x = 0;
 			y++;
 		}
 
+		if(parse.charAt(i) === '.') {
+			x++;
+			
+			continue;
+		}
+		
 		var key = x + "," + y;
 		
 		if(!board[key]) {
@@ -1078,7 +1088,7 @@ function selectPixel(x, y) {
 function startZoomer(level) {
 	stagePos = $("#canvas").offset();
 	//reset to 1
-	if(zoomLevel !== 1) drawBoard();
+	if(zoomLevel !== 1) drawBoard(mypixelsSelected && me.userID);
 	
 	selected = "zoom";
 	var w = canvasWidth / level,

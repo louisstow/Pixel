@@ -86,7 +86,7 @@ span.blue { color: blue; font-weight: 700 }
 span.hinttype { text-transform: capitalize; font-weight: 700 }
 span.hintcolor { font-weight: 700 }
 
-#controls li#welcome { display:none; float:right; text-transform:none; color: #E9E9E9; height:30px; line-height:28px; font-weight: 700; text-shadow:0px 1px #000 }
+#controls li#welcome { float:right; text-transform:none; color: #E9E9E9; height:30px; line-height:28px; font-weight: 700; text-shadow:0px 1px #000 }
 
 #tooltip { display: none; position: absolute; border:1px solid #ccc; background: #eee; padding: 2px; cursor: pointer; z-index: 1000; max-width: 200px;
 text-align: left; word-break: break-all; }

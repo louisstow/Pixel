@@ -44,7 +44,7 @@ $q = queryDaemon("{$list} g");
 
 //should be 30 dots
 if(strlen($q) > 30) {
-	error("Pixels taken");
+	error("Pixels taken: " . $q);
 }
 
 $password = encrypt($password);
