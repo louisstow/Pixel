@@ -357,7 +357,7 @@ function deletePixel(pixels) {
 		var dim = pixels[i].split(",");
 		var pix = board[+dim[0]][+dim[1]];
 		pix.owner = null;
-		pix.price = 10;
+		pix.price = null;
 		pix.color = null;
 	}
 }

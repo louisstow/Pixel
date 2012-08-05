@@ -18,6 +18,6 @@ var socket = net.createConnection(5607, function() {
 	req = req.substring(0, req.length - 1);
 	var color = zeroPad(Math.random() * 0xFFFFFF | 0, 6);
 
-	req += " w " + color + " 1f4 1 9999999999";
+	req += " w " + color + " 1f4 1 " + (Date.now() / 1000 | 0);
 	socket.end(req);
 });

@@ -9,6 +9,8 @@
 
 	<script src="assets/jquery.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="assets/colorpicker/js/colorpicker.js"></script>
+	<script src="assets/controls.js" type="text/javascript"></script>
+	<script src="assets/canvas.js" type="text/javascript"></script>
 	<script src="assets/pixel.js" type="text/javascript"></script>
 	<script src="assets/html5slider.js" type="text/javascript"></script>
 	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
@@ -201,11 +203,6 @@ will be Red. If your color channels are the same value, it will randomly choose 
 <span class="green">Green</span> beats <span class="blue">Blue</span> (similar to Paper, Scissors, Rock).</p>
 
 <p>Your odds will be increased by having a large difference between the dominant color channel and the other channels.</p>
-
-<p>
-<iframe width="500" height="284" src="http://www.youtube.com/embed/Thsfheuigrg?wmode=opaque" frameborder="0" allowfullscreen></iframe>
-</p>
-
 </div>
 
 </div>
@@ -216,7 +213,15 @@ will be Red. If your color channels are the same value, it will randomly choose 
 <span class="price"></span>
 </div>
 
+
 <div id="stage">
+
+	
+<div id="zoom">
+	<a class="in">+</a>
+	<div class="level"></div>
+	<a class="out">-</a>
+</div>
 
 <canvas id="canvas" width="1200" height="1000">
 	<p class="browser">To use Pixenomics, please update or switch your browser to one of the following: Chrome, Firefox, Opera, IE10</p>
