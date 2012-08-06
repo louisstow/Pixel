@@ -187,10 +187,9 @@ function initControls () {
 	
 	$("a.default").click(function() {
 		clearSelection();
-		pixels = {length: 0};
+
 		selected = "default";
 		$(this).addClass("active");
-		redraw();
 		
 		var downPos, dragging = false, dragged = false, lastPos;
 
@@ -696,7 +695,7 @@ function initControls () {
 		}, false);
 	});
 
-	$("#zoom a.in").click(function() {
+	$("a.zoomin").click(function() {
 		//increase zoom by power of 2
 		if(zoomLevel === 64) return;
 
@@ -711,17 +710,22 @@ function initControls () {
 		console.log(newZoom, width, height, midPointX, midPointY, x, y)
 		if(x < 0) x = 0;
 		if(y < 0) y = 0;
-		if(x > 1200 - 1200 / zoomLevel) x = 1200 - 1200 / zoomLevel;
-		if(y > 1000 - 1000 / zoomLevel) y = 1000 - 1000 / zoomLevel;
+		if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
+		if(y > 1000 - 1000 / newZoom) y = 1000 - 1000 / newZoom;
 
 		drawZoom(x, y, newZoom);
 	});
 
-	$("#zoom a.out").click(function() {
+	$("a.zoomout").click(function() {
 		//decrease zoom by power of 2
 		if(zoomLevel === 1) return;
 
 		var newZoom = zoomLevel / 2;
+		if(newZoom === 1) {
+			drawBoard();
+			return;
+		}
+
 		var width = (1200 / newZoom) / 2;
 		var height  = (1000 / newZoom) / 2;
 		var midPointX = zoomPos.left + (1200 / zoomLevel / 2);
@@ -732,8 +736,8 @@ function initControls () {
 		console.log(newZoom, width, height, midPointX, midPointY, x, y);
 		if(x < 0) x = 0;
 		if(y < 0) y = 0;
-		if(x > 1200 - 1200 / zoomLevel) x = 1200 - 1200 / zoomLevel;
-		if(y > 1000 - 1000 / zoomLevel) y = 1000 - 1000 / zoomLevel;
+		if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
+		if(y > 1000 - 1000 / newZoom) y = 1000 - 1000 / newZoom;
 
 		drawZoom(x, y, newZoom);
 	});

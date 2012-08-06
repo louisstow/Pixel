@@ -96,18 +96,6 @@ $(function() {
 			
 			//T
 			case 84: $("a.invert").click(); break;
-			
-			//1
-			case 49: $("a.x16").click(); break;
-			
-			//2
-			case 50: $("a.x2").click(); break;
-			
-			//4
-			case 52: $("a.x4").click(); break;
-			
-			//8
-			case 56: $("a.x8").click(); break;
 		}
 	});
 	

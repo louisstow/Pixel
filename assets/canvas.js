@@ -42,6 +42,8 @@ function drawBoard(owner) {
 	zoomPos.top = 0;
 	zoomLevel = 1;
 	ctx.putImageData(imgdata, 0, 0);
+
+	$("a.zoomlevel").text("1");
 }
 
 /**
@@ -58,34 +60,77 @@ function drawZoom(startX, startY, level, owner) {
 	//clear canvas
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 	
-	for(x = ~~startX; x < endX; ++x) {
-		for(y = ~~startY; y < endY; ++y) {
-			pixel = board[x + "," + y];
-			
-			//if no pixel found, don't draw
-			if(!pixel && !pixels[x + "," + y]) continue;
-			
-			//only show existing pixels
-			if(owner && !pixel) {
-				continue;
+	//if the zoom level is greater than two, this is more effecient
+	if(zoomLevel > 4) {
+		for(x = ~~startX; x < endX; ++x) {
+			for(y = ~~startY; y < endY; ++y) {
+				pixel = board[x + "," + y];
+				
+				//if no pixel found, don't draw
+				if(!pixel && !pixels[x + "," + y]) continue;
+				
+				//only show existing pixels
+				if(owner && !pixel) {
+					continue;
+				}
+				
+				//if only draw the specified owner
+				if(owner && pixel.owner != owner) {
+					continue;
+				}
+				
+				ctx.fillStyle = "#" + (pixels[x + "," + y] ? selectColor : pixel.color);
+				ctx.fillRect(
+					(x - startX) * level, 
+					(y - startY) * level, 
+					level, 
+					level
+				);
 			}
-			
-			//if only draw the specified owner
-			if(owner && pixel.owner != owner) {
-				continue;
+		}
+	} else {
+		var pix, coord;
+		for(pix in board) {
+			coord = pix.split(",");
+			x = +coord[0]; y = +coord[1];
+			pixel = board[pix];
+
+			//if only show owners pixels
+			if(owner && pixel.owner != owner) continue;
+
+			//if selected, draw later
+			if(pixels[pix]) continue;
+
+			if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
+				ctx.fillStyle = "#" + pixel.color;
+				ctx.fillRect(
+					(x - startX) * level, 
+					(y - startY) * level, 
+					level, 
+					level
+				);
 			}
-			
-			ctx.fillStyle = "#" + (pixels[x + "," + y] ? selectColor : pixel.color);
-			ctx.fillRect(
-				(x - startX) * level, 
-				(y - startY) * level, 
-				level, 
-				level
-			);
+		}
+
+		for(var pix in pixels) {
+			coord = pix.split(",");
+			x = +coord[0]; y = +coord[1];
+
+
+			if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
+				ctx.fillStyle = "#" + selectColor;
+				ctx.fillRect(
+					(x - startX) * level, 
+					(y - startY) * level, 
+					level, 
+					level
+				);
+			}
 		}
 	}
 	
 	zoomLevel = level;
+	$("a.zoomlevel").text(zoomLevel);
 }
 
 function redraw() {
