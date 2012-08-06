@@ -153,7 +153,10 @@ $(function() {
 
 //should grab logs
 function status() {
-	if(!currentTimestamp) return;
+	if(!currentTimestamp) {
+		console.log("Y", currentTimestamp);
+		return;
+	}
 	
 	api("Status", {time: currentTimestamp}, function(resp) {
 		nextCycle = +resp.cycle.cycleTime;
@@ -252,32 +255,6 @@ function unixtime(time) {
 	var newtime = +time;
 	newtime = ~~((newtime + time.getTimezoneOffset() * 60000) / 1000);
 	return newtime;
-}
-
-
-function updateColors() {
-	if(!me) {
-		return;
-	}
-	
-	var data = {};
-	data.color = swatch;
-	data.pixels = "";
-	data.POST = true;
-	
-	//loop selected pixels
-	for(var pix in pixels) {
-		var pixel = board[pix];
-		if(!pixel || pixel.owner != me.userID) continue;
-		
-		pixel.color = swatch;
-		data.pixels += pix + " ";
-	}
-	
-	if(data.pixels.length === 0) return;
-	
-	api("ChangeColor", data);
-	redraw();
 }
 
 

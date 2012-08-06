@@ -712,6 +712,37 @@ function initControls () {
 
 		drawZoom(x, y, newZoom);
 	});
+
+	$("li.colors span").click(function(e) {
+		var color = $(this).attr("data-value");
+
+		updateColors(color);
+	})
+}
+
+function updateColors(color) {
+	if(!me) {
+		return;
+	}
+
+	var data = {};
+	data.color = color;
+	data.pixels = "";
+	data.POST = true;
+
+	//loop selected pixels
+	for(var pix in pixels) {
+		var pixel = board[pix];
+		if(!pixel || pixel.owner != me.userID) continue;
+
+		pixel.color = color;
+		data.pixels += pix + " ";
+	}
+
+	if(data.pixels.length === 0) return;
+
+	api("ChangeColor", data);
+	redraw();
 }
 
 function showTooltip(e) {
