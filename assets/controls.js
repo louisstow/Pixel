@@ -1,18 +1,4 @@
 function initControls () {
-	
-	$(".color").each(function() {
-		var self = $(this);
-		
-		self.focus(function() {
-			$(this).click();
-		});
-		
-		self.ColorPicker({
-			onChange: function(hsb, hex, rgb) {
-				self.val(hex);
-			}
-		});
-	});
 
 
 	$("#login").click(function() {
@@ -487,21 +473,6 @@ function initControls () {
 		});
 	});
 	
-	$("a.swatch").ColorPicker({
-		onChange: function(a, hex, c) {
-			$("a.swatch span").css("background", "#" + hex);
-			swatch = hex;
-		},
-		
-		onHide: function() {
-			updateColors();
-		},
-		
-		onBeforeShow: function() {
-			$(this).ColorPickerSetColor(swatch);
-		}
-	});
-	
 	$("a.buypixel").click(function() {
 		if(!me) {
 			showError("Please login or register");
@@ -787,7 +758,7 @@ function clearSelection() {
 	$("#tools a").removeClass("active");
 	selected = null;
 	stopZoomer();
-	$("#canvas, #stage").unbind("mousedown").unbind("click").unbind("mouseleave");
+	$("#canvas, #stage").unbind("mousedown").unbind("click").unbind("mouseleave").unbind("mouseup").unbind("dblclick");
 	moveSelected = false;
 }
 
