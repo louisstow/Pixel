@@ -176,7 +176,7 @@ function updateBoard(data) {
 		}
 		
 		board[key].color = parse.substr(i, 6);
-		board[key].cost = parseInt(parse.substr(i + 6, 3), 16) * 10;
+		board[key].cost = parseInt(parse.substr(i + 6, 3), 16);
 		board[key].owner = parseInt(parse.substr(i + 9, 4), 16);
 		
 		if(!owners[board[key].owner]) ownr[board[key].owner] = true;
@@ -239,7 +239,7 @@ function applyLogs(logs) {
 			
 			//update the board
 			if(opts[2] != '.') board[pixel].color = opts[2];
-			if(opts[3] != '.') board[pixel].cost = parseInt(opts[3], 16) * 10;
+			if(opts[3] != '.') board[pixel].cost = parseInt(opts[3], 16);
 			if(opts[4] != '.') board[pixel].owner = parseInt(opts[4], 16);
 			o = board[pixel].owner;
 			

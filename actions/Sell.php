@@ -5,12 +5,12 @@ data("pixels, cost");
 $pix = validate($pixels);
 
 //ensure cost is a number between 1,00 and 50,00
-$cost = floor(((float) $cost) * 10);
-if($cost < 1 || $cost > 500) {
-    error("Price must be between $0.00 and $50");
+$cost = (float) $cost;
+if($cost < 0.01 || $cost > 5.00) {
+    error("Price must be between $0.01 and $5");
 }
 
-$cost = dechex($cost);
+$cost = dechex($cost * 100);
 
 //grab the pixels
 $get = chunk("{$pix} g");

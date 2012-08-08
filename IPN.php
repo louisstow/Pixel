@@ -107,7 +107,7 @@ $ownerList = array();
 
 //loop over every specified pixel and double check
 foreach($pixels as $pix) {
-    //skip if not for sale
+    //if pixel is owned
 	if(isset($result[$i]) && $result[$i] !== false) {
 		$pixel = $result[$i];
 		

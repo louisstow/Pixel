@@ -608,10 +608,13 @@ function initControls () {
 		
 		sellList = []
 		for(var pix in pixels) {
+			if(pix === "length") continue;
+
 			var pixel = board[pix];
 			
 			if(!pixel || pixel.owner != me.userID) {
 				delete pixels[pix];
+				pixels.length--;
 				continue;
 			}
 			
@@ -636,8 +639,8 @@ function initControls () {
 	$("input.display").change(function() {
 		var value = +$(this).val();
 		
-		if(value < 0.1 || value > 50.0 || isNaN(value)) {
-			showError("Value must be between $0.10 and $50.00");
+		if(value < 0.01 || value > 5.0 || isNaN(value)) {
+			showError("Value must be between $0.01 and $5.00");
 			value = 0.1;
 		}
 		
@@ -684,7 +687,7 @@ function initControls () {
 		if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
 		if(y > 1000 - 1000 / newZoom) y = 1000 - 1000 / newZoom;
 
-		drawZoom(x, y, newZoom);
+		drawZoom(~~x, ~~y, newZoom);
 	});
 
 	$("a.zoomout").click(function() {
@@ -710,7 +713,7 @@ function initControls () {
 		if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
 		if(y > 1000 - 1000 / newZoom) y = 1000 - 1000 / newZoom;
 
-		drawZoom(x, y, newZoom);
+		drawZoom(~~x, ~~y, newZoom);
 	});
 
 	$("li.colors span").click(function(e) {

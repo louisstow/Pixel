@@ -2,19 +2,15 @@
 <html>
 <head>
 	<link href="assets/global.css" type="text/css" rel="stylesheet" />
-	<link rel="stylesheet" media="screen" type="text/css" href="assets/colorpicker/css/colorpicker.css" />
 	<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 	<link rel="icon" type="image/png" href="favicon.png" />
 	
 
 	<script src="assets/jquery.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="assets/colorpicker/js/colorpicker.js"></script>
 	<script src="assets/controls.js" type="text/javascript"></script>
 	<script src="assets/canvas.js" type="text/javascript"></script>
 	<script src="assets/pixel.js" type="text/javascript"></script>
 	<script src="assets/html5slider.js" type="text/javascript"></script>
-	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-	<script type="text/javascript">stLight.options({publisher: "ur-6f763b07-7f93-c877-7d5a-13c767491557"}); </script>
 
 	<title>Pixenomics - Start your pixel empire</title>
 	<script type="text/javascript">
@@ -35,6 +31,8 @@
 
 <div id="dialog"></div>
 
+<div id="container">
+
 <div id="controls" class="menu">
 	<ul>
 		<li><a class="instructions"><u>I</u>nstructions</a></li>
@@ -43,10 +41,6 @@
 		<li><a class="sellpixel">S<u>e</u>ll</a></li>
 		<li><a class="invert">Inver<u>t</u></a></li>
 		<li><a class="about" href="about.php">About</a></li>
-		<li>
-			<span class='st_twitter_hcount' st_url="http://pixenomics.com" displayText='Tweet'></span>
-			<span class='st_facebook_hcount' st_url="http://pixenomics.com" displayText='Facebook'></span>
-		</li>
 		
 		<li id="welcome">Register now for your FREE 30 pixels!</li>
 	</ul>
@@ -73,6 +67,10 @@
 
 	<div id="tools" class="menu">
 		<ul>
+			<li><a class="zoomin">+</a></li>
+			<li><a class="zoomlevel">1</a></li>
+			<li><a class="zoomout">-</a></li>
+			<li class="seperator">|</li>
 			<li><a class="default"><u>D</u>efault</a></li>
 			<li><a class="select"><u>S</u>elect<span id="counter"></span></a>
 				<ul>
@@ -80,17 +78,30 @@
 					<li><a class="clearselection"><u>C</u>lear Selection</a></li>
 				</ul>
 			</li>
-			<li><a class="zoomin">Zoom In</a>
-				<ul>
-					<li><a class="x2"><u>2</u>x</a></li>
-					<li><a class="x4"><u>4</u>x</a></li>
-					<li><a class="x8"><u>8</u>x</a></li>
-					<li><a class="x16"><u>1</u>6x</a></li>
-				</ul>
-			</li>
+
 			<li><a class="move">Mo<u>v</u>e</a></li>
 			<li>
-				<a class="swatch">Colo<u>r</u> <span></span></a>
+				<a class="swatch">Colo<u>r</u></a>
+				<ul>
+					<li class="colors">
+						<span class="pink" data-value="FFABAB"></span>
+						<span class="red" data-value="ED0000"></span>
+						<span class="darkred" data-value="8F0000"></span>
+						<span class="purple" data-value="9700BD"></span>					
+						<span class="yellow" data-value="FFFB03"></span>
+						<span class="gold" data-value="BDBA00"></span>
+						<span class="orange" data-value="FFA200"></span>
+						<span class="green" data-value="50DB00"></span>
+						<span class="darkgreen" data-value="0B7046"></span>
+						<span class="blue" data-value="0040FF"></span>
+						<span class="darkblue" data-value="02299E"></span>
+						<span class="brown" data-value="946000"></span>
+						<span class="grey" data-value="CCCCCC"></span>
+						<span class="darkgrey" data-value="777777"></span>
+						<span class="black" data-value="000000"></span>
+						
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</div>
@@ -153,7 +164,7 @@ the email does not appear.</p>
 
 <div class="box sell">
 <h2>Sell pixels</h2>
-<input type="range" min="0.1" max="50.01" class="slider" value="0.1" step="0.1" /><br />$<input type="text" class="display" value="0.10" />
+<input type="range" min="0.01" max="5.00" class="slider" value="0.1" step="0.01" /><br />$<input type="text" class="display" value="0.10" />
 <p><button class="sellb">Sell</button></p>
 </div>
 
@@ -213,15 +224,7 @@ will be Red. If your color channels are the same value, it will randomly choose 
 <span class="price"></span>
 </div>
 
-
 <div id="stage">
-
-	
-<div id="zoom">
-	<a class="in">+</a>
-	<div class="level"></div>
-	<a class="out">-</a>
-</div>
 
 <canvas id="canvas" width="1200" height="1000">
 	<p class="browser">To use Pixenomics, please update or switch your browser to one of the following: Chrome, Firefox, Opera, IE10</p>
@@ -241,6 +244,8 @@ Contact
 <a href="https://www.iubenda.com/privacy-policy/648820" class="iubenda-white " id="iubenda-embed" title="Privacy Policy">Privacy Policy</a>
 <script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; w.addEventListener ? w.addEventListener("load", loader, false) : w.attachEvent("onload", loader);})(window, document);</script>
 </p>
+</div>
+
 </div>
 
 </body>
