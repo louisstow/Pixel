@@ -176,7 +176,7 @@ the email does not appear.</p>
 <ul></ul>
 </div>
 
-<p>Total: $<span class="total"></span></p>
+<p><strong>Total: $<span class="total"></span></strong></p>
 
 <p>By purchasing these pixels I agree to the <a href="terms.html" target="_blank">terms and conditions</a></p>
 

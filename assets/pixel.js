@@ -128,6 +128,16 @@ $(function() {
 		if(checkCounter > 10) {
 			console.log("COULD NOT FIND DATA");
 		} else if(window.DATA) { 
+			//if viewport saved in localstorage
+			if(window.localStorage && window.localStorage.viewport) {
+				var splat = window.localStorage.viewport.split(",");
+				if(splat.length === 3) {
+					zoomPos.left = +splat[0];
+					zoomPos.top = +splat[1];
+					zoomLevel = +splat[2];
+				}
+			}
+
 			updateBoard(DATA);
 			status();
 		} else setTimeout(checkData, 10);
@@ -276,7 +286,12 @@ function translateGlobal(x, y) {
 
 function showError(msg) {
 	var $d = $("#dialog");
-	$d.css("left", ($(window).width() - 1200) / 2).show().text(msg).animate({bottom: 0}, 150).delay(msg.length * 100)
+	$d.css({"left": ($(window).width() - 1200) / 2, "bottom": -50})
+		.stop(true, true)
+		.show()
+		.text(msg)
+		.animate({bottom: 0}, 150)
+		.delay(msg.length * 100)
 		.animate({bottom: -50}, 150, function() {
 			$(this).hide().html("");
 		});

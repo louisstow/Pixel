@@ -6,6 +6,12 @@ function drawBoard(owner) {
 	var pixel;
 	var index;
 	var data = imgdata.data;
+
+	owner = owner || mypixelsSelected && me.userID;
+
+	if(window.localStorage) {
+		window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
+	}
 	
 	//loop over board
 	for(var pos in board) {
@@ -56,6 +62,12 @@ function drawZoom(startX, startY, level, owner) {
 	
 	zoomPos.left = startX;
 	zoomPos.top = startY;
+
+	if(window.localStorage) {
+		window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
+	}
+
+	owner = owner || mypixelsSelected && me.userID;
 	
 	//clear canvas
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
