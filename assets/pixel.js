@@ -140,7 +140,7 @@ $(function() {
 
 			updateBoard(DATA);
 			status();
-		} else setTimeout(checkData, 10);
+		} else setTimeout(checkData, 100);
 	})()
 	
 	
