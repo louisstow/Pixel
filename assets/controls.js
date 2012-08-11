@@ -451,10 +451,19 @@ function initControls () {
 					showError("That pixel is taken. You may purchase this pixel for $" + (pixel.cost / 100).toFixed(2));
 					return;
 				}
+
+				board[key] = board[moveSelected];
+				delete board[moveSelected];
 				
-				api("MovePixel", {from: moveSelected, to: key}, function() {
+				api("MovePixel", {from: moveSelected, to: key}, function(resp) {
+					if(resp.error) {
+						showError(resp.error);
+						board[moveSelected] = board[key];
+						delete board[key];
+					}
+
 					status();
-				});
+				}, false);
 				
 				pixels = {length: 0};
 				

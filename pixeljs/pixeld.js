@@ -49,6 +49,7 @@ function initBoard() {
 		fs.readFile("board.js", function(err, out) {
 			out = out.toString();
 			readBoard(out.substring(22, out.length - 3));
+			console.log("THE END", out.substring(out.length - 10, out.length - 2))
 		});
 	} else {
 		//else save the state to a file
@@ -176,7 +177,7 @@ function cron(socket) {
 		for(var y = 0; y < ROWS; ++y) {
 			pixel = board[x][ y];
 			
-			if(!pixel) continue;
+			if(!pixel || pixel.color === null) continue;
 			
 			var r = parseInt(pixel.color.substr(0, 2), 16);
 			var g = parseInt(pixel.color.substr(2, 2), 16);
@@ -194,7 +195,7 @@ function cron(socket) {
 				
 				var opp = board[col][row];
 				
-				if(!opp || opp.owner === pixel.owner) 
+				if(!opp || opp.owner === pixel.owner || opp.color === null) 
                     continue;
 				
 				var or = parseInt(opp.color.substr(0, 2), 16);
@@ -281,7 +282,7 @@ function getLogs(timestamp, socket) {
 	console.log("LOGS", journal.length, timestamp);
 
 	for(var i = 0; i < journal.length; ++i) {
-		if(journal[i].timestamp > timestamp) {
+		if(journal[i].timestamp >= timestamp) {
 			socket.write(journal[i].qry + "\n");
 			count++;
 		}
@@ -360,10 +361,23 @@ function deletePixel(pixels) {
 		pix.price = null;
 		pix.color = null;
 	}
+
+	saveState();
 }
 
 //Save the board to a static JS file
+var needsBuilding = true;
+setInterval(function () {
+	if(needsBuilding) {
+		executeSave();
+	}
+}, 1000)
+
 function saveState() {
+	needsBuilding = true;
+}
+
+function executeSave() {
 	console.log("SAVE STATE");
 	var start = Date.now();
 	var buffer = fs.createWriteStream("board.js");
@@ -372,8 +386,16 @@ function saveState() {
 		console.log(err);
 	});
 
-	buffer.write("var DATA = '" + (Date.now() / 1000 | 0));
-	getBoard(buffer);
-	buffer.end("';\n");
-	console.log("Save took ", Date.now() - start, "milliseconds");
+	buffer.on("open", function() {
+		buffer.write("var DATA = '" + (Date.now() / 1000 | 0));
+		getBoard(buffer);
+		buffer.write("';\n");
+		buffer.end();
+		buffer.destroy();
+
+		console.log("Save took ", Date.now() - start, "milliseconds");
+		needsBuilding = false;
+	})
+	
+	
 }

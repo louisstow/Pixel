@@ -9,10 +9,6 @@ function drawBoard(owner) {
 
 	owner = owner || mypixelsSelected && me.userID;
 
-	if(window.localStorage) {
-		window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
-	}
-	
 	//loop over board
 	for(var pos in board) {
 		pixel = board[pos];
@@ -48,6 +44,10 @@ function drawBoard(owner) {
 	zoomPos.top = 0;
 	zoomLevel = 1;
 	ctx.putImageData(imgdata, 0, 0);
+
+	if(window.localStorage) {
+		window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
+	}
 
 	$("a.zoomlevel").text("1");
 }

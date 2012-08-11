@@ -53,15 +53,7 @@ if($_POST['receiver_email'] !== "jgs@pixenomics.com") {
 	exit;
 }
 
-//if not pending and not complete
-if($_POST['payment_status'] !== "Completed" && $_POST['payment_status'] !== "Pending") {
-	//log error
-	$message = $res . "\r\n";
-	$message .= print_r($_POST, true) . "\r\n";
-	
-	mail($TO, "Not Completed", $message);
-	exit;
-}
+
 
 //payment wasn't USD
 if($_POST['mc_currency'] !== "USD") {
@@ -81,6 +73,17 @@ if(!$data) {
 	$message = print_r($_POST, true) . "\r\n";
 	
 	mail($TO, "Invalid user or order ID", $message);
+	exit;
+}
+
+//if not pending and not complete
+if($_POST['payment_status'] !== "Completed") {
+	//log error
+	$message = $res . "\r\n";
+	$message .= print_r($_POST, true) . "\r\n";
+	
+	mail($TO, "Not Completed", $message);
+	ORM::query("UPDATE orders SET status = 'incomplete' WHERE orderID = ?", array($_POST['item_number']));
 	exit;
 }
 
@@ -145,12 +148,6 @@ foreach($pixels as $pix) {
 //rebuild the list
 $list = implode($pixels, "|");
 
-//payment wasn't completed
-if($_POST['payment_status'] === "Pending") {
-	chunk("{$list} w AAAAAA 0 {$huser} " . time());
-	exit;
-}
-
 //if they paid under the threshold, we make no profit
 if($_POST['mc_gross'] < 2) {
 	$message = "";
@@ -158,6 +155,7 @@ if($_POST['mc_gross'] < 2) {
 	$message .= $cost;
 	
 	mail($TO, "Under $2 Sale", $message);
+	ORM::query("UPDATE orders SET status = 'no profit' WHERE orderID = ?", array($_POST['item_number']));
 	exit;
 }
 
@@ -169,7 +167,8 @@ if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 	$message .= $cost;
 	
 	mail($TO, "Incorrect price", $message);
-	//User::updateCredit($user, ($_POST['mc_gross'] * 100));
+	
+	ORM::query("UPDATE orders SET status = 'paid too little' WHERE orderID = ?", array($_POST['item_number']));
 	exit;
 } //paid too much, credit the difference
 else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
@@ -182,6 +181,8 @@ else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 	
 	$profit += $_POST['mc_fee'] * 100;
 	User::updateCredit($user, min(0, ($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100));
+
+	ORM::query("UPDATE orders SET status = 'paid too much' WHERE orderID = ?", array($_POST['item_number']));
 }
 
 //update the pixel data
@@ -195,6 +196,13 @@ chunk("{$list} m immunity 1");
 //our profit will be deducted by the fee
 $profit -= ($_POST['mc_fee'] * 100);
 Stat::updateProfit($profit);
+
+//update order record
+ORM::query("UPDATE orders SET status = 'success', paid = ?, profit = ? WHERE orderID = ?", array(
+	$_POST['item_number'],
+	$_POST['mc_gross'] * 100,
+	$profit
+));
 
 //log as events
 I("Event")->create($user, NOW(), 0, "You bought {$count} pixels");
