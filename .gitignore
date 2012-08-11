@@ -1,6 +1,5 @@
 config.php
 .gitignore
-cron.php
 ctore
 board.js
 *.swp
