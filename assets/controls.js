@@ -181,6 +181,24 @@ function initControls () {
 
 
 		$("#canvas")
+                        .click(function(e) {
+                            if(!e.shiftKey) return;
+                            var up = translate(e.clientX, e.clientY);
+                            var pixel = board[~~up.x + ',' + ~~up.y];
+            
+                            if(!pixel) {
+                                    showError("This pixel is available");
+                            } else {
+                                    var info = owners[+pixel.owner];
+                                    if(!info) return;
+                                    var url = info.url;
+                                    
+                                    if(/https?\:\/\//.test(url)) url = "http://" + url;
+                                    
+                                    window.open(url);
+                                    $("#tooltip").hide();
+                            }
+                        })
 			.dblclick(function(e) {
 				//increase zoom by power of 2
 				if(zoomLevel === 64) return;
@@ -215,25 +233,7 @@ function initControls () {
 				}
 			})
 			.mouseup(function(e) {
-				var up = translate(e.clientX, e.clientY);
 				console.log("TWO")
-				//on mouse up, check if down pos is the same, therfore click
-				if(!dragged) {
-					var pixel = board[~~up.x + ',' + ~~up.y];
-			
-					if(!pixel) {
-						showError("This pixel is available");
-					} else {
-						var info = owners[+pixel.owner];
-						if(!info) return;
-						var url = info.url;
-						
-						if(/https?\:\/\//.test(url)) url = "http://" + url;
-						
-						window.open(url);
-						$("#tooltip").hide();
-					}
-				}
 
 				dragging = dragged = false;
 				downPos = null;
@@ -763,7 +763,7 @@ function showTooltip(e) {
 
 	if(!pixel) {
 		$("#tooltip").hide();
-		$("#tooltip span").text("");
+		$("#tooltip .url, #tooltip .message, #tooltip .price").text("");
 		return;
 	}
 
@@ -802,7 +802,6 @@ function clearSelection() {
 	selected = null;
 	stopZoomer();
 	$("#canvas, #stage").unbind("mousedown").unbind("click").unbind("mouseleave").unbind("mouseup").unbind("dblclick");
-	moveSelected = false;
 }
 
 function selectPixel(x, y) {

@@ -220,7 +220,7 @@ will be Red. If your color channels are the same value, it will randomly choose 
 
 <div id="tooltip">
 <span class="message"></span>
-<span class="url"></span>
+<span class="url"></span> <span class="toolhelp">(Shift + Click)</span>
 <span class="price"></span>
 </div>
 

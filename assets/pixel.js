@@ -233,7 +233,7 @@ function updateUser(user) {
 	$("div.register input").val("");
 	$("#login,#register,#lostp").hide();
 	$("#welcome").text(user.userEmail).show();
-	$("#money").text("$" + (+user.money).toFixed(2)).show();
+	$("#money").text("$" + (+user.money / 100).toFixed(2)).show();
 	$("#events,#logout,#change").show();
 	$("a.instructions").removeClass("active");
 	$("div.instr").hide();

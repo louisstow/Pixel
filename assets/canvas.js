@@ -6,6 +6,7 @@ function drawBoard(owner) {
 	var pixel;
 	var index;
 	var data = imgdata.data;
+        var coord;
 
 	owner = owner || mypixelsSelected && me.userID;
 
@@ -15,8 +16,10 @@ function drawBoard(owner) {
 		//skip if only drawing owner
 		if(owner && pixel.owner != owner) continue;
 		
-		pos = pos.split(",");
-		index = (pos[1] * canvasWidth + (+pos[0])) * 4;
+		coord = pos.split(",");
+                if(coord.length !== 2) continue;
+
+		index = (coord[1] * canvasWidth + (+coord[0])) * 4;
 		color = pixels[pos] ? selectColor : pixel.color;
 		
 		data[index] = parseInt(color.substr(0, 2), 16);   //red
@@ -31,8 +34,10 @@ function drawBoard(owner) {
 		if(owner && !pixel) continue;
 		if(owner && pixel.owner != owner) continue;
 		
-		pos = pos.split(",");
-		index = (pos[1] * canvasWidth + (+pos[0])) * 4;
+		coord = pos.split(",");
+                if(coord.length !== 2) continue;
+
+		index = (coord[1] * canvasWidth + (+coord[0])) * 4;
 	
 		data[index] = parseInt(selectColor.substr(0, 2), 16);   //red
 		data[++index] = parseInt(selectColor.substr(2, 2), 16); // green

@@ -14,6 +14,11 @@ foreach ($_POST as $key => $value) {
 
 // post back to PayPal system to validate
 $header  = "POST /cgi-bin/webscr HTTP/1.0\r\n";
+if($GLOBALS['paypal'] == 'sandbox') {
+    $header .= "Host: www.sandbox.paypal.com\r\n";
+} else {
+    $header .= "Host: ipnpb.paypal.com\r\n";
+}
 $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 $header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 
@@ -174,13 +179,20 @@ if(($_POST['mc_gross'] - ($cost / 100)) < -0.01) {
 else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 	$message = print_r($_POST, true) . "\r\n";
 	//$message .= print_r($data, true) . "\r\n";
-	$message .= "Paid: " . $cost . "\r\n";
-	$message .= "Gave: " . (($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100) . "\r\n";
+	
+        $over = (($_POST['mc_gross'] * 100 - $cost));
+        $fee = $_POST['mc_fee'] * 100;
+        $canPay = min($fee, $over);
+	
+        //payer pays the fee (or at least as much as possible)
+	$profit += $canPay;
+	User::updateCredit($user, max(0, $over - $canPay));
+
+        $message .= "Cost: " . $cost . "\r\n";
+	$message .= "Over: " . $over . "\r\n";
+	$message .= "Paid Fee: " . $canPay . "\r\n";
 	
 	mail($TO, "Too much", $message);
-	
-	$profit += $_POST['mc_fee'] * 100;
-	User::updateCredit($user, min(0, ($_POST['mc_gross'] * 100 - $cost) - $_POST['mc_fee'] * 100));
 
 	ORM::query("UPDATE orders SET status = 'paid too much' WHERE orderID = ?", array($_POST['item_number']));
 }
@@ -198,14 +210,15 @@ $profit -= ($_POST['mc_fee'] * 100);
 Stat::updateProfit($profit);
 
 //update order record
-ORM::query("UPDATE orders SET status = 'success', paid = ?, profit = ? WHERE orderID = ?", array(
-	$_POST['item_number'],
+ORM::query("UPDATE orders SET response = 'success', paid = ?, profit = ? WHERE orderID = ?", array(
 	$_POST['mc_gross'] * 100,
-	$profit
+	$profit,
+	$_POST['item_number']
 ));
 
 //log as events
-I("Event")->create($user, NOW(), 0, "You bought {$count} pixels");
+$paid = number_format((float) $_POST['mc_gross'], 2);
+I("Event")->create($user, NOW(), 0, "You bought {$count} pixels for ${$paid}");
 
 $ownerList = implode($ownerList, ",");
 $q = ORM::query("SELECT userID, userEmail FROM users WHERE userID IN({$ownerList})");
@@ -213,20 +226,22 @@ $ownerEmails = array();
 while($row = $q->fetch(PDO::FETCH_ASSOC)) $ownerEmails[(int) $row['userID']] = $row['userEmail'];
 
 $message  = "Congrats! You sold some pixels. Your account has been \r\ncredited and will be sent to you via PayPal.\r\n\r\n";
-$message .= "Visit http://pixenomics.com to see your account balance.\r\n\r\n";
-$message .= "Thanks,\r\nThe Pixenomics Team";
+
+$footer  = "Visit http://pixenomics.com to see your account balance.\r\n\r\n";
+$footer .= "Thanks,\r\nThe Pixenomics Team";
 $header = "From: Pixenomics <noreply@pixenomics.com>";
 
 foreach($owners as $id => $data) {
-	I("Event")->create($id, NOW(), 0, "You sold {$data['sold']} pixels");
+        $sold = number_format($data['credit'] / 100, 2);
+
+	I("Event")->create($id, NOW(), 0, "You sold {$data['sold']} pixels for ${$sold}");
+
 	//update the credit
 	User::updateCredit($id, $data['credit']);
-	
+
+	$message .= "Sold {$data['sold']} pixels for ${$sold}\r\n\r\n";
 	mail($ownerEmails[$id], "You sold {$data['sold']} pixels - Pixenomics", $message, $header);
 }
-
-//remove the order
-ORM::query("DELETE FROM orders WHERE orderID = ?", array($_POST['item_number']));
 
 //send a payment email as a log of the transaction
 //$message = print_r($data, true) . "\r\n";
@@ -234,5 +249,5 @@ $message = print_r($_POST, true) . "\r\n";
 $message .= "Profit: {$profit}\r\n";
 $message .= "{$list} w AAAAAA 1f4 {$huser} " . time() . "\r\n";
 
-mail($TO, "Pixels bought", $message);
+mail($TO, "Pixels bought #{$_POST['item_number']}", $message);
 ?>
