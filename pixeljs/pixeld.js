@@ -160,6 +160,7 @@ function cron(socket) {
 	var pixel;
 	var modified = {};
 	var owners = {};
+	var startTime = Date.now();
 	
 	//directions of neighbouring pixels
 	var circle = [
@@ -175,7 +176,7 @@ function cron(socket) {
 	
 	for(var x = 0; x < COLS; ++x) {
 		for(var y = 0; y < ROWS; ++y) {
-			pixel = board[x][ y];
+			pixel = board[x][y];
 			
 			if(!pixel || pixel.color === null) continue;
 			
@@ -192,7 +193,7 @@ function cron(socket) {
 			for(var j = 0; j < 8; ++j) {
 				var row = y + circle[j][0];
 				var col = x + circle[j][1];
-
+				
 				//out of bounds
 				if(row < 0 || col < 0 || col >= COLS || row >= ROWS)
                     continue;
@@ -215,7 +216,7 @@ function cron(socket) {
 				var row = +coord[1];
 				var oscore = 0;
 				var opp = board[col][row];
-
+				
 				//extract pixel color
 				var or = parseInt(opp.color.substr(0, 2), 16);
 				var og = parseInt(opp.color.substr(2, 2), 16);
@@ -241,7 +242,7 @@ function cron(socket) {
 					var subrow = y + circle[l][0];
 					var subcol = x + circle[l][1];
 					var subpixel = board[subcol][subrow];
-
+					
 					//out of bounds
 					if(subrow < 0 || subcol < 0 || subcol >= COLS || subrow >= ROWS)
 						continue;
@@ -280,6 +281,8 @@ function cron(socket) {
 	for(var own in owners) {
 		summary += own + "," + owners[own].win + "," + owners[own].lose + "|";
 	}
+
+	console.log("Cron took ", Date.now() - startTime, "milliseconds", it);
 	
 	socket.write(summary.substring(0, summary.length - 1));
 }
