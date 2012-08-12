@@ -200,6 +200,7 @@ function cron(socket) {
 
                 //increase the score if neighbour
                 var opp = board[col][row];
+
                 if(opp.owner === pixel.owner)
                 	score++;
                 //save position if enemy
@@ -207,6 +208,8 @@ function cron(socket) {
                 	opponents.push(col + "," + row);
 
 			}
+
+			//console.log(x,y,score,opponents.length)
 			
 			//loop over enemies
 			for(var k = 0; k < opponents.length; ++k) {
@@ -239,20 +242,24 @@ function cron(socket) {
 				
 				//loop over enemy pixel to calculate support
 				for(var l = 0; l < 8; ++l) {
-					var subrow = y + circle[l][0];
-					var subcol = x + circle[l][1];
-					var subpixel = board[subcol][subrow];
+					var subrow = row + circle[l][0];
+					var subcol = col + circle[l][1];
 					
 					//out of bounds
 					if(subrow < 0 || subcol < 0 || subcol >= COLS || subrow >= ROWS)
 						continue;
 
+					var subpixel = board[subcol][subrow];
+
 					//increase opponent score
-					if(subpixel.owner === opp.owner)
+					if(subpixel.owner === opp.owner) {
+						//console.log("	", subcol, subrow, subpixel.owner);
 						oscore++;
+					}
 				}
 
 				//winner
+				//console.log(x,y, score, "vs", col, row, oscore)
 				if(score > oscore) {
 					modified[col + "," + row] = pixel.owner;
 					
@@ -282,9 +289,10 @@ function cron(socket) {
 		summary += own + "," + owners[own].win + "," + owners[own].lose + "|";
 	}
 
-	console.log("Cron took ", Date.now() - startTime, "milliseconds", it);
+	console.log("Cron took ", Date.now() - startTime, "milliseconds");
 	
 	socket.write(summary.substring(0, summary.length - 1));
+	saveState();
 }
 
 function rand(min, max) {
