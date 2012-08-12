@@ -179,48 +179,80 @@ function cron(socket) {
 			
 			if(!pixel || pixel.color === null) continue;
 			
+			//extract pixel color from current
 			var r = parseInt(pixel.color.substr(0, 2), 16);
 			var g = parseInt(pixel.color.substr(2, 2), 16);
 			var b = parseInt(pixel.color.substr(4, 2), 16);
 			
 			var dominant = getDominant(r, g, b);
-			
-			for(var k = 0; k < 8; ++k) {
-				var row = x + circle[k][0];
-				var col = y + circle[k][1];
-				var odds = 0;
-				
+			var score = 0;
+			var opponents = [];
+
+			//loop over every neighbour
+			for(var j = 0; j < 8; ++j) {
+				var row = y + circle[j][0];
+				var col = x + circle[j][1];
+
+				//out of bounds
 				if(row < 0 || col < 0 || col >= COLS || row >= ROWS)
                     continue;
-				
+
+                //increase the score if neighbour
+                var opp = board[col][row];
+                if(opp.owner === pixel.owner)
+                	score++;
+                //save position if enemy
+                else if(opp.owner !== null)
+                	opponents.push(col + "," + row);
+
+			}
+			
+			//loop over enemies
+			for(var k = 0; k < opponents.length; ++k) {
+				//grab the coordinate and pixel
+				var coord = opponents[k].split(",");
+				var col = +coord[0];
+				var row = +coord[1];
+				var oscore = 0;
 				var opp = board[col][row];
-				
-				if(!opp || opp.owner === pixel.owner || opp.color === null) 
-                    continue;
-				
+
+				//extract pixel color
 				var or = parseInt(opp.color.substr(0, 2), 16);
 				var og = parseInt(opp.color.substr(2, 2), 16);
 				var ob = parseInt(opp.color.substr(4, 2), 16);
 				
+				//determine dominant channel
 				var odominant = getDominant(or, og, ob);
 				
+				//increase odds if better color
 				if((dominant == RED && odominant == GREEN) ||
 				   (dominant == GREEN && odominant == BLUE) ||
 				   (dominant == BLUE && odominant == RED))
 				
-					odds += 600;
-					
-				//boost odds for brighter colors
-				if(dominant == RED) {
-					odds += ~~((r - g) + (r - b)) / 5;
-				} else if(dominant == GREEN) {
-					odds += ~~((g - r) + (g - b)) / 5;
-				} else if(dominant == BLUE) {
-					odds += ~~((b - r) + (b - g)) / 5;
-				}
+					score += 3;
+				else if((odominant == RED && dominant == GREEN) ||
+				   (odominant == GREEN && dominant == BLUE) ||
+				   (odominant == BLUE && dominant == RED))
+
+					oscore += 3;
 				
+				//loop over enemy pixel to calculate support
+				for(var l = 0; l < 8; ++l) {
+					var subrow = y + circle[l][0];
+					var subcol = x + circle[l][1];
+					var subpixel = board[subcol][subrow];
+
+					//out of bounds
+					if(subrow < 0 || subcol < 0 || subcol >= COLS || subrow >= ROWS)
+						continue;
+
+					//increase opponent score
+					if(subpixel.owner === opp.owner)
+						oscore++;
+				}
+
 				//winner
-				if(rand(0, 1000) < odds) {
+				if(score > oscore) {
 					modified[col + "," + row] = pixel.owner;
 					
 					if(!owners[pixel.owner]) 
