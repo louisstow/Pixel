@@ -113,7 +113,7 @@ z-index: 1000;
 max-width: 200px;
 text-align: left; 
 word-break: break-all; 
-border-radius: 5px; 
+border-radius: 6px; 
 box-shadow: 1px 1px 1px #BBB;
 background: #f7f7f7; /* Old browsers */
 background: -moz-linear-gradient(top,  #f7f7f7 0%, #dbdbdb 100%); /* FF3.6+ */

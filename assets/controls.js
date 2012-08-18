@@ -257,6 +257,8 @@ function initControls () {
 			})
 			.mouseleave(function() {
 				$("#tooltip").hide();
+                                dragging = dragged = false;
+                                downPos = null;
 			});
 	}).trigger("click");
 	
