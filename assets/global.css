@@ -19,6 +19,38 @@ input { outline: none }
 .buy, .sell { width: 300px }
 .instr { width: 500px}
 
+.box.events table {
+width: 350px;
+margin: -10px -15px;
+padding: 0;
+border-collapse: collapse;
+}
+
+.box.events td, .box.events th {
+	padding: 5px;border-right: 1px solid #B2B1B1;
+}
+
+.box.events th {
+	background: #f7f7f7; /* Old browsers */
+	background: -moz-linear-gradient(top,  #f7f7f7 0%, #dbdbdb 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(100%,#dbdbdb)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #f7f7f7 0%,#dbdbdb 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #f7f7f7 0%,#dbdbdb 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #f7f7f7 0%,#dbdbdb 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #f7f7f7 0%,#dbdbdb 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#dbdbdb',GradientType=0 ); /* IE6-9 */
+	border-bottom: 1px solid #B2B1B1;
+}
+
+.box.events td.seperator { color: #999 }
+.box.events td:first-child { font-size: 12px; text-align: center; }
+.box.events td:nth-child(2) { font-family: Georgia; text-align: center; }
+.cash { font-family: Georgia; font-size: 16px; }
+
+.box.events tr:nth-child(odd) {
+	background: #EEE;
+}
+
 .register_col_l, .register_col_r { width: 290px; float:left }
 .register_col_l { margin-right: 15px }
 
@@ -80,7 +112,7 @@ div.menu li:hover ul { display: block }
 	
 .events ul { list-style: none; padding: 0; margin: 0 }
 .events li { margin: 5px 0 }
-.events { max-height: 500px; overflow: auto }
+.events { max-height: 1000px; overflow: auto }
 
 .zoomer { border: 1px solid #ccc; position: absolute; cursor: crosshair }
 

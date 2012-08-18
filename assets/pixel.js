@@ -245,19 +245,29 @@ function updateUser(user) {
 function updateEvents(data) {
     //loop over all events and create html
     var i = 0, len = data.length;
-    var html = "";
+    console.log("EV",data);
+    var html = "<table><tr><th>Date</th><th>Cycle</th><th>Event</th></tr>";
     for(; i < len; ++i) {
-		if(data[i].cycleID == 0) {
-			html += "<li>"+data[i].event+"</li>";
+    	html += "<tr>";
+
+    	var date = new Date(data[i].eventDate);    	
+
+    	html += "<td title='" + date + "'>" + $.timeago(date) + "</td>";
+		
+		if(data[i].cycleID !== "0") {
+			html += "<td>" + data[i].cycleID + "</td>";
 		} else {
-			html += "<li><b>Cycle "+data[i].cycleID+"</b> "+data[i].event+"</li>";
+			html += "<td class='seperator'>-</td>";
 		}
+
+		html += "<td>" + data[i].event.replace(/(\d+)/g, "<span class='cash'>$1</span>") + "</td>";
+		html += "</tr>";
     }
 
 	if(i === 0) {
-		$("div.events ul").html("<li>No events to show</li>")
+		$("div.events").html("<em>No events to show</em>")
 	} else {
-		$("div.events ul").html(html);
+		$("div.events").html(html);
 	}
 }
 
