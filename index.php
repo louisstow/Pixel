@@ -134,7 +134,7 @@ the email does not appear.</p>
 		<label>Link: <input type="text" class="url" /></label>
 		<label>Message: <input type="text" class="message" /></label>
 		
-		<span>These settings will apply to your first 30 pixels.</span>
+		<span>Promotional information for your pixels.</span>
 	</div>
 
 	<div class="register_col_r">
@@ -199,7 +199,7 @@ the email does not appear.</p>
 </div>
 
 <div class="box instr">
-<h2>Instructions</h2>
+<h2>How to play</h2>
 
 <p class="feature">Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with <strong>30 free pixels</strong> and take over neighbouring pixels by strategically choosing a
 color. You can then sell your pixels for real money or use them as advertising space.</p>
