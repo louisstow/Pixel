@@ -25,9 +25,14 @@ $eprep = array();
 
 foreach($summary as $sum) {
 	$line = explode(",", $sum);
-	if(count($line) != 3) continue;
+	if(count($line) != 2) continue;
+
+	if(intval($line[1]) >= 0) {
+		$text = "You gained {$line[1]} pixels";
+	} else {
+		$text = "You lost {$line[1]} pixels";
+	}
 	
-	$text = "You won {$line[1]} and lost {$line[2]}";
 	$esql .= "(?, ?, ?, ?),";
 	
 	$eprep[] = hexdec($line[0]);
