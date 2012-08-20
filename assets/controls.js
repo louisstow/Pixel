@@ -15,11 +15,10 @@ function initControls () {
 		if($("div.register").is(":visible")) {
 			$("div.register").hide();
 		} else {
-			//player must choose a pixel
+			//player can choose pixels
 			if(pixels.length < 30) {
-				showError("Select 30 free pixels with the select tool.");
+				showError("Remember, you can select 30 free pixels");
 				$("a.select").trigger("click");
-				return;
 			}
 			
 			$("div.register").show();
@@ -135,14 +134,9 @@ function initControls () {
 		
 		var self = this;
 		
-		//player must choose a pixel
-		if(pixels.length < 30) {
-			showError("Select 30 free pixels with the select tool.");
-			return;
-		}
-		
 		var count = 0;
 		var list = [];
+
 		//loop over selected pixels
 		for(var pix in pixels) { 
 			//don't confuse pixels with proto or length
@@ -157,7 +151,7 @@ function initControls () {
 			if(count > 29) break;
 		}
 		
-		data.pixel = list;
+		data.pixel = list.length ? list : "";
 		
 		api("Register", data, function(resp) {
 			disableButton(self, true);
@@ -490,6 +484,7 @@ function initControls () {
 		if($("div.buy").is(":visible")) {
 			$("div.buy").hide();
 			$(this).removeClass("active");
+			$(".register").unbind(":Registered");
 			return;
 		}
 		
