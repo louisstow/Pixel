@@ -25,6 +25,7 @@ if(isset($_SESSION['id'])) {
     $q = Event::getLatest(USER);
     $events = array();
     while($row = $q->fetch(PDO::FETCH_ASSOC)) {
+        $row['eventDate'] .= " UTC+0:00";
         $events[] = $row;
     }
 

@@ -11,7 +11,7 @@ class Event extends ORM {
     );
 
     public static function getLatest($user) {
-        $q = ORM::query("SELECT CONCAT(eventDate, " UTC+0"), cycleID, event 
+        $q = ORM::query("SELECT eventDate, cycleID, event 
                         FROM events 
                         WHERE userID = ? 
                         ORDER BY eventDate desc
