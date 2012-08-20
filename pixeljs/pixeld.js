@@ -233,12 +233,12 @@ function cron(socket) {
 				   (dominant == GREEN && odominant == BLUE) ||
 				   (dominant == BLUE && odominant == RED))
 				
-					score += 3;
+					score += 2;
 				else if((odominant == RED && dominant == GREEN) ||
 				   (odominant == GREEN && dominant == BLUE) ||
 				   (odominant == BLUE && dominant == RED))
 
-					oscore += 3;
+					oscore += 2;
 				
 				//loop over enemy pixel to calculate support
 				for(var l = 0; l < 8; ++l) {
@@ -264,12 +264,12 @@ function cron(socket) {
 					modified[col + "," + row] = pixel.owner;
 					
 					if(!owners[pixel.owner]) 
-                        owners[pixel.owner] = {win: 0, lose: 0};
+                        owners[pixel.owner] = 0;
 					if(!owners[opp.owner]) 
-                        owners[opp.owner] = {win: 0, lose: 0};
+                        owners[opp.owner] = 0;
 					
-					owners[pixel.owner].win++;
-					owners[opp.owner].lose++;
+					owners[pixel.owner]++;
+					owners[opp.owner]--;
 				}
 			}
 		}
@@ -286,7 +286,7 @@ function cron(socket) {
 	//build summary
 	var summary = "";
 	for(var own in owners) {
-		summary += own + "," + owners[own].win + "," + owners[own].lose + "|";
+		summary += own + "," + owners[own] + "|";
 	}
 
 	console.log("Cron took ", Date.now() - startTime, "milliseconds");
