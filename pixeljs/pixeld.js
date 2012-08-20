@@ -8,8 +8,8 @@ var ROWS = 1000;
 var COLS = 1200;
 
 var RED 	= 0, 
-		GREEN = 1, 
-		BLUE 	= 2;
+	GREEN	= 1, 
+	BLUE 	= 2;
 
 var server = net.createServer(function(socket) {
     console.log("SERVER CONNECTED");
@@ -410,8 +410,9 @@ function deletePixel(pixels) {
 
 //Save the board to a static JS file
 var needsBuilding = true;
+var startedBuilding = false;
 setInterval(function () {
-	if(needsBuilding) {
+	if(needsBuilding && !startedBuilding) {
 		executeSave();
 	}
 }, 1000)
@@ -424,6 +425,7 @@ function executeSave() {
 	console.log("SAVE STATE");
 	var start = Date.now();
 	var buffer = fs.createWriteStream("board.js");
+	startedBuilding = true;
 	
 	buffer.on("error", function(err) {
 		console.log(err);
@@ -438,6 +440,7 @@ function executeSave() {
 
 		console.log("Save took ", Date.now() - start, "milliseconds");
 		needsBuilding = false;
+		startedBuilding = false;
 	})
 	
 	

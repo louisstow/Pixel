@@ -13,10 +13,6 @@ if(!$resp->is_valid) {
 	error("Invalid CAPTCHA. Please try again.");
 }
 
-if(!is_array($pixel)) {
-	error("Invalid pixels");
-}
-
 if(strlen($password) > 250 || strlen($email) > 250) {
 	error("All fields must be less than 250 characters");
 }
@@ -26,25 +22,31 @@ $url = substr(trim($url), 0, 250);
 $message = substr(trim($message), 0, 250);
 
 //basic field validation
-if($email == "" || $url == "" || $message == "" || $password == "") {
+if($email == "" || $password == "") {
 	error("Please fill in all fields.");
 }
+
+//default message and url
+if(!$url) $url = "pixenomics.com";
+if(!$message) $message = "Pixenomics - Start your pixel empire!";
 
 if(count($pixel) > 30) {
 	$pixel = array_slice($pixel, 0, 30);
 }
 
-if(!realValidation($pixel))
-	error("Invalid pixels");
-
 //validate the selected pixels
-$list = implode($pixel, "|");
+if(is_array($pixel)) {
+	if(!realValidation($pixel))
+		error("Invalid pixels");
 
-$q = queryDaemon("{$list} g");
+	$list = implode($pixel, "|");
 
-//should be 30 dots
-if(strlen($q) > 30) {
-	error("Pixels taken: " . $q);
+	$q = queryDaemon("{$list} g");
+
+	//should be 30 dots
+	if(strlen($q) > 30) {
+		error("Pixels taken: " . $q);
+	}
 }
 
 $password = encrypt($password);
@@ -57,7 +59,10 @@ if(!$player) {
 
 $_SESSION['id'] = $player->userID;
 
-queryDaemon("{$list} w 000000 1f4 " . dechex($player->userID) . " " . time());
+//pixels are optional
+if(is_array($pixel)) {
+	queryDaemon("{$list} w 000000 1f4 " . dechex($player->userID) . " " . time());
+}
 
 unset($player->userPass);
 unset($player->_updateFlag);

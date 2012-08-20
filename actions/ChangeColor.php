@@ -4,14 +4,27 @@ data("color, pixels");
 
 $pix = validate($pixels);
 
-//ensure color is valid
-$icolor = intval($color, 16);
-if($icolor < 0 || $icolor > 16777215) {
-    error("Invalid color provided. {$icolor}");
-}
+$validColors = array(
+	"ED0000",
+	"8F0000",
+	"50DB00",
+	"0B7046",
+	"FFA200",
+	"0040FF",
+	"02299E",
+	"FFFB03",
+	"BDBA00",
+	"9700BD",
+	"000000",
+	"946000",
+	"777777",
+	"CCCCCC",
+	"FFABAB"
+);
 
-$color = dechex($icolor);
-$color = str_repeat("0", 6 - strlen($color)) . $color;
+if(!in_array($color, $validColors)) {
+	error("Invalid color");
+}
 
 $q = chunk("{$pix} g");
 $data = toArray($q);

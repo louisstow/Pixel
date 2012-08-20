@@ -15,11 +15,10 @@ function initControls () {
 		if($("div.register").is(":visible")) {
 			$("div.register").hide();
 		} else {
-			//player must choose a pixel
+			//player can choose pixels
 			if(pixels.length < 30) {
-				showError("Select 30 free pixels with the select tool.");
+				showError("Remember, you can select 30 free pixels");
 				$("a.select").trigger("click");
-				return;
 			}
 			
 			$("div.register").show();
@@ -59,27 +58,27 @@ function initControls () {
 		}, false);
 	});
 
-    $("#logout").click(function() {
-        if(me) {
-            api("Logout", function() {
+	$("#logout").click(function() {
+		if(me) {
+			api("Logout", function() {
 				if(mypixelsSelected) {
 					$(this).removeClass("active");
 					$("#stage").css("background", "#fff");
 					mypixelsSelected = false;
 				}
 				
-                $("#login, #register, #lostp").show();
-                $("#welcome, #money").text("").hide();
-                $("#logout, #events, div.events, #change, div.change").hide();
+				$("#login, #register, #lostp").show();
+				$("#welcome, #money").text("").hide();
+				$("#logout, #events, div.events, #change, div.change").hide();
 				me = null;
-            });
-        }
-    });
+			});
+		}
+	});
 
-    $("#events").click(function() {
+	$("#events").click(function() {
 		$("div.change").hide();
-        $("div.events").toggle();
-    });
+		$("div.events").toggle();
+	});
 	
 	$("#change").click(function() {
 		$("div.events").hide();
@@ -135,14 +134,9 @@ function initControls () {
 		
 		var self = this;
 		
-		//player must choose a pixel
-		if(pixels.length < 30) {
-			showError("Select 30 free pixels with the select tool.");
-			return;
-		}
-		
 		var count = 0;
 		var list = [];
+
 		//loop over selected pixels
 		for(var pix in pixels) { 
 			//don't confuse pixels with proto or length
@@ -157,7 +151,7 @@ function initControls () {
 			if(count > 29) break;
 		}
 		
-		data.pixel = list;
+		data.pixel = list.length ? list : "";
 		
 		api("Register", data, function(resp) {
 			disableButton(self, true);
@@ -167,7 +161,9 @@ function initControls () {
 				return showError(resp.error);
 			}
 			
-			updateUser(resp);
+			updateUser(resp, function() {
+				$(".register").trigger(":Registered", resp);	
+			});
 		}, false);
 	});
 	
@@ -181,24 +177,24 @@ function initControls () {
 
 
 		$("#canvas")
-                        .click(function(e) {
-                            if(!e.shiftKey) return;
-                            var up = translate(e.clientX, e.clientY);
-                            var pixel = board[~~up.x + ',' + ~~up.y];
-            
-                            if(!pixel) {
-                                    showError("This pixel is available");
-                            } else {
-                                    var info = owners[+pixel.owner];
-                                    if(!info) return;
-                                    var url = info.url;
-                                    
-                                    if(/https?\:\/\//.test(url)) url = "http://" + url;
-                                    
-                                    window.open(url);
-                                    $("#tooltip").hide();
-                            }
-                        })
+			.click(function(e) {
+				if(!e.shiftKey) return;
+				var up = translate(e.clientX, e.clientY);
+				var pixel = board[~~up.x + ',' + ~~up.y];
+
+				if(!pixel) {
+						showError("This pixel is available");
+				} else {
+						var info = owners[+pixel.owner];
+						if(!info) return;
+						var url = info.url;
+						
+						if(/https?\:\/\//.test(url)) url = "http://" + url;
+						
+						window.open(url);
+						$("#tooltip").hide();
+				}
+			})
 			.dblclick(function(e) {
 				//increase zoom by power of 2
 				if(zoomLevel === 64) return;
@@ -313,9 +309,9 @@ function initControls () {
 			pos.y = ~~pos.y;
 
 			if(pos.x < 0 || pos.x >= 1200 || pos.y < 0 || pos.y >= 1000) {
-                                $(this).unbind("mousemove").unbind("mouseup");
-                                return;
-                        }
+				$(this).unbind("mousemove").unbind("mouseup");
+				return;
+			}
 
 			var startZoomPos = translateGlobal(e.clientX, e.clientY);;
 			
@@ -351,10 +347,10 @@ function initControls () {
 
 				$(zoomer).hide();
 
-                if(pos2.x < 0 || pos2.x >= 1200 || pos2.y < 0 || pos2.y >= 1000) {
-                    $(this).unbind("mousemove").unbind("mouseup");
-                    return;
-                }
+				if(pos2.x < 0 || pos2.x >= 1200 || pos2.y < 0 || pos2.y >= 1000) {
+					$(this).unbind("mousemove").unbind("mouseup");
+					return;
+				}
 
 				var diffx = pos2.x < pos.x ? -1 : 1;
 				var diffy = pos2.y < pos.y ? -1 : 1;
@@ -435,8 +431,8 @@ function initControls () {
 			var key = ~~pos.x + "," + ~~pos.y;
 			var pixel = board[key];
 
-            if(~~pos.x < 0 || ~~pos.x >= 1200) return;
-            if(~~pos.y < 0 || ~~pos.y >= 1000) return;
+			if(~~pos.x < 0 || ~~pos.x >= 1200) return;
+			if(~~pos.y < 0 || ~~pos.y >= 1000) return;
 			
 			//check if free pixel
 			if(moveSelected) {
@@ -485,15 +481,12 @@ function initControls () {
 	});
 	
 	$("a.buypixel").click(function() {
-		if(!me) {
-			showError("Please login or register");
-			return;
-		}
 		
 		//hide if opened
 		if($("div.buy").is(":visible")) {
 			$("div.buy").hide();
 			$(this).removeClass("active");
+			$(".register").unbind(":Registered");
 			return;
 		}
 		
@@ -508,30 +501,43 @@ function initControls () {
 		total = 0;
 		var html = "";
 		buyList = [];
-		for(var pix in pixels) {
-			if(pix === "length" || !pixels.hasOwnProperty(pix)) continue;
-			
-			var pixel = board[pix];
-			var cost;
-			if(pixel) {
-				//if pixel for sale, add to total, else deselect
-				if(pixel.cost && pixel.owner != me.userID) 
-					cost = +pixel.cost;
-				else {
-					delete pixels[pix];
-					continue;
+
+		function generateReceipt() {
+			//reset values
+			total = 0;
+			buyList = [];
+
+			for(var pix in pixels) {
+				if(pix === "length" || !pixels.hasOwnProperty(pix)) continue;
+				
+				var pixel = board[pix];
+				var cost;
+				if(pixel) {
+					//if pixel for sale, add to total, else deselect
+					if(pixel.cost && pixel.owner != me.userID) 
+						cost = +pixel.cost;
+					else {
+						delete pixels[pix];
+						continue;
+					}
+				} else {
+					//add 10 cents to the price
+					cost = 10;
 				}
-			} else {
-				//add 10 cents to the price
-				cost = 10;
+				
+				total += cost;
+				buyList.push(pix);
+				
+				if(pixels.length < 10000) 
+					html += "<li><b>" + pix + "</b><i>$" + (cost / 100).toFixed(2) + "</i><a class='remove'>remove</a></li>";
 			}
-			
-			total += cost;
-			buyList.push(pix);
-			
-			if(pixels.length < 10000) html += "<li><b>" + pix + "</b><i>$" + (cost / 100).toFixed(2) + "</i><a class='remove'>remove</a></li>";
+
+			redraw();
+			$("div.buy span.total").text((total / 100).toFixed(2));
 		}
 		
+		generateReceipt();
+
 		//2 dollar minimum
 		if(total < 200) {
 			showError("You must buy at least $2.00 worth of pixels. Currently $" + (total / 100).toFixed(2));
@@ -549,54 +555,70 @@ function initControls () {
 		$("div.buy div.list ul").html(html);
 		$("div.buy").show();
 		$("#paypal").hide();
-		$("#paypalloading").text("Loading").show();
-		
-		if(pixels.length < 10000) {
-			$("div.list a.remove").click(function() {
-				$("#paypal").hide();
-				var id = $(this).parent().find("b").text();
-				var pixel = board[id];
-				
-				//loop over list
-				for(var i = 0; i < buyList.length; ++i) {
-					if(buyList[i] === id) {
-						buyList.splice(i, 1);
+
+		function saveOrder() {
+			$("#paypalloading").text("Loading").show();
+			
+			if(pixels.length < 10000) {
+				$("div.list a.remove").click(function() {
+					$("#paypal").hide();
+					var id = $(this).parent().find("b").text();
+					var pixel = board[id];
+					
+					//loop over list
+					for(var i = 0; i < buyList.length; ++i) {
+						if(buyList[i] === id) {
+							buyList.splice(i, 1);
+						}
 					}
-				}
-				
-				if(pixel) {
-					total -= pixel.cost;
-				} else {
-					total -= 10;
-				}
-				
-				api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
-					$("div.buy span.total").text((total / 100).toFixed(2));
-					$("div.buy input.amount").val((total / 100).toFixed(2));
-					$("input.item").val(resp.orderID);
-					$("input.payer").val(me.userID);
-					$("input.payeremail").val(me.userEmail);
-					$("#paypal").show();
+					
+					if(pixel) {
+						total -= pixel.cost;
+					} else {
+						total -= 10;
+					}
+					
+					api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
+						$("div.buy span.total").text((total / 100).toFixed(2));
+						$("div.buy input.amount").val((total / 100).toFixed(2));
+						$("input.item").val(resp.orderID);
+						$("input.payer").val(me.userID);
+						$("input.payeremail").val(me.userEmail);
+						$("#paypal").show();
+					});
+					
+					$(this).parent().remove();
+					
+					delete pixels[id];
+					redraw();
 				});
-				
-				$(this).parent().remove();
-				
-				delete pixels[id];
-				redraw();
+			}
+			
+			api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
+				$("input.item").val(resp.orderID);
+				$("#paypal").show();
+				$("#paypalloading").hide();
 			});
+			
+			$("input.payer").val(me.userID);
+			
+			$("div.buy input.amount").val((total / 100).toFixed(2));
+			$("input.payeremail").val(me.userEmail);
 		}
 		
-		api("SaveOrder", {pixels: buyList.join(' '), POST: true}, function(resp) {
-			$("input.item").val(resp.orderID);
-			$("#paypal").show();
-			$("#paypalloading").hide();
-		});
-		
-		$("input.payer").val(me.userID);
-		$("div.buy span.total").text((total / 100).toFixed(2));
-		$("div.buy input.amount").val((total / 100).toFixed(2));
-		$("input.payeremail").val(me.userEmail);
-		redraw();
+		if(me) {
+			saveOrder();
+		} else {
+
+			$("#paypalloading").text("Please register or login in the right box");
+			$(".register").show();
+			//bind to custom event
+			$(".register").bind(":Registered", function() {
+				console.log(me, "DO i exist?", arguments);
+				generateReceipt();
+				saveOrder();
+			});
+		}
 	});
 	
 	$("a.sellpixel").click(function() {
@@ -771,6 +793,7 @@ function showTooltip(e) {
 
 	var info = owners[+pixel.owner];
 	if(!info) return;
+	if(mypixelsSelected && pixel.owner != me.userID) return;
 
 	var globalPos = translateGlobal(e.clientX, e.clientY);
 	$("#tooltip .message").text(info.message);
