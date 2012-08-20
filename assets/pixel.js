@@ -162,7 +162,7 @@ $(function() {
 });
 
 //should grab logs
-function status() {
+function status(next) {
 	if(!currentTimestamp) {
 		console.log("Y", currentTimestamp);
 		return;
@@ -188,6 +188,9 @@ function status() {
 		currentCycle = +resp.cycle.cycleID;
 		
 		applyLogs(resp.log);
+
+		if(next && typeof next === "function")
+			next();
 	});
 }
 
@@ -225,7 +228,7 @@ function tick() {
 	$seconds.text(seconds + " second" + (seconds === 1 ? "" : "s"));
 }
 
-function updateUser(user) {
+function updateUser(user, next) {
 	me = user;
 	$("div.register").hide();
 	$("div.login").hide();
@@ -239,7 +242,7 @@ function updateUser(user) {
 	$("div.instr").hide();
 	$("div.change input.url").val(user.url);
 	$("div.change input.message").val(user.message);
-	status();
+	status(next);
 }
 
 function updateEvents(data) {
