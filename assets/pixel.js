@@ -17,7 +17,8 @@ var canvas,
 	mypixelsSelected = false,
 	moveSelected = false,
 	shadowColor = "#222222",
-	selectColor = "00C8FF",
+	selectColor = "rgba(0, 200, 255, 0.5)",
+	selectColorHex = "00C8FF",
 	
 	hasFocus = true,
 	

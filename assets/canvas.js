@@ -17,10 +17,10 @@ function drawBoard(owner) {
 		if(owner && pixel.owner != owner) continue;
 		
 		coord = pos.split(",");
-                if(coord.length !== 2) continue;
+        if(coord.length !== 2) continue;
 
 		index = (coord[1] * canvasWidth + (+coord[0])) * 4;
-		color = pixels[pos] ? selectColor : pixel.color;
+		color = pixel.color;
 		
 		data[index] = parseInt(color.substr(0, 2), 16);   //red
 		data[++index] = parseInt(color.substr(2, 2), 16); // green
@@ -35,14 +35,34 @@ function drawBoard(owner) {
 		if(owner && pixel.owner != owner) continue;
 		
 		coord = pos.split(",");
-                if(coord.length !== 2) continue;
+		if(coord.length !== 2) continue;
 
 		index = (coord[1] * canvasWidth + (+coord[0])) * 4;
-	
-		data[index] = parseInt(selectColor.substr(0, 2), 16);   //red
-		data[++index] = parseInt(selectColor.substr(2, 2), 16); // green
-		data[++index] = parseInt(selectColor.substr(4, 2), 16); // blue
-		data[++index] = 255;
+
+		var sr = parseInt(selectColorHex.substr(0, 2), 16),
+			sg = parseInt(selectColorHex.substr(2, 2), 16),
+			sb = parseInt(selectColorHex.substr(4, 2), 16);
+
+		if(!pixel) {
+			data[  index] = sr;   //red
+			data[++index] = sg; // green
+			data[++index] = sb; // blue
+			data[++index] = 127;
+		} else {
+			var other = pixel.color;
+			var r = parseInt(other.substr(0, 2), 16) / 255;
+			var g = parseInt(other.substr(2, 2), 16) / 255;
+			var b = parseInt(other.substr(4, 2), 16) / 255;
+			sr /= 255;
+			sg /= 255;
+			sb /= 255;
+
+			data[  index] = ((r * .5 + sr * .5) * 255) | 0;
+			data[++index] = ((g * .5 + sg * .5) * 255) | 0;
+			data[++index] = ((b * .5 + sb * .5) * 255) | 0;
+			data[++index] = 255;
+		}
+		
 	}
 	
 	zoomPos.left = 0;
@@ -96,13 +116,25 @@ function drawZoom(startX, startY, level, owner) {
 					continue;
 				}
 				
-				ctx.fillStyle = "#" + (pixels[x + "," + y] ? selectColor : pixel.color);
-				ctx.fillRect(
-					(x - startX) * level, 
-					(y - startY) * level, 
-					level, 
-					level
-				);
+				if(pixel) {
+					ctx.fillStyle = "#" + pixel.color;
+					ctx.fillRect(
+						(x - startX) * level, 
+						(y - startY) * level, 
+						level, 
+						level
+					);
+				}
+
+				if(pixels[x + "," + y]) {
+					ctx.fillStyle = selectColor;
+					ctx.fillRect(
+						(x - startX) * level, 
+						(y - startY) * level, 
+						level, 
+						level
+					);
+				}
 			}
 		}
 	} else {
@@ -115,9 +147,6 @@ function drawZoom(startX, startY, level, owner) {
 			//if only show owners pixels
 			if(owner && pixel.owner != owner) continue;
 
-			//if selected, draw later
-			if(pixels[pix]) continue;
-
 			if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
 				ctx.fillStyle = "#" + pixel.color;
 				ctx.fillRect(
@@ -126,6 +155,16 @@ function drawZoom(startX, startY, level, owner) {
 					level, 
 					level
 				);
+
+				if(pixels[pix]) {
+					ctx.fillStyle = selectColor;
+					ctx.fillRect(
+						(x - startX) * level, 
+						(y - startY) * level, 
+						level, 
+						level
+					);
+				}
 			}
 		}
 
@@ -133,9 +172,10 @@ function drawZoom(startX, startY, level, owner) {
 			coord = pix.split(",");
 			x = +coord[0]; y = +coord[1];
 
+			if(board[pix]) continue;
 
 			if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
-				ctx.fillStyle = "#" + selectColor;
+				ctx.fillStyle = selectColor;
 				ctx.fillRect(
 					(x - startX) * level, 
 					(y - startY) * level, 
