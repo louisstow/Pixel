@@ -261,15 +261,7 @@ function cron(socket) {
 				//winner
 				//console.log(x,y, score, "vs", col, row, oscore)
 				if(score > oscore) {
-					modified[col + "," + row] = pixel.owner;
-					
-					if(!owners[pixel.owner]) 
-                        owners[pixel.owner] = 0;
-					if(!owners[opp.owner]) 
-                        owners[opp.owner] = 0;
-					
-					owners[pixel.owner]++;
-					owners[opp.owner]--;
+					modified[col + "," + row] = pixel.owner;					
 				}
 			}
 		}
@@ -279,6 +271,19 @@ function cron(socket) {
 	for(var pix in modified) {
 		var dim = pix.split(",");
 		if(dim.length !== 2) continue;
+
+		var pixel = board[+dim[0]][+dim[1]];
+
+		if(!owners[pixel.owner]) 
+			owners[pixel.owner] = 0;
+		if(!owners[modified[pix]]) 
+			owners[modified[pix]] = 0;
+
+
+		//used to be pixel.owner's
+		owners[pixel.owner]--;
+		//is now modified[pix]'s
+		owners[modified[pix]]++;
 
 		board[+dim[0]][+dim[1]].owner = modified[pix];
 	}
