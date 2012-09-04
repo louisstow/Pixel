@@ -173,8 +173,10 @@ function initControls () {
 		selected = "default";
 		$(this).addClass("active");
 		
-		var downPos, dragging = false, dragged = false, lastPos;
-
+		var downPos, 
+			dragging = false, 
+			dragged = false, 
+			lastPos;
 
 		$("#canvas")
 			.click(function(e) {
@@ -215,7 +217,7 @@ function initControls () {
 				if(y > 1000 - 1000 / newZoom) y = 1000 - 1000 / newZoom;
 
 
-				console.log(newZoom, width, height, midPointX, midPointY, x, y, 1200 - 1200 / newZoom)
+				console.log(lastRenderedZoom, width, height, midPointX, midPointY, x, y, 1200 - 1200 / newZoom)
 
 				drawZoom(x, y, newZoom);
 			})
@@ -246,11 +248,36 @@ function initControls () {
 					if(zoomPos.top > 1000 - 1000 / zoomLevel) zoomPos.top = 1000 - 1000 / zoomLevel;
 
 					dragged = true;
-					redraw();
+					ctx.clearRect(0,0,canvasWidth,canvasHeight);
+					
+					if(zoomLevel < 8) {
+						ctx.drawImage(
+							offscreen,
+							zoomPos.left * zoomLevel | 0,
+							zoomPos.top * zoomLevel | 0,
+							canvasWidth,
+							canvasHeight,
+							0,
+							0,
+							canvasWidth,
+							canvasHeight
+						);
+					} else {
+						drawRange(
+							zoomPos.left,
+							zoomPos.top,
+							zoomLevel
+						);
+					}
+
+					if(window.localStorage) {
+						window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
+					}
 				} else {
 					showTooltip(e);
 				}
 			})
+
 			.mouseleave(function() {
 				$("#tooltip").hide();
 			});

@@ -49,6 +49,9 @@ $(function() {
 	$("#stage").append(zoomer);
 	zoomer.setAttribute("class", "zoomer");
 	stagePos = $("#canvas").offset();
+
+	offscreen = document.createElement("canvas");
+	offscreenCtx = offscreen.getContext("2d");
 	
 	//update the stage position
 	$(window).resize(function() {
