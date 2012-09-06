@@ -135,6 +135,10 @@ function parseQuery(qry, socket) {
 		saveLog(qry, cmd[1]);
 		return deletePixel(pixels);
 	}
+
+	if(cmd[0] === "t") {
+		return transportPixels(pixels, cmd);
+	}
 }
 
 function getBoard(socket) {
@@ -413,6 +417,95 @@ function deletePixel(pixels) {
 	saveState();
 }
 
+/**
+* 1. Loop through pixels
+* 2. Check which is the top left pixel
+* 3. Create a structure of which pixels is moveable
+*	a. Check from value
+*	b. Check to by calculating relative offset to the to
+* 4. Generate a log of which pixels to delete
+* 5. Chunk same value pixels into a structure
+* 5. Generate a log of pixels to create based on chunks
+* 6. Add logs and update
+*
+* 0,0|0,2|0,1 t 5,5
+*/
+function transportPixels(pixels, cmd) {
+	var minX = null, minY = null;
+	
+	var chunk = {};
+	var toRemove = [];
+
+	//parse the to position
+	var to = cmd[1].split(",");
+	to[0] = +to[0];
+	to[1] = +to[1];
+
+	//find the top left point
+	for(var i = 0; i < pixels.length; ++i) {
+		var dim = pixels[i].split(",");
+
+		if(+dim[0] < minX || minX === null) 
+			minX = +dim[0];
+
+		if(+dim[1] < minY || minY === null) 
+			minX = +dim[1];
+	}
+
+	//loop over every pixel
+	for(var i = 0; i < pixels.length; ++i) {
+		var dim = pixels[i].split(",");
+		var pix = board[+dim[0]][+dim[1]];
+
+		//make sure owner has access
+		if(pix.owner != cmd[2]) continue;
+
+		//add the top left offset
+		var offsetX = +dim[0] - minX;
+		var offsetY = +dim[1] - minY;
+		var x = to[0] + offsetX;
+		var y = to[1] + offsetY;
+
+		//skip out of bounds
+		if(x < 0 || y < 0 || x >= COLS || y >= ROWS)
+			continue;
+
+		//check the destination is correct
+		var dest = board[x][y];
+		if(dest.color !== null)
+			continue;
+
+		//generate the chunk key
+		var key = [
+			pix.color,
+			zeroPad(pix.price, 3),
+			zeroPad(pix.owner, 4)
+		].join(" ");
+
+		//create chunk object, add to remove list
+		if(!chunk[key]) chunk[key] = [];
+		chunk[key].push(x + "," + y);
+		toRemove.push(x + "," + y);
+
+		//move pixel data
+		dest.color = pix.color;
+		dest.price = pix.price;
+		dest.owner = pix.owner;
+
+		pix.color = pix.price = pix.owner = null;
+	}
+
+	//generate one timestamp
+	var timestamp = Date.now() / 1000 | 0;
+
+	//delete all removable pixels
+	saveLog(timestamp, toRemove.join("|") + " d " + timestamp);
+
+	for(var qry in chunk) {
+		saveLog(timestamp, chunk[qry].join("|") + " w " + qry + " " + timestamp);
+	}
+}
+
 //Save the board to a static JS file
 var needsBuilding = true;
 var startedBuilding = false;
@@ -450,3 +543,5 @@ function executeSave() {
 	
 	
 }
+
+

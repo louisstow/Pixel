@@ -231,8 +231,6 @@ function initControls () {
 				}
 			})
 			.mouseup(function(e) {
-				console.log("TWO")
-
 				dragging = dragged = false;
 				downPos = null;
 			})
@@ -449,59 +447,29 @@ function initControls () {
 		selected = "move";
 		$("#canvas").unbind();
 		$(this).addClass("active");
-		pixels = {length: 0};
 		
 		$("#canvas").click(function(e) {
 			var pos = translate(e.clientX, e.clientY);
 			var key = ~~pos.x + "," + ~~pos.y;
 			var pixel = board[key];
 
-			if(~~pos.x < 0 || ~~pos.x >= 1200) return;
-			if(~~pos.y < 0 || ~~pos.y >= 1000) return;
-			
-			//check if free pixel
-			if(moveSelected) {
-				//deselect if same key
-				if(key === moveSelected) {
-					moveSelected = false;
-					pixels = {length: 0};
-					redraw();
-					return;
-				}
-			
-				//if someone owns it
-				if(pixel) {
-					showError("That pixel is taken. You may purchase this pixel for $" + (pixel.cost / 100).toFixed(2));
-					return;
-				}
+			//if out of bounds or existing pixel, throw error
+			if(~~pos.x < 0 || ~~pos.x >= 1200 || 
+			   ~~pos.y < 0 || ~~pos.y >= 1000) {
 
-				board[key] = board[moveSelected];
-				delete board[moveSelected];
-				
-				api("MovePixel", {from: moveSelected, to: key}, function(resp) {
-					if(resp.error) {
-						showError(resp.error);
-						board[moveSelected] = board[key];
-						delete board[key];
-					}
-
-					status();
-				}, false);
-				
-				pixels = {length: 0};
-				
-				moveSelected = false;
-			} else {
-				if(!pixel || (pixel && pixel.owner != me.userID)) {
-					showError("You can only move your own pixels.");
-					return;
-				}
-				
-				moveSelected = key;
-				pixels[key] = true;
+				return showError("Pixel area out of bounds.");
 			}
-			
-			redraw();
+
+			delete pixels.length;
+			var pixelArr = Object.keys(pixels);
+			api("MovePixel", {from: pixelArr.join("|"), to: key, POST: true}, function(resp) {
+				if(resp.error) {
+					showError(resp.error);
+				}
+
+				pixels = {length: 0};
+				status();
+			}, false);
 		});
 	});
 	
