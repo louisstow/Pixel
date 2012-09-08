@@ -331,14 +331,15 @@ function getLogs(timestamp, socket) {
         return;
     }
 
-	console.log("LOGS", journal.length, timestamp);
-
 	for(var i = 0; i < journal.length; ++i) {
-		if(journal[i].timestamp >= timestamp) {
+		
+		if(+journal[i].timestamp >= +timestamp) {
 			socket.write(journal[i].qry + "\n");
 			count++;
 		}
 	}
+
+	console.log("LOGS", journal.length, count, timestamp);
 	
 	//write empty string
 	if(count == 0) {
@@ -441,6 +442,8 @@ function transportPixels(pixels, cmd) {
 	to[0] = +to[0];
 	to[1] = +to[1];
 
+	console.log("TRANSPORT", pixels, cmd);
+
 	//find the top left point
 	for(var i = 0; i < pixels.length; ++i) {
 		var dim = pixels[i].split(",");
@@ -449,7 +452,7 @@ function transportPixels(pixels, cmd) {
 			minX = +dim[0];
 
 		if(+dim[1] < minY || minY === null) 
-			minX = +dim[1];
+			minY = +dim[1];
 	}
 
 	//loop over every pixel
@@ -458,7 +461,10 @@ function transportPixels(pixels, cmd) {
 		var pix = board[+dim[0]][+dim[1]];
 
 		//make sure owner has access
-		if(pix.owner != cmd[2]) continue;
+		if(+pix.owner != +cmd[2]) {
+			console.log("NOT OWNER", pix.owner, cmd[2])
+			continue;
+		}
 
 		//add the top left offset
 		var offsetX = +dim[0] - minX;
@@ -466,14 +472,19 @@ function transportPixels(pixels, cmd) {
 		var x = to[0] + offsetX;
 		var y = to[1] + offsetY;
 
+		console.log("CALCS", offsetX, offsetY, x, y, to[0], to[1], minX, minY)
 		//skip out of bounds
-		if(x < 0 || y < 0 || x >= COLS || y >= ROWS)
+		if(x < 0 || y < 0 || x >= COLS || y >= ROWS) {
+			console.log("OUT OF BOUNDS", x, y)
 			continue;
+		}
 
 		//check the destination is correct
 		var dest = board[x][y];
-		if(dest.color !== null)
+		if(dest.color !== null) {
+			console.log("DEST NOT NuLL", dest, x, y)
 			continue;
+		}
 
 		//generate the chunk key
 		var key = [
@@ -485,7 +496,7 @@ function transportPixels(pixels, cmd) {
 		//create chunk object, add to remove list
 		if(!chunk[key]) chunk[key] = [];
 		chunk[key].push(x + "," + y);
-		toRemove.push(x + "," + y);
+		toRemove.push(pixels[i]);
 
 		//move pixel data
 		dest.color = pix.color;
@@ -495,15 +506,21 @@ function transportPixels(pixels, cmd) {
 		pix.color = pix.price = pix.owner = null;
 	}
 
+	console.log("LENGTH", toRemove.length, chunk)
+
 	//generate one timestamp
 	var timestamp = Date.now() / 1000 | 0;
 
 	//delete all removable pixels
-	saveLog(timestamp, toRemove.join("|") + " d " + timestamp);
+	if(toRemove.length) 
+		saveLog(toRemove.join("|") + " d " + timestamp, timestamp);
 
 	for(var qry in chunk) {
-		saveLog(timestamp, chunk[qry].join("|") + " w " + qry + " " + timestamp);
+		if(chunk[qry].length)
+			saveLog(chunk[qry].join("|") + " w " + qry + " " + timestamp, timestamp);
 	}
+
+	saveState();
 }
 
 //Save the board to a static JS file
