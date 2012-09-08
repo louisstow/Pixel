@@ -9,7 +9,7 @@ function createBuffer() {
 	offscreen.height = zoomLevel * canvasHeight;
 
 	lastRenderedZoom = zoomLevel;
-	console.log(zoomLevel, lastRenderedZoom)
+	
 	drawRect(0, 0, zoomLevel, offscreenCtx);
 }
 
@@ -137,7 +137,7 @@ function drawRange(startX, startY, level, cx) {
 	var owner = mypixelsSelected && me.userID;
 	var x, y;
 	cx = cx || ctx;
-	console.log("DATA", startX, startY, endX, endY)
+	
 	for(x = ~~startX; x < endX; ++x) {
 		for(y = ~~startY; y < endY; ++y) {
 			pixel = board[x + "," + y];
