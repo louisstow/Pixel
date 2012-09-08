@@ -15,7 +15,7 @@ if(count($cto) != 2 || $cto[0] >= 1200 || $cto[1] >= 1000) {
     error("Invalid pixel range");
 }
 
-chunk($from . " t " . $to . " " . USER . " " . time());
+chunk($from . " t " . $to . " " . dechex(USER) . " " . time());
 
 ok();
 ?>
