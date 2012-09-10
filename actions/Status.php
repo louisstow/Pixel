@@ -17,7 +17,7 @@ $cycle['cycleTime'] = strtotime($cycle['cycleTime']);
 $json = array(
 	"log" => $logs,
 	"cycle" => $cycle,
-	"time" => time()
+	"time" => getTime()
 );
 
 //if logged in, list event data

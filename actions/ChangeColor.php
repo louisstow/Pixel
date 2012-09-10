@@ -36,7 +36,7 @@ foreach($data as $row) {
 	}
 }
 
-chunk("{$pix} w {$color} . . " . time());
+chunk("{$pix} w {$color} . . " . getTime());
 
 ok();
 ?>

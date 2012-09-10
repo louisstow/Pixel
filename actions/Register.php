@@ -61,7 +61,7 @@ $_SESSION['id'] = $player->userID;
 
 //pixels are optional
 if(is_array($pixel)) {
-	queryDaemon("{$list} w 000000 1f4 " . dechex($player->userID) . " " . time());
+	queryDaemon("{$list} w 000000 1f4 " . dechex($player->userID) . " " . getTime());
 }
 
 unset($player->userPass);

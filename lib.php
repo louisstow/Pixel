@@ -58,6 +58,13 @@ function ok() {
 }
 
 /**
+* Return unix time 
+*/
+function getTime() {
+	return (int) (microtime(true) * 1000);
+}
+
+/**
 * Validate pixel string
 */
 function validate($pixels, $rep = true) {

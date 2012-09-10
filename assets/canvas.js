@@ -249,8 +249,8 @@ function redraw() {
 }
 
 function updateBoard(data) {
-	currentTimestamp = data.substr(0, 10);
-	parse = data.substr(10);
+	currentTimestamp = data.substr(0, 13);
+	parse = data.substr(13);
 	var len = parse.length;
 	var x = 0, y = 0;
 	var params = {};
