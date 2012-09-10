@@ -216,9 +216,6 @@ function initControls () {
 				if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
 				if(y > 1000 - 1000 / newZoom) y = 1000 - 1000 / newZoom;
 
-
-				console.log(lastRenderedZoom, width, height, midPointX, midPointY, x, y, 1200 - 1200 / newZoom)
-
 				drawZoom(x, y, newZoom);
 			})
 			.mousedown(function(e) {
@@ -246,28 +243,14 @@ function initControls () {
 					if(zoomPos.top > 1000 - 1000 / zoomLevel) zoomPos.top = 1000 - 1000 / zoomLevel;
 
 					dragged = true;
-					ctx.clearRect(0,0,canvasWidth,canvasHeight);
+					//ctx.clearRect(0,0,canvasWidth,canvasHeight);
+		
+					drawZoom(
+						zoomPos.left,
+						zoomPos.top,
+						zoomLevel
+					);
 					
-					if(zoomLevel < 8) {
-						ctx.drawImage(
-							offscreen,
-							zoomPos.left * zoomLevel | 0,
-							zoomPos.top * zoomLevel | 0,
-							canvasWidth,
-							canvasHeight,
-							0,
-							0,
-							canvasWidth,
-							canvasHeight
-						);
-					} else {
-						drawRange(
-							zoomPos.left,
-							zoomPos.top,
-							zoomLevel
-						);
-					}
-
 					if(window.localStorage) {
 						window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
 					}
@@ -306,6 +289,7 @@ function initControls () {
 			mypixelsSelected = true;
 		}
 		
+		dirtyBuffer = true;
 		redraw();
 	});
 	
@@ -406,6 +390,7 @@ function initControls () {
 					x += diffx;
 				}
 				
+				dirtyBuffer = true;
 				redraw();
 			
 				$(this).unbind("mousemove").unbind("mouseup");
@@ -415,7 +400,7 @@ function initControls () {
 	
 	$("a.clearselection").click(function() {
 		pixels = {length: 0 };
-		
+		dirtyBuffer = true;
 		redraw();
 	});
 	
@@ -434,6 +419,7 @@ function initControls () {
 			pixels.length++;
 		}
 		
+		dirtyBuffer = true;
 		redraw();
 	});
 	
@@ -525,6 +511,7 @@ function initControls () {
 					html += "<li><b>" + pix + "</b><i>$" + (cost / 100).toFixed(2) + "</i><a class='remove'>remove</a></li>";
 			}
 
+			dirtyBuffer = true;
 			redraw();
 			$("div.buy span.total").text((total / 100).toFixed(2));
 		}
@@ -583,6 +570,7 @@ function initControls () {
 					$(this).parent().remove();
 					
 					delete pixels[id];
+					dirtyBuffer = true;
 					redraw();
 				});
 			}
@@ -654,6 +642,7 @@ function initControls () {
 		
 		$(this).addClass("active");
 		$("div.sell").show();
+		dirtyBuffer = true;
 		redraw();
 	});
 	
@@ -771,6 +760,7 @@ function updateColors(color) {
 	if(data.pixels.length === 0) return;
 
 	api("ChangeColor", data);
+	dirtyBuffer = true;
 	redraw();
 }
 
@@ -837,6 +827,7 @@ function selectPixel(x, y) {
 		pixels.length++;
 	}
 	
+	dirtyBuffer = true;
 	redraw();
 }
 
