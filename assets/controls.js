@@ -534,9 +534,9 @@ function initControls () {
 		
 		generateReceipt();
 
-		//2 dollar minimum
-		if(total < 200) {
-			showError("You must buy at least $2.00 worth of pixels. Currently $" + (total / 100).toFixed(2));
+		//5 dollar minimum
+		if(total < 500) {
+			showError("You must buy at least $5.00 worth of pixels. Currently $" + (total / 100).toFixed(2));
 			$(this).removeClass("active");
 			return;
 		}

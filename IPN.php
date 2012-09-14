@@ -154,7 +154,7 @@ foreach($pixels as $pix) {
 $list = implode($pixels, "|");
 
 //if they paid under the threshold, we make no profit
-if($_POST['mc_gross'] < 2) {
+if($_POST['mc_gross'] < 5) {
 	$message = "";
 	$message .= print_r($_POST, true) . "\r\n";
 	$message .= $cost;
