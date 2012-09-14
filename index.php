@@ -211,8 +211,8 @@ won or lost under 'Events'.</p>
 Each color is made up of different amounts of Red, Green and Blue (we call these color channels). If your color is mostly Red, its dominant color channel
 will be Red. If your color channels are the same value, it will randomly choose a dominant channel.</p>
 
-<p><span class="red">Red</span> beats <span class="green">Green</span>, <span class="blue">Blue</span> beats <span class="red">Red</span> and 
-<span class="green">Green</span> beats <span class="blue">Blue</span> (similar to Paper, Scissors, Rock).</p>
+<p><span class="sred">Red</span> beats <span class="sgreen">Green</span>, <span class="sblue">Blue</span> beats <span class="sred">Red</span> and 
+<span class="sgreen">Green</span> beats <span class="sblue">Blue</span> (similar to Paper, Scissors, Rock).</p>
 
 <p>Your odds will be increased by having a large difference between the dominant color channel and the other channels.</p>
 </div>
