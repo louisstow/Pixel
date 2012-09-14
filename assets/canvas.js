@@ -1,14 +1,26 @@
+var offscreen = null;
+var offscreenCtx = null;
+var lastRenderedZoom;
 
-function drawBoard(owner) {
-	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-	var imgdata = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+function createBuffer() {
+	if(zoomLevel > 4) return;
+
+	offscreen.width = zoomLevel * canvasWidth;
+	offscreen.height = zoomLevel * canvasHeight;
+
+	lastRenderedZoom = zoomLevel;
+	
+	drawRect(0, 0, zoomLevel, offscreenCtx);
+}
+
+function drawPixels(cx) {
+	var imgdata = cx.getImageData(0, 0, canvasWidth, canvasHeight);
 	var color;
 	var pixel;
 	var index;
 	var data = imgdata.data;
-        var coord;
-
-	owner = owner || mypixelsSelected && me.userID;
+	var coord;
+	var owner = mypixelsSelected && me.userID;
 
 	//loop over board
 	for(var pos in board) {
@@ -17,10 +29,10 @@ function drawBoard(owner) {
 		if(owner && pixel.owner != owner) continue;
 		
 		coord = pos.split(",");
-                if(coord.length !== 2) continue;
+        if(coord.length !== 2) continue;
 
 		index = (coord[1] * canvasWidth + (+coord[0])) * 4;
-		color = pixels[pos] ? selectColor : pixel.color;
+		color = pixel.color;
 		
 		data[index] = parseInt(color.substr(0, 2), 16);   //red
 		data[++index] = parseInt(color.substr(2, 2), 16); // green
@@ -35,20 +47,46 @@ function drawBoard(owner) {
 		if(owner && pixel.owner != owner) continue;
 		
 		coord = pos.split(",");
-                if(coord.length !== 2) continue;
+		if(coord.length !== 2) continue;
 
 		index = (coord[1] * canvasWidth + (+coord[0])) * 4;
-	
-		data[index] = parseInt(selectColor.substr(0, 2), 16);   //red
-		data[++index] = parseInt(selectColor.substr(2, 2), 16); // green
-		data[++index] = parseInt(selectColor.substr(4, 2), 16); // blue
-		data[++index] = 255;
+
+		var sr = parseInt(selectColorHex.substr(0, 2), 16),
+			sg = parseInt(selectColorHex.substr(2, 2), 16),
+			sb = parseInt(selectColorHex.substr(4, 2), 16);
+
+		if(!pixel) {
+			data[  index] = sr;   //red
+			data[++index] = sg; // green
+			data[++index] = sb; // blue
+			data[++index] = 127;
+		} else {
+			var other = pixel.color;
+			var r = parseInt(other.substr(0, 2), 16) / 255;
+			var g = parseInt(other.substr(2, 2), 16) / 255;
+			var b = parseInt(other.substr(4, 2), 16) / 255;
+			sr /= 255;
+			sg /= 255;
+			sb /= 255;
+
+			data[  index] = ((r * .5 + sr * .5) * 255) | 0;
+			data[++index] = ((g * .5 + sg * .5) * 255) | 0;
+			data[++index] = ((b * .5 + sb * .5) * 255) | 0;
+			data[++index] = 255;
+		}
+		
 	}
+
+	cx.putImageData(imgdata, 0, 0);
+}
+
+function drawBoard(owner) {
+	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 	
 	zoomPos.left = 0;
 	zoomPos.top = 0;
 	zoomLevel = 1;
-	ctx.putImageData(imgdata, 0, 0);
+	drawPixels(ctx);
 
 	if(window.localStorage) {
 		window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
@@ -60,94 +98,140 @@ function drawBoard(owner) {
 /**
 * Draw the board at a certain zoom level
 */
-function drawZoom(startX, startY, level, owner) {
+function drawZoom(startX, startY, level, cx) {
 	var endX = startX + canvasWidth / level;
 	var endY = startY + canvasHeight / level;
 	var x, y, pixel, index;
+	cx = cx || ctx;
 	
 	zoomPos.left = startX;
 	zoomPos.top = startY;
 
+
 	if(window.localStorage) {
-		window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
+		window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + level;
 	}
 
-	owner = owner || mypixelsSelected && me.userID;
+	var owner = mypixelsSelected && me.userID;
 	
 	//clear canvas
-	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+	cx.clearRect(0, 0, canvasWidth, canvasHeight);
 	
 	//if the zoom level is greater than two, this is more effecient
 	if(zoomLevel > 4) {
-		for(x = ~~startX; x < endX; ++x) {
-			for(y = ~~startY; y < endY; ++y) {
-				pixel = board[x + "," + y];
-				
-				//if no pixel found, don't draw
-				if(!pixel && !pixels[x + "," + y]) continue;
-				
-				//only show existing pixels
-				if(owner && !pixel) {
-					continue;
-				}
-				
-				//if only draw the specified owner
-				if(owner && pixel.owner != owner) {
-					continue;
-				}
-				
-				ctx.fillStyle = "#" + (pixels[x + "," + y] ? selectColor : pixel.color);
-				ctx.fillRect(
-					(x - startX) * level, 
-					(y - startY) * level, 
-					level, 
-					level
-				);
-			}
-		}
+		drawRange(startX, startY, level, cx);
 	} else {
-		var pix, coord;
-		for(pix in board) {
-			coord = pix.split(",");
-			x = +coord[0]; y = +coord[1];
-			pixel = board[pix];
-
-			//if only show owners pixels
-			if(owner && pixel.owner != owner) continue;
-
-			//if selected, draw later
-			if(pixels[pix]) continue;
-
-			if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
-				ctx.fillStyle = "#" + pixel.color;
-				ctx.fillRect(
-					(x - startX) * level, 
-					(y - startY) * level, 
-					level, 
-					level
-				);
-			}
-		}
-
-		for(var pix in pixels) {
-			coord = pix.split(",");
-			x = +coord[0]; y = +coord[1];
-
-
-			if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
-				ctx.fillStyle = "#" + selectColor;
-				ctx.fillRect(
-					(x - startX) * level, 
-					(y - startY) * level, 
-					level, 
-					level
-				);
-			}
-		}
+		drawRect(startX, startY, level, cx);
 	}
 	
 	zoomLevel = level;
 	$("a.zoomlevel").text(zoomLevel);
+
+	createBuffer();
+}
+
+function drawRange(startX, startY, level, cx) {
+	var endX = startX + canvasWidth / level;
+	var endY = startY + canvasHeight / level;
+	var pix, coord;
+	var owner = mypixelsSelected && me.userID;
+	var x, y;
+	cx = cx || ctx;
+	
+	for(x = ~~startX; x < endX; ++x) {
+		for(y = ~~startY; y < endY; ++y) {
+			pixel = board[x + "," + y];
+			
+			//if no pixel found, don't draw
+			if(!pixel && !pixels[x + "," + y]) continue;
+			
+			//only show existing pixels
+			if(owner && !pixel) {
+				continue;
+			}
+			
+			//if only draw the specified owner
+			if(owner && pixel.owner != owner) {
+				continue;
+			}
+			
+			if(pixel) {
+				cx.fillStyle = "#" + pixel.color;
+				cx.fillRect(
+					(x - startX) * level, 
+					(y - startY) * level, 
+					level, 
+					level
+				);
+			}
+
+			if(pixels[x + "," + y]) {
+				cx.fillStyle = selectColor;
+				cx.fillRect(
+					(x - startX) * level, 
+					(y - startY) * level, 
+					level, 
+					level
+				);
+			}
+		}
+	}
+}
+
+function drawRect(startX, startY, level, cx) {
+	var endX = startX + canvasWidth / level;
+	var endY = startY + canvasHeight / level;
+	var pix, coord;
+	var owner = mypixelsSelected && me.userID;
+	var x, y;
+
+	cx = cx || ctx;
+
+	for(pix in board) {
+		coord = pix.split(",");
+		x = +coord[0]; y = +coord[1];
+		pixel = board[pix];
+
+		//if only show owners pixels
+		if(owner && pixel.owner != owner) continue;
+
+		if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
+			cx.fillStyle = "#" + pixel.color;
+			cx.fillRect(
+				(x - startX) * level, 
+				(y - startY) * level, 
+				level, 
+				level
+			);
+
+			if(pixels[pix]) {
+				cx.fillStyle = selectColor;
+				cx.fillRect(
+					(x - startX) * level, 
+					(y - startY) * level, 
+					level, 
+					level
+				);
+			}
+		}
+	}
+
+	for(var pix in pixels) {
+		coord = pix.split(",");
+		x = +coord[0]; y = +coord[1];
+
+		if(board[pix]) continue;
+
+		if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
+			cx.fillStyle = selectColor;
+			cx.fillRect(
+				(x - startX) * level, 
+				(y - startY) * level, 
+				level, 
+				level
+			);
+		}
+	}
 }
 
 function redraw() {
@@ -160,13 +244,13 @@ function redraw() {
 	if(zoomLevel === 1) {
 		drawBoard(mypixelsSelected && me.userID);
 	} else {
-		drawZoom(zoomPos.left, zoomPos.top, zoomLevel, mypixelsSelected && me.userID);
+		drawZoom(zoomPos.left, zoomPos.top, zoomLevel);
 	}
 }
 
 function updateBoard(data) {
-	currentTimestamp = data.substr(0, 10);
-	parse = data.substr(10);
+	currentTimestamp = data.substr(0, 13);
+	parse = data.substr(13);
 	var len = parse.length;
 	var x = 0, y = 0;
 	var params = {};

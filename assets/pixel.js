@@ -5,7 +5,7 @@ var canvas,
 	canvasWidth, 
 	canvasHeight,
 	body,
-	me,
+	me = {},
 	pixels = {length: 0}, //selected pixes
 	stagePos,
 	zoomPos = {left: 0, top: 0},
@@ -17,7 +17,8 @@ var canvas,
 	mypixelsSelected = false,
 	moveSelected = false,
 	shadowColor = "#222222",
-	selectColor = "00C8FF",
+	selectColor = "rgba(0, 200, 255, 0.5)",
+	selectColorHex = "00C8FF",
 	
 	hasFocus = true,
 	
@@ -48,6 +49,9 @@ $(function() {
 	$("#stage").append(zoomer);
 	zoomer.setAttribute("class", "zoomer");
 	stagePos = $("#canvas").offset();
+
+	offscreen = document.createElement("canvas");
+	offscreenCtx = offscreen.getContext("2d");
 	
 	//update the stage position
 	$(window).resize(function() {

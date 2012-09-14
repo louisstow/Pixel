@@ -1,3 +1,4 @@
+
 function initControls () {
 
 
@@ -16,8 +17,8 @@ function initControls () {
 			$("div.register").hide();
 		} else {
 			//player can choose pixels
-			if(pixels.length < 30) {
-				showError("Remember, you can select 30 free pixels");
+			if(pixels.length < 50) {
+				showError("Remember, you can select 50 free pixels");
 				$("a.select").trigger("click");
 			}
 			
@@ -59,7 +60,7 @@ function initControls () {
 	});
 
 	$("#logout").click(function() {
-		if(me) {
+		if(me.userID) {
 			api("Logout", function() {
 				if(mypixelsSelected) {
 					$(this).removeClass("active");
@@ -173,8 +174,10 @@ function initControls () {
 		selected = "default";
 		$(this).addClass("active");
 		
-		var downPos, dragging = false, dragged = false, lastPos;
-
+		var downPos, 
+			dragging = false, 
+			dragged = false, 
+			lastPos;
 
 		$("#canvas")
 			.click(function(e) {
@@ -215,22 +218,22 @@ function initControls () {
 				if(y > 1000 - 1000 / newZoom) y = 1000 - 1000 / newZoom;
 
 
-				console.log(newZoom, width, height, midPointX, midPointY, x, y, 1200 - 1200 / newZoom)
+				console.log(lastRenderedZoom, width, height, midPointX, midPointY, x, y, 1200 - 1200 / newZoom)
 
 				drawZoom(x, y, newZoom);
 			})
 			.mousedown(function(e) {
 				if(zoomLevel > 1)
 					dragging = true;
+				
 				downPos = translate(e.clientX, e.clientY);
 				lastPos = {
 					x: downPos.x,
 					y: downPos.y
-				}
+				};
+				
 			})
 			.mouseup(function(e) {
-				console.log("TWO")
-
 				dragging = dragged = false;
 				downPos = null;
 			})
@@ -246,11 +249,36 @@ function initControls () {
 					if(zoomPos.top > 1000 - 1000 / zoomLevel) zoomPos.top = 1000 - 1000 / zoomLevel;
 
 					dragged = true;
-					redraw();
+					ctx.clearRect(0,0,canvasWidth,canvasHeight);
+					
+					if(zoomLevel < 8) {
+						ctx.drawImage(
+							offscreen,
+							zoomPos.left * zoomLevel | 0,
+							zoomPos.top * zoomLevel | 0,
+							canvasWidth,
+							canvasHeight,
+							0,
+							0,
+							canvasWidth,
+							canvasHeight
+						);
+					} else {
+						drawRange(
+							zoomPos.left,
+							zoomPos.top,
+							zoomLevel
+						);
+					}
+
+					if(window.localStorage) {
+						window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
+					}
 				} else {
 					showTooltip(e);
 				}
 			})
+
 			.mouseleave(function() {
 				$("#tooltip").hide();
                                 dragging = dragged = false;
@@ -270,7 +298,7 @@ function initControls () {
 	});
 	
 	$("a.mypixels").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -397,7 +425,7 @@ function initControls () {
 	});
 	
 	$("a.selectmypixels").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -415,7 +443,7 @@ function initControls () {
 	});
 	
 	$("a.move").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -424,59 +452,29 @@ function initControls () {
 		selected = "move";
 		$("#canvas").unbind();
 		$(this).addClass("active");
-		pixels = {length: 0};
 		
 		$("#canvas").click(function(e) {
 			var pos = translate(e.clientX, e.clientY);
 			var key = ~~pos.x + "," + ~~pos.y;
 			var pixel = board[key];
 
-			if(~~pos.x < 0 || ~~pos.x >= 1200) return;
-			if(~~pos.y < 0 || ~~pos.y >= 1000) return;
-			
-			//check if free pixel
-			if(moveSelected) {
-				//deselect if same key
-				if(key === moveSelected) {
-					moveSelected = false;
-					pixels = {length: 0};
-					redraw();
-					return;
-				}
-			
-				//if someone owns it
-				if(pixel) {
-					showError("That pixel is taken. You may purchase this pixel for $" + (pixel.cost / 100).toFixed(2));
-					return;
-				}
+			//if out of bounds or existing pixel, throw error
+			if(~~pos.x < 0 || ~~pos.x >= 1200 || 
+			   ~~pos.y < 0 || ~~pos.y >= 1000) {
 
-				board[key] = board[moveSelected];
-				delete board[moveSelected];
-				
-				api("MovePixel", {from: moveSelected, to: key}, function(resp) {
-					if(resp.error) {
-						showError(resp.error);
-						board[moveSelected] = board[key];
-						delete board[key];
-					}
-
-					status();
-				}, false);
-				
-				pixels = {length: 0};
-				
-				moveSelected = false;
-			} else {
-				if(!pixel || (pixel && pixel.owner != me.userID)) {
-					showError("You can only move your own pixels.");
-					return;
-				}
-				
-				moveSelected = key;
-				pixels[key] = true;
+				return showError("Pixel area out of bounds.");
 			}
-			
-			redraw();
+
+			delete pixels.length;
+			var pixelArr = Object.keys(pixels);
+			api("MovePixel", {from: pixelArr.join("|"), to: key, POST: true}, function(resp) {
+				if(resp.error) {
+					showError(resp.error);
+				}
+
+				pixels = {length: 0};
+				status();
+			}, false);
 		});
 	});
 	
@@ -538,9 +536,9 @@ function initControls () {
 		
 		generateReceipt();
 
-		//2 dollar minimum
-		if(total < 200) {
-			showError("You must buy at least $2.00 worth of pixels. Currently $" + (total / 100).toFixed(2));
+		//5 dollar minimum
+		if(total < 500) {
+			showError("You must buy at least $5.00 worth of pixels. Currently $" + (total / 100).toFixed(2));
 			$(this).removeClass("active");
 			return;
 		}
@@ -606,7 +604,7 @@ function initControls () {
 			$("input.payeremail").val(me.userEmail);
 		}
 		
-		if(me) {
+		if(me.userID) {
 			saveOrder();
 		} else {
 
@@ -622,7 +620,7 @@ function initControls () {
 	});
 	
 	$("a.sellpixel").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -757,7 +755,7 @@ function initControls () {
 }
 
 function updateColors(color) {
-	if(!me) {
+	if(!me.userID) {
 		return;
 	}
 

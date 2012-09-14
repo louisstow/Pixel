@@ -154,7 +154,7 @@ foreach($pixels as $pix) {
 $list = implode($pixels, "|");
 
 //if they paid under the threshold, we make no profit
-if($_POST['mc_gross'] < 2) {
+if($_POST['mc_gross'] < 5) {
 	$message = "";
 	$message .= print_r($_POST, true) . "\r\n";
 	$message .= $cost;
@@ -200,7 +200,7 @@ else if(($_POST['mc_gross'] - ($cost / 100)) > 0.01) {
 //update the pixel data
 $huser = dechex($user);
 
-chunk("{$list} w AAAAAA 1f4 {$huser} " . time());
+chunk("{$list} w AAAAAA 1f4 {$huser} " . getTime());
 
 //give the pixels immunity
 chunk("{$list} m immunity 1");
@@ -247,7 +247,7 @@ foreach($owners as $id => $data) {
 //$message = print_r($data, true) . "\r\n";
 $message = print_r($_POST, true) . "\r\n";
 $message .= "Profit: {$profit}\r\n";
-$message .= "{$list} w AAAAAA 1f4 {$huser} " . time() . "\r\n";
+$message .= "{$list} w AAAAAA 1f4 {$huser} " . getTime() . "\r\n";
 
 mail($TO, "Pixels bought #{$_POST['item_number']}", $message);
 ?>

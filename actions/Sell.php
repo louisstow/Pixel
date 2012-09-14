@@ -26,7 +26,7 @@ foreach($data as $pixel) {
 	}
 }
 
-chunk("{$pix} w . {$cost} . " . time());
+chunk("{$pix} w . {$cost} . " . getTime());
 
 ok();
 ?>
