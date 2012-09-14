@@ -1,3 +1,4 @@
+
 function initControls () {
 
 
@@ -16,8 +17,8 @@ function initControls () {
 			$("div.register").hide();
 		} else {
 			//player can choose pixels
-			if(pixels.length < 30) {
-				showError("Remember, you can select 30 free pixels");
+			if(pixels.length < 50) {
+				showError("Remember, you can select 50 free pixels");
 				$("a.select").trigger("click");
 			}
 			
@@ -59,7 +60,7 @@ function initControls () {
 	});
 
 	$("#logout").click(function() {
-		if(me) {
+		if(me.userID) {
 			api("Logout", function() {
 				if(mypixelsSelected) {
 					$(this).removeClass("active");
@@ -224,11 +225,13 @@ function initControls () {
 			.mousedown(function(e) {
 				if(zoomLevel > 1)
 					dragging = true;
+				
 				downPos = translate(e.clientX, e.clientY);
 				lastPos = {
 					x: downPos.x,
 					y: downPos.y
-				}
+				};
+				
 			})
 			.mouseup(function(e) {
 				dragging = dragged = false;
@@ -293,7 +296,7 @@ function initControls () {
 	});
 	
 	$("a.mypixels").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -420,7 +423,7 @@ function initControls () {
 	});
 	
 	$("a.selectmypixels").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -438,7 +441,7 @@ function initControls () {
 	});
 	
 	$("a.move").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -599,7 +602,7 @@ function initControls () {
 			$("input.payeremail").val(me.userEmail);
 		}
 		
-		if(me) {
+		if(me.userID) {
 			saveOrder();
 		} else {
 
@@ -615,7 +618,7 @@ function initControls () {
 	});
 	
 	$("a.sellpixel").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -750,7 +753,7 @@ function initControls () {
 }
 
 function updateColors(color) {
-	if(!me) {
+	if(!me.userID) {
 		return;
 	}
 

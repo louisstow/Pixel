@@ -30,8 +30,8 @@ if($email == "" || $password == "") {
 if(!$url) $url = "pixenomics.com";
 if(!$message) $message = "Pixenomics - Start your pixel empire!";
 
-if(count($pixel) > 30) {
-	$pixel = array_slice($pixel, 0, 30);
+if(count($pixel) > 50) {
+	$pixel = array_slice($pixel, 0, 50);
 }
 
 //validate the selected pixels
@@ -43,8 +43,8 @@ if(is_array($pixel)) {
 
 	$q = queryDaemon("{$list} g");
 
-	//should be 30 dots
-	if(strlen($q) > 30) {
+	//should be 50 dots
+	if(strlen($q) > 50) {
 		error("Pixels taken: " . $q);
 	}
 }

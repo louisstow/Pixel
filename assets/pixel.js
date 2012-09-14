@@ -5,7 +5,7 @@ var canvas,
 	canvasWidth, 
 	canvasHeight,
 	body,
-	me,
+	me = {},
 	pixels = {length: 0}, //selected pixes
 	stagePos,
 	zoomPos = {left: 0, top: 0},
