@@ -51,7 +51,7 @@ if($res != "VERIFIED") {
 	exit;
 }
 
-if($_POST['receiver_email'] !== "jgs@pixenomics.com") {
+if($_POST['receiver_email'] !== "louisstow@gmail3.com") {
 	$message = print_r($_POST, true) . "\r\n";
 	
 	mail($TO, "Not sent to us", $message);
