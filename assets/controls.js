@@ -192,7 +192,9 @@ function initControls () {
 						if(!info) return;
 						var url = info.url;
 						
-						if(/https?\:\/\//.test(url)) url = "http://" + url;
+						if(!/https?\:\/\//.test(url)) {
+							url = "http://" + url;
+						}
 						
 						window.open(url);
 						$("#tooltip").hide();
@@ -466,7 +468,10 @@ function initControls () {
 			}
 
 			delete pixels.length;
-			var pixelArr = Object.keys(pixels);
+			var pixelArr = Object.keys(pixels).filter(function (i) {
+				return board[i] && board[i].owner == me.userID;
+			});
+			console.log(Object.keys(pixels), pixelArr)
 			api("MovePixel", {from: pixelArr.join("|"), to: key, POST: true}, function(resp) {
 				if(resp.error) {
 					showError(resp.error);
@@ -780,7 +785,8 @@ function updateColors(color) {
 }
 
 function showTooltip(e) {
-	var pos = translate(e.clientX, e.clientY);
+	var pos = translate(e.clientX - 1, e.clientY - 2);
+	
 	var pixel = board[Math.floor(pos.x) + ',' + Math.floor(pos.y)];
 
 	if(!pixel) {
@@ -799,7 +805,7 @@ function showTooltip(e) {
 	$("#tooltip .price").text("$" + (pixel.cost / 100).toFixed(2));
 
 	$("#tooltip").show().css({
-		left: e.clientX + 15 + body.scrollLeft,
+		left: e.clientX + 13 + body.scrollLeft,
 		top: e.clientY + body.scrollTop
 	});
 }
