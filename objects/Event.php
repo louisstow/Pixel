@@ -15,7 +15,7 @@ class Event extends ORM {
                         FROM events 
                         WHERE userID = ? 
                         ORDER BY eventDate desc
-						LIMIT 30", array($user));
+						LIMIT 50", array($user));
         return $q;
     }
 }

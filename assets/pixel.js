@@ -226,6 +226,10 @@ function tick() {
 	if(hours < 0) hours = 0;
 	if(minutes < 0) minutes = 0;
 	if(seconds < 0) seconds = 0;
+
+	if(hours === 0 && minutes < 30) {
+		$(".hours, .minutes, .seconds").addClass("sred");
+	}
 	
 	$hours.text(hours + " hour" + (hours === 1 ? "" : "s"));
 	$minutes.text(minutes + " minute" + (minutes === 1 ? "" : "s"));

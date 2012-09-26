@@ -15,6 +15,7 @@ input { outline: none }
 .login, .register, .events, .change, .lostpass { right: 1px; border-width: 0 0 1px 1px; display: none; border-bottom-left-radius: 10px; }
 .login, .events, .change, .lostpass { width: 320px; }
 .register { width: 620px; }
+.box.events { height: 980px; border-radius: 0 }
 .buy, .sell, .instr { left: 1px; display: none; border-width: 0 1px 1px 0; border-bottom-right-radius: 10px; }
 .buy, .sell { width: 300px }
 .instr { width: 500px}
@@ -143,6 +144,7 @@ padding: 2px;
 cursor: pointer; 
 z-index: 1000; 
 max-width: 200px;
+min-width: 100px;
 text-align: left; 
 word-break: break-all; 
 border-radius: 5px; 
@@ -229,6 +231,28 @@ button.disabled {
 
 #content { border: 1px solid #B2B1B1; box-shadow: 0 2px 4px #939393; width: 800px; background: white; padding: 20px; margin: auto; text-align: left }
 #ntop { margin-top: 8px }
+
+a.button {
+border-radius: 3px; 
+
+background: #f7f7f7; /* Old browsers */
+background: -moz-linear-gradient(top,  #f7f7f7 0%, #dbdbdb 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(100%,#dbdbdb)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #f7f7f7 0%,#dbdbdb 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #f7f7f7 0%,#dbdbdb 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #f7f7f7 0%,#dbdbdb 100%); /* IE10+ */
+background: linear-gradient(to bottom,  #f7f7f7 0%,#dbdbdb 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#dbdbdb',GradientType=0 ); /* IE6-9 */
+padding: 5px 20px;
+cursor: pointer;
+border: 1px solid #ccc;
+}
+
+p.action {
+	padding-top: 15px;
+	border-top: 1px dotted #CCC;
+	text-align: right;
+}
 
 span.red { background: #ED0000 }
 span.darkred { background: #8F0000 }
