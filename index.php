@@ -43,7 +43,7 @@
 		<li><a class="invert">Inver<u>t</u></a></li>
 		<li><a class="about" href="about.php">About</a></li>
 		
-		<li id="welcome">Register now for your FREE 30 pixels!</li>
+		<li id="welcome">Register now for your FREE 50 pixels!</li>
 	</ul>
 
 </div>
@@ -52,7 +52,7 @@
 
 	<div id="details">
 		<a id="login">Login</a>
-		<a id="register">Register</a>
+		<a id="register">Join</a>
 		<a id="lostp">Lost Password</a>
 		
 		<span id="money" title="You will be paid via PayPal once your money reaches $20."></span>
@@ -201,20 +201,22 @@ the email does not appear.</p>
 <div class="box instr">
 <h2>How to play</h2>
 
-<p class="feature">Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with <strong>30 free pixels</strong> and take over neighbouring pixels by strategically choosing a
+<p class="feature">Pixenomics is the game of pixel ownership; by force or by wealth. Start your empire with <strong>50 free pixels</strong> and take over neighbouring pixels by strategically choosing a
 color. You can then sell your pixels for real money or use them as advertising space.</p>
 
-<p>The countdown displays the time until the next cycle where your pixels fight it out against others. After a cycle you will recieve a summary of how many pixels you
-won or lost under 'Events'.</p>
+<p>The countdown displays the time until the next cycle where your pixels fight it out. After a cycle you will recieve a summary of how many pixels you
+won or lost under <em>Events</em>.</p>
 
-<p>To invade a neighbouring pixel you need to increase your odds by choosing a dominant color channel that can beat the opponent's dominant color channel. 
+<p>To invade a surrounding enemy pixel you need to increase your strength by choosing a dominant color channel that can beat the opponent's dominant color channel. 
 Each color is made up of different amounts of Red, Green and Blue (we call these color channels). If your color is mostly Red, its dominant color channel
-will be Red. If your color channels are the same value, it will randomly choose a dominant channel.</p>
+will be Red. Color channels with the same value will be chosen randomly.</p>
 
-<p><span class="sred">Red</span> beats <span class="sgreen">Green</span>, <span class="sblue">Blue</span> beats <span class="sred">Red</span> and 
+<p><span class="sred">Red</span> beats <span class="sgreen">Green</span>, <span class="sblue">Blue</span> beats <span class="sred">Red</span>, and 
 <span class="sgreen">Green</span> beats <span class="sblue">Blue</span> (similar to Paper, Scissors, Rock).</p>
 
-<p>Your odds will be increased by having a large difference between the dominant color channel and the other channels.</p>
+<p>The strength of a pixel will increase with more surrounding pixels as support.</p>
+
+<p class="action"><a class="button loginb">Login</a> or <a class="button join">Join</a> to start playing!</p>
 </div>
 
 </div>

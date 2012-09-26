@@ -2,26 +2,31 @@
 function initControls () {
 
 
-	$("#login").click(function() {
+	$("#login, .loginb").click(function() {
 		if($("div.login").is(":visible")) {
 			$("div.login").hide();
 		} else {
 			$("div.login").show();
+			if($("a.instr").is(":visible"))
+				$("a.instructions").trigger("click")
 		}
 		$("div.register, div.lostpass").hide();
 	});
 	
-	$("#register").click(function() {
+	$("#register, .join").click(function() {
 		
 		if($("div.register").is(":visible")) {
 			$("div.register").hide();
 		} else {
 			//player can choose pixels
 			if(pixels.length < 50) {
-				showError("Remember, you can select 50 free pixels");
+				showError("Remember, you can select 50 free pixels by clicking the board!");
 				$("a.select").trigger("click");
 			}
 			
+			if($(".instr").is(":visible"))
+				$("a.instructions").trigger("click")
+
 			$("div.register").show();
 		}
 				
