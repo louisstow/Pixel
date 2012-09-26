@@ -222,14 +222,14 @@ function tick() {
 	var hours = ~~(diff / 60 / 60);
 	var minutes = ~~(diff / 60) % 60;
 	var seconds = diff % 60;
+
+	if(hours === 0 && minutes < 30 && minutes > 0) {
+		$(".hours, .minutes, .seconds").addClass("sred");
+	}
 	
 	if(hours < 0) hours = 0;
 	if(minutes < 0) minutes = 0;
 	if(seconds < 0) seconds = 0;
-
-	if(hours === 0 && minutes < 30) {
-		$(".hours, .minutes, .seconds").addClass("sred");
-	}
 	
 	$hours.text(hours + " hour" + (hours === 1 ? "" : "s"));
 	$minutes.text(minutes + " minute" + (minutes === 1 ? "" : "s"));
@@ -250,6 +250,7 @@ function updateUser(user, next) {
 	$("div.instr").hide();
 	$("div.change input.url").val(user.url);
 	$("div.change input.message").val(user.message);
+	$(".action").hide();
 	status(next);
 }
 
