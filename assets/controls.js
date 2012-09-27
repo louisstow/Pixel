@@ -218,14 +218,10 @@ function initControls () {
 				var x = midPointX - width;
 				var y = midPointY - height;
 
-				console.log(newZoom, width, height, midPointX, midPointY, x, y)
 				if(x < 0) x = 0;
 				if(y < 0) y = 0;
 				if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
 				if(y > 1000 - 1000 / newZoom) y = 1000 - 1000 / newZoom;
-
-
-				console.log(lastRenderedZoom, width, height, midPointX, midPointY, x, y, 1200 - 1200 / newZoom)
 
 				drawZoom(x, y, newZoom);
 			})
@@ -476,7 +472,7 @@ function initControls () {
 			var pixelArr = Object.keys(pixels).filter(function (i) {
 				return board[i] && board[i].owner == me.userID;
 			});
-			console.log(Object.keys(pixels), pixelArr)
+			
 			api("MovePixel", {from: pixelArr.join("|"), to: key, POST: true}, function(resp) {
 				if(resp.error) {
 					showError(resp.error);
@@ -484,6 +480,7 @@ function initControls () {
 
 				pixels = {length: 0};
 				status();
+				$("a.select").trigger("click");
 			}, false);
 		});
 	});
@@ -622,7 +619,7 @@ function initControls () {
 			$(".register").show();
 			//bind to custom event
 			$(".register").bind(":Registered", function() {
-				console.log(me, "DO i exist?", arguments);
+				
 				generateReceipt();
 				saveOrder();
 			});
@@ -722,7 +719,6 @@ function initControls () {
 		var x = midPointX - width;
 		var y = midPointY - height;
 
-		console.log(newZoom, width, height, midPointX, midPointY, x, y)
 		if(x < 0) x = 0;
 		if(y < 0) y = 0;
 		if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
@@ -748,7 +744,6 @@ function initControls () {
 		var x = zoomPos.left - (midPointX - zoomPos.left);
 		var y = zoomPos.top - (midPointY - zoomPos.top);
 
-		console.log(newZoom, width, height, midPointX, midPointY, x, y);
 		if(x < 0) x = 0;
 		if(y < 0) y = 0;
 		if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
