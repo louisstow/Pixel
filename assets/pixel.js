@@ -127,10 +127,11 @@ $(function() {
 	//board might not be loaded, keep checking	
 	var checkCounter = 0;
 	(function checkData() {
-		console.log("ATTEMPT AGAIN");
+		
 		checkCounter++;
 		if(checkCounter > 10) {
 			console.log("COULD NOT FIND DATA");
+			window.reload();
 		} else if(window.DATA) { 
 			//if viewport saved in localstorage
 			if(window.localStorage && window.localStorage.viewport) {
@@ -257,7 +258,7 @@ function updateUser(user, next) {
 function updateEvents(data) {
     //loop over all events and create html
     var i = 0, len = data.length;
-    console.log("EV",data);
+    
     var html = "<table><tr><th>Date</th><th>Cycle</th><th>Event</th></tr>";
     for(; i < len; ++i) {
     	html += "<tr>";
