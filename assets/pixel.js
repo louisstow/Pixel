@@ -44,7 +44,6 @@ $(function() {
 	offscreenCtx = offscreen.getContext("2d");
 	offscreen.width = canvasWidth;
 	offscreen.height = canvasHeight;
-	document.body.appendChild(offscreen)
 
 	var script = document.createElement("script");
 	script.src = "board.js?_=" + Date.now();

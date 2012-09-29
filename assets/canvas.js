@@ -93,18 +93,16 @@ function drawZoom(startX, startY, zoom) {
 	var offsetX = startX - (startX | 0);
 	var offsetY = startY - (startY | 0);
 
-	console.log(offsetX, offsetY)
-
 	ctx.drawImage(
 		offscreen, 
 		startX | 0, 
 		startY | 0,
 		zoomWidth,
 		zoomHeight,
-		offsetX,
-		offsetY,
-		canvasWidth,
-		canvasHeight
+		offsetX * -zoom,
+		offsetY * -zoom,
+		canvasWidth + zoom,
+		canvasHeight + zoom
 	);
 }
 
