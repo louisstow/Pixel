@@ -136,7 +136,7 @@ $(function() {
 		checkCounter++;
 		if(checkCounter > 10) {
 			console.log("COULD NOT FIND DATA");
-			window.reload();
+			window.location.reload();
 		} else if(window.DATA) { 
 			//if viewport saved in localstorage
 			if(window.localStorage && window.localStorage.viewport) {
