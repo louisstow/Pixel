@@ -82,6 +82,13 @@ function drawZoom(startX, startY, zoom) {
 	zoomPos.left = startX;
 	zoomPos.top = startY;
 	zoomLevel = zoom;
+	if(window.localStorage) {
+		window.localStorage.viewport = [
+			zoomPos.left | 0,
+			zoomPos.top  | 0,
+			zoomLevel
+		].join(",")
+	}
 
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
