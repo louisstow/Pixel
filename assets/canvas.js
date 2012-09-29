@@ -93,17 +93,25 @@ function drawZoom(startX, startY, zoom) {
 	var offsetX = startX - (startX | 0);
 	var offsetY = startY - (startY | 0);
 
-	ctx.drawImage(
-		offscreen, 
-		startX | 0, 
-		startY | 0,
-		zoomWidth + 1,
-		zoomHeight + 1,
-		offsetX * -zoom,
-		offsetY * -zoom,
-		canvasWidth + zoom,
-		canvasHeight + zoom
-	);
+	if(zoom === 1) {
+		ctx.drawImage(
+			offscreen,
+			0,
+			0
+		);
+	} else {
+		ctx.drawImage(
+			offscreen, 
+			startX | 0, 
+			startY | 0,
+			zoomWidth + 1,
+			zoomHeight + 1,
+			offsetX * -zoom,
+			offsetY * -zoom,
+			canvasWidth + zoom,
+			canvasHeight + zoom
+		);
+	}
 }
 
 function drawBoard() {
