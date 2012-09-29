@@ -1,20 +1,17 @@
 var offscreen = null;
 var offscreenCtx = null;
-var lastRenderedZoom;
+var dirtyBuffer = true;
 
-function createBuffer() {
-	if(zoomLevel > 4) return;
+/**
+* 1. Draw the image data onto offscreen buffer
+* 2. Draw buffer to canvas at zoom level
+*/
 
-	offscreen.width = zoomLevel * canvasWidth;
-	offscreen.height = zoomLevel * canvasHeight;
+function updateBuffer() {
+	offscreen.width = canvasWidth;
+	offscreen.height = canvasHeight;
 
-	lastRenderedZoom = zoomLevel;
-	
-	drawRect(0, 0, zoomLevel, offscreenCtx);
-}
-
-function drawPixels(cx) {
-	var imgdata = cx.getImageData(0, 0, canvasWidth, canvasHeight);
+	var imgdata = offscreenCtx.getImageData(0, 0, canvasWidth, canvasHeight);
 	var color;
 	var pixel;
 	var index;
@@ -77,161 +74,43 @@ function drawPixels(cx) {
 		
 	}
 
-	cx.putImageData(imgdata, 0, 0);
+	offscreenCtx.putImageData(imgdata, 0, 0);
+	dirtyBuffer = false;
 }
 
-function drawBoard(owner) {
+function drawZoom(startX, startY, zoom) {
+	zoomPos.left = startX;
+	zoomPos.top = startY;
+	zoomLevel = zoom;
+
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-	
+
+	var zoomWidth = canvasWidth / zoom | 0;
+	var zoomHeight = canvasHeight / zoom | 0;
+
+	$("a.zoomlevel").text(zoomLevel);
+
+	var offsetX = startX - (startX | 0);
+	var offsetY = startY - (startY | 0);
+
+	ctx.drawImage(
+		offscreen, 
+		startX | 0, 
+		startY | 0,
+		zoomWidth,
+		zoomHeight,
+		offsetX * -zoom,
+		offsetY * -zoom,
+		canvasWidth + zoom,
+		canvasHeight + zoom
+	);
+}
+
+function drawBoard() {
 	zoomPos.left = 0;
 	zoomPos.top = 0;
 	zoomLevel = 1;
-	drawPixels(ctx);
-
-	if(window.localStorage) {
-		window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + zoomLevel;
-	}
-
-	$("a.zoomlevel").text("1");
-}
-
-/**
-* Draw the board at a certain zoom level
-*/
-function drawZoom(startX, startY, level, cx) {
-	var endX = startX + canvasWidth / level;
-	var endY = startY + canvasHeight / level;
-	var x, y, pixel, index;
-	cx = cx || ctx;
-	
-	zoomPos.left = startX;
-	zoomPos.top = startY;
-
-
-	if(window.localStorage) {
-		window.localStorage["viewport"] = zoomPos.left + "," + zoomPos.top + "," + level;
-	}
-
-	var owner = mypixelsSelected && me.userID;
-	
-	//clear canvas
-	cx.clearRect(0, 0, canvasWidth, canvasHeight);
-	
-	//if the zoom level is greater than two, this is more effecient
-	if(zoomLevel > 4) {
-		drawRange(startX, startY, level, cx);
-	} else {
-		drawRect(startX, startY, level, cx);
-	}
-	
-	zoomLevel = level;
-	$("a.zoomlevel").text(zoomLevel);
-
-	createBuffer();
-}
-
-function drawRange(startX, startY, level, cx) {
-	var endX = startX + canvasWidth / level;
-	var endY = startY + canvasHeight / level;
-	var pix, coord;
-	var owner = mypixelsSelected && me.userID;
-	var x, y;
-	cx = cx || ctx;
-	
-	for(x = ~~startX; x < endX; ++x) {
-		for(y = ~~startY; y < endY; ++y) {
-			pixel = board[x + "," + y];
-			
-			//if no pixel found, don't draw
-			if(!pixel && !pixels[x + "," + y]) continue;
-			
-			//only show existing pixels
-			if(owner && !pixel) {
-				continue;
-			}
-			
-			//if only draw the specified owner
-			if(owner && pixel.owner != owner) {
-				continue;
-			}
-			
-			if(pixel) {
-				cx.fillStyle = "#" + pixel.color;
-				cx.fillRect(
-					(x - startX) * level, 
-					(y - startY) * level, 
-					level, 
-					level
-				);
-			}
-
-			if(pixels[x + "," + y]) {
-				cx.fillStyle = selectColor;
-				cx.fillRect(
-					(x - startX) * level, 
-					(y - startY) * level, 
-					level, 
-					level
-				);
-			}
-		}
-	}
-}
-
-function drawRect(startX, startY, level, cx) {
-	var endX = startX + canvasWidth / level;
-	var endY = startY + canvasHeight / level;
-	var pix, coord;
-	var owner = mypixelsSelected && me.userID;
-	var x, y;
-
-	cx = cx || ctx;
-
-	for(pix in board) {
-		coord = pix.split(",");
-		x = +coord[0]; y = +coord[1];
-		pixel = board[pix];
-
-		//if only show owners pixels
-		if(owner && pixel.owner != owner) continue;
-
-		if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
-			cx.fillStyle = "#" + pixel.color;
-			cx.fillRect(
-				(x - startX) * level, 
-				(y - startY) * level, 
-				level, 
-				level
-			);
-
-			if(pixels[pix]) {
-				cx.fillStyle = selectColor;
-				cx.fillRect(
-					(x - startX) * level, 
-					(y - startY) * level, 
-					level, 
-					level
-				);
-			}
-		}
-	}
-
-	for(var pix in pixels) {
-		coord = pix.split(",");
-		x = +coord[0]; y = +coord[1];
-
-		if(board[pix]) continue;
-
-		if(x >= ~~startX && x <= endX && y >= ~~startY && y <= endY) {
-			cx.fillStyle = selectColor;
-			cx.fillRect(
-				(x - startX) * level, 
-				(y - startY) * level, 
-				level, 
-				level
-			);
-		}
-	}
+	return drawZoom(0, 0, 1);
 }
 
 function redraw() {
@@ -240,12 +119,12 @@ function redraw() {
 	} else {
 		$counter.hide();
 	}
-	
-	if(zoomLevel === 1) {
-		drawBoard(mypixelsSelected && me.userID);
-	} else {
-		drawZoom(zoomPos.left, zoomPos.top, zoomLevel);
+
+	if(dirtyBuffer) {
+		updateBuffer();
 	}
+	
+	drawZoom(zoomPos.left, zoomPos.top, zoomLevel);
 }
 
 function updateBoard(data) {
@@ -297,11 +176,13 @@ function updateBoard(data) {
 	if(params.owners && params.owners.length)
 		api("GetUsers", params, getUsers);
 	
+	dirtyBuffer = true;
 	redraw();
 }
 
 function applyLogs(logs) {
 	if(!logs) return;
+	dirtyBuffer = true;
 	
 	//log too big, refresh page
 	if(log == ".") {

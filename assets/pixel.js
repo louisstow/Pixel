@@ -40,6 +40,11 @@ var RecaptchaOptions = {
 };
 
 $(function() {
+	offscreen = document.createElement("canvas");
+	offscreenCtx = offscreen.getContext("2d");
+	offscreen.width = canvasWidth;
+	offscreen.height = canvasHeight;
+
 	var script = document.createElement("script");
 	script.src = "board.js?_=" + Date.now();
 	document.body.appendChild(script);
@@ -49,9 +54,6 @@ $(function() {
 	$("#stage").append(zoomer);
 	zoomer.setAttribute("class", "zoomer");
 	stagePos = $("#canvas").offset();
-
-	offscreen = document.createElement("canvas");
-	offscreenCtx = offscreen.getContext("2d");
 	
 	//update the stage position
 	$(window).resize(function() {
@@ -113,6 +115,9 @@ $(function() {
 	//init canvases
 	canvas = $("#canvas")[0];
 	ctx = canvas.getContext("2d");
+	ctx.webkitImageSmoothingEnabled = false;
+	ctx.mozImageSmoothingEnabled = false;
+	ctx.imageSmoothingEnabled = false;
 	
 	canvasWidth = canvas.width;
 	canvasHeight = canvas.height;
