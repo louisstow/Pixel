@@ -1,26 +1,32 @@
+
 function initControls () {
 
 
-	$("#login").click(function() {
+	$("#login, .loginb").click(function() {
 		if($("div.login").is(":visible")) {
 			$("div.login").hide();
 		} else {
 			$("div.login").show();
+			if($("a.instr").is(":visible"))
+				$("a.instructions").trigger("click")
 		}
 		$("div.register, div.lostpass").hide();
 	});
 	
-	$("#register").click(function() {
+	$("#register, .join").click(function() {
 		
 		if($("div.register").is(":visible")) {
 			$("div.register").hide();
 		} else {
 			//player can choose pixels
-			if(pixels.length < 30) {
-				showError("Remember, you can select 30 free pixels");
+			if(pixels.length < 50) {
+				showError("Remember, you can select 50 free pixels by clicking the board!");
 				$("a.select").trigger("click");
 			}
 			
+			if($(".instr").is(":visible"))
+				$("a.instructions").trigger("click")
+
 			$("div.register").show();
 		}
 				
@@ -59,7 +65,7 @@ function initControls () {
 	});
 
 	$("#logout").click(function() {
-		if(me) {
+		if(me.userID) {
 			api("Logout", function() {
 				if(mypixelsSelected) {
 					$(this).removeClass("active");
@@ -191,7 +197,9 @@ function initControls () {
 						if(!info) return;
 						var url = info.url;
 						
-						if(/https?\:\/\//.test(url)) url = "http://" + url;
+						if(!/https?\:\/\//.test(url)) {
+							url = "http://" + url;
+						}
 						
 						window.open(url);
 						$("#tooltip").hide();
@@ -210,7 +218,6 @@ function initControls () {
 				var x = midPointX - width;
 				var y = midPointY - height;
 
-				console.log(newZoom, width, height, midPointX, midPointY, x, y)
 				if(x < 0) x = 0;
 				if(y < 0) y = 0;
 				if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
@@ -221,11 +228,13 @@ function initControls () {
 			.mousedown(function(e) {
 				if(zoomLevel > 1)
 					dragging = true;
+				
 				downPos = translate(e.clientX, e.clientY);
 				lastPos = {
 					x: downPos.x,
 					y: downPos.y
-				}
+				};
+				
 			})
 			.mouseup(function(e) {
 				dragging = dragged = false;
@@ -276,7 +285,7 @@ function initControls () {
 	});
 	
 	$("a.mypixels").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -405,7 +414,7 @@ function initControls () {
 	});
 	
 	$("a.selectmypixels").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -424,7 +433,7 @@ function initControls () {
 	});
 	
 	$("a.move").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -447,7 +456,10 @@ function initControls () {
 			}
 
 			delete pixels.length;
-			var pixelArr = Object.keys(pixels);
+			var pixelArr = Object.keys(pixels).filter(function (i) {
+				return board[i] && board[i].owner == me.userID;
+			});
+			
 			api("MovePixel", {from: pixelArr.join("|"), to: key, POST: true}, function(resp) {
 				if(resp.error) {
 					showError(resp.error);
@@ -455,6 +467,7 @@ function initControls () {
 
 				pixels = {length: 0};
 				status();
+				$("a.select").trigger("click");
 			}, false);
 		});
 	});
@@ -518,9 +531,9 @@ function initControls () {
 		
 		generateReceipt();
 
-		//2 dollar minimum
-		if(total < 200) {
-			showError("You must buy at least $2.00 worth of pixels. Currently $" + (total / 100).toFixed(2));
+		//5 dollar minimum
+		if(total < 500) {
+			showError("You must buy at least $5.00 worth of pixels. Currently $" + (total / 100).toFixed(2));
 			$(this).removeClass("active");
 			return;
 		}
@@ -587,7 +600,7 @@ function initControls () {
 			$("input.payeremail").val(me.userEmail);
 		}
 		
-		if(me) {
+		if(me.userID) {
 			saveOrder();
 		} else {
 
@@ -595,7 +608,7 @@ function initControls () {
 			$(".register").show();
 			//bind to custom event
 			$(".register").bind(":Registered", function() {
-				console.log(me, "DO i exist?", arguments);
+				
 				generateReceipt();
 				saveOrder();
 			});
@@ -603,7 +616,7 @@ function initControls () {
 	});
 	
 	$("a.sellpixel").click(function() {
-		if(!me) {
+		if(!me.userID) {
 			showError("Please login or register");
 			return;
 		}
@@ -696,7 +709,6 @@ function initControls () {
 		var x = midPointX - width;
 		var y = midPointY - height;
 
-		console.log(newZoom, width, height, midPointX, midPointY, x, y)
 		if(x < 0) x = 0;
 		if(y < 0) y = 0;
 		if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
@@ -722,7 +734,6 @@ function initControls () {
 		var x = zoomPos.left - (midPointX - zoomPos.left);
 		var y = zoomPos.top - (midPointY - zoomPos.top);
 
-		console.log(newZoom, width, height, midPointX, midPointY, x, y);
 		if(x < 0) x = 0;
 		if(y < 0) y = 0;
 		if(x > 1200 - 1200 / newZoom) x = 1200 - 1200 / newZoom;
@@ -739,7 +750,7 @@ function initControls () {
 }
 
 function updateColors(color) {
-	if(!me) {
+	if(!me.userID) {
 		return;
 	}
 
@@ -765,7 +776,8 @@ function updateColors(color) {
 }
 
 function showTooltip(e) {
-	var pos = translate(e.clientX, e.clientY);
+	var pos = translate(e.clientX - 1, e.clientY - 2);
+	
 	var pixel = board[Math.floor(pos.x) + ',' + Math.floor(pos.y)];
 
 	if(!pixel) {
@@ -784,7 +796,7 @@ function showTooltip(e) {
 	$("#tooltip .price").text("$" + (pixel.cost / 100).toFixed(2));
 
 	$("#tooltip").show().css({
-		left: e.clientX + 15 + body.scrollLeft,
+		left: e.clientX + 13 + body.scrollLeft,
 		top: e.clientY + body.scrollTop
 	});
 }

@@ -48,7 +48,7 @@ function initBoard() {
 	if(fs.existsSync("board.js")) {
 		fs.readFile("board.js", function(err, out) {
 			out = out.toString();
-			readBoard(out.substring(22, out.length - 3));
+			readBoard(out.substring(25, out.length - 3));
 			console.log("THE END", out.substring(out.length - 10, out.length - 2))
 		});
 	} else {
@@ -509,7 +509,7 @@ function transportPixels(pixels, cmd) {
 	console.log("LENGTH", toRemove.length, chunk)
 
 	//generate one timestamp
-	var timestamp = Date.now() / 1000 | 0;
+	var timestamp = Date.now();
 
 	//delete all removable pixels
 	if(toRemove.length) 
@@ -547,7 +547,7 @@ function executeSave() {
 	});
 
 	buffer.on("open", function() {
-		buffer.write("var DATA = '" + (Date.now() / 1000 | 0));
+		buffer.write("var DATA = '" + Date.now());
 		getBoard(buffer);
 		buffer.write("';\n");
 		buffer.end();

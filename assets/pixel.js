@@ -5,7 +5,7 @@ var canvas,
 	canvasWidth, 
 	canvasHeight,
 	body,
-	me,
+	me = {},
 	pixels = {length: 0}, //selected pixes
 	stagePos,
 	zoomPos = {left: 0, top: 0},
@@ -133,10 +133,11 @@ $(function() {
 	//board might not be loaded, keep checking	
 	var checkCounter = 0;
 	(function checkData() {
-		console.log("ATTEMPT AGAIN");
+		
 		checkCounter++;
 		if(checkCounter > 10) {
 			console.log("COULD NOT FIND DATA");
+			window.reload();
 		} else if(window.DATA) { 
 			//if viewport saved in localstorage
 			if(window.localStorage && window.localStorage.viewport) {
@@ -228,6 +229,10 @@ function tick() {
 	var hours = ~~(diff / 60 / 60);
 	var minutes = ~~(diff / 60) % 60;
 	var seconds = diff % 60;
+
+	if(hours === 0 && minutes < 30 && minutes > 0) {
+		$(".hours, .minutes, .seconds").addClass("sred");
+	}
 	
 	if(hours < 0) hours = 0;
 	if(minutes < 0) minutes = 0;
@@ -252,13 +257,14 @@ function updateUser(user, next) {
 	$("div.instr").hide();
 	$("div.change input.url").val(user.url);
 	$("div.change input.message").val(user.message);
+	$(".action").hide();
 	status(next);
 }
 
 function updateEvents(data) {
     //loop over all events and create html
     var i = 0, len = data.length;
-    console.log("EV",data);
+    
     var html = "<table><tr><th>Date</th><th>Cycle</th><th>Event</th></tr>";
     for(; i < len; ++i) {
     	html += "<tr>";

@@ -11,11 +11,12 @@ input { outline: none }
 #stage { clear: both; overflow: hidden; max-width: 1200px; height: 1000px; margin: 52px auto 0 auto; position: relative; background: #fff; border: 1px solid #b2b1b1; box-shadow: 0 2px 4px #939393 }
 #footer { padding-top: 10px; color: #0c7147; text-shadow: 0px 1px #fff }
 
-.box { position: absolute; border-color: #b2b1b1; border-style: solid; background: #fff; padding: 10px 15px; margin-top: 0px; top:70px; }
-.login, .register, .events, .change, .lostpass { right: 1px; border-width: 0 0 1px 1px; display: none; /*box-shadow: -1px 1px 2px #ddd*/ }
+.box { position: absolute; border-color: #b2b1b1; border-style: solid; background: #fff; padding: 10px 15px; margin-top: 0px; top:70px; box-shadow: 0 0 15px 0 #AAA; }
+.login, .register, .events, .change, .lostpass { right: 1px; border-width: 0 0 1px 1px; display: none; border-bottom-left-radius: 10px; }
 .login, .events, .change, .lostpass { width: 320px; }
 .register { width: 620px; }
-.buy, .sell, .instr { left: 1px; display: none; border-width: 0 1px 1px 0; /*box-shadow: 1px 1px 2px #ddd*/ }
+.box.events { height: 980px; border-radius: 0 }
+.buy, .sell, .instr { left: 1px; display: none; border-width: 0 1px 1px 0; border-bottom-right-radius: 10px; }
 .buy, .sell { width: 300px }
 .instr { width: 500px}
 
@@ -122,9 +123,9 @@ a.swatch span { background: black; border: 1px solid #111; width: 10px; height: 
 a.default { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
 a.swatch { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
 
-span.green { color: green; font-weight: 700 }
-span.red { color: red; font-weight: 700; }
-span.blue { color: blue; font-weight: 700 }
+span.sgreen { color: green; font-weight: 700 }
+span.sred { color: red; font-weight: 700; }
+span.sblue { color: blue; font-weight: 700 }
 
 #hint { position: absolute; right: 0; top: 40px; /*float: right;*/ }
 
@@ -143,6 +144,7 @@ padding: 2px;
 cursor: pointer; 
 z-index: 1000; 
 max-width: 200px;
+min-width: 100px;
 text-align: left; 
 word-break: break-all; 
 border-radius: 5px; 
@@ -171,7 +173,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     text-align: center;
 }
 
-.list { max-height: 100px; overflow: auto; box-shadow: 1px 1px 2px #CCC; border: 1px solid #CCC; }
+.list { max-height: 100px; overflow: auto; padding: 2px; border: 1px solid #CCC; }
 .list ul { padding: 0; margin: 0; list-style: none }
 .list li { padding: 5px }
 .list li:nth-child(odd) { background: #eee }
@@ -230,18 +232,40 @@ button.disabled {
 #content { border: 1px solid #B2B1B1; box-shadow: 0 2px 4px #939393; width: 800px; background: white; padding: 20px; margin: auto; text-align: left }
 #ntop { margin-top: 8px }
 
-.red { background: #ED0000 }
-.darkred { background: #8F0000 }
-.green { background: #50DB00 }
-.darkgreen { background: #0B7046 }
-.orange { background: #FFA200 }
-.blue { background: #0040FF }
-.darkblue { background: #02299E }
-.yellow { background: #FFFB03 }
-.gold { background: #BDBA00 }
-.purple { background: #9700BD }
-.black { background: #000000 }
-.brown { background: #946000 }
-.darkgrey { background: #777777 }
-.grey { background: #CCCCCC }
-.pink { background: #FFABAB }
+a.button {
+border-radius: 3px; 
+
+background: #f7f7f7; /* Old browsers */
+background: -moz-linear-gradient(top,  #f7f7f7 0%, #dbdbdb 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(100%,#dbdbdb)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #f7f7f7 0%,#dbdbdb 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #f7f7f7 0%,#dbdbdb 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #f7f7f7 0%,#dbdbdb 100%); /* IE10+ */
+background: linear-gradient(to bottom,  #f7f7f7 0%,#dbdbdb 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#dbdbdb',GradientType=0 ); /* IE6-9 */
+padding: 5px 20px;
+cursor: pointer;
+border: 1px solid #ccc;
+}
+
+p.action {
+	padding-top: 15px;
+	border-top: 1px dotted #CCC;
+	text-align: right;
+}
+
+span.red { background: #ED0000 }
+span.darkred { background: #8F0000 }
+span.green { background: #50DB00 }
+span.darkgreen { background: #0B7046 }
+span.orange { background: #FFA200 }
+span.blue { background: #0040FF }
+span.darkblue { background: #02299E }
+span.yellow { background: #FFFB03 }
+span.gold { background: #BDBA00 }
+span.purple { background: #9700BD }
+span.black { background: #000000 }
+span.brown { background: #946000 }
+span.darkgrey { background: #777777 }
+span.grey { background: #CCCCCC }
+span.pink { background: #FFABAB }
