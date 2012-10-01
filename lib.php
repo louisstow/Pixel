@@ -153,7 +153,7 @@ function toArray($resp) {
 		//every 13th char
 		$result[] = array(
 			"color" => substr($resp, $i, 6),
-			"cost" => hexdec(substr($resp, $i + 6, 3)) * 10,
+			"cost" => hexdec(substr($resp, $i + 6, 3)),
 			"owner" => hexdec(substr($resp, $i + 9, 4))
 		);
 		
