@@ -61,7 +61,7 @@ function ok() {
 * Return unix time 
 */
 function getTime() {
-	return (int) (microtime(true) * 1000);
+	return floor(microtime(true) * 1000);
 }
 
 /**
@@ -153,7 +153,7 @@ function toArray($resp) {
 		//every 13th char
 		$result[] = array(
 			"color" => substr($resp, $i, 6),
-			"cost" => hexdec(substr($resp, $i + 6, 3)) * 10,
+			"cost" => hexdec(substr($resp, $i + 6, 3)),
 			"owner" => hexdec(substr($resp, $i + 9, 4))
 		);
 		

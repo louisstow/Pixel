@@ -461,7 +461,7 @@ function transportPixels(pixels, cmd) {
 		var pix = board[+dim[0]][+dim[1]];
 
 		//make sure owner has access
-		if(+pix.owner != +cmd[2]) {
+		if(parseInt(pix.owner, 16) != parseInt(cmd[2], 16)) {
 			console.log("NOT OWNER", pix.owner, cmd[2])
 			continue;
 		}
