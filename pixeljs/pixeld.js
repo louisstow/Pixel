@@ -205,7 +205,7 @@ function cron(socket) {
                 //increase the score if neighbour
                 var opp = board[col][row];
 
-                if(opp.owner === pixel.owner)
+                if(parseInt(opp.owner, 16) === parseInt(pixel.owner, 16))
                 	score++;
                 //save position if enemy
                 else if(opp.owner !== null)
@@ -256,7 +256,7 @@ function cron(socket) {
 					var subpixel = board[subcol][subrow];
 
 					//increase opponent score
-					if(subpixel.owner === opp.owner) {
+					if(parseInt(subpixel.owner, 16) === parseInt(opp.owner, 16)) {
 						//console.log("	", subcol, subrow, subpixel.owner);
 						oscore++;
 					}
@@ -277,17 +277,19 @@ function cron(socket) {
 		if(dim.length !== 2) continue;
 
 		var pixel = board[+dim[0]][+dim[1]];
+		var pkey = parseInt(pixel.owner, 16);
+		var okey = parseInt(modified[pix], 16);
 
-		if(!owners[pixel.owner]) 
-			owners[pixel.owner] = 0;
-		if(!owners[modified[pix]]) 
-			owners[modified[pix]] = 0;
+		if(!owners[pkey]) 
+			owners[pkey] = 0;
+		if(!owners[okey]) 
+			owners[okey] = 0;
 
 
 		//used to be pixel.owner's
-		owners[pixel.owner]--;
+		owners[pkey]--;
 		//is now modified[pix]'s
-		owners[modified[pix]]++;
+		owners[okey]++;
 
 		board[+dim[0]][+dim[1]].owner = modified[pix];
 	}

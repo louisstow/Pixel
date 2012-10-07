@@ -29,6 +29,7 @@ mail(
 $esql = "INSERT INTO events VALUES ";
 $eprep = array();
 
+print_r($summary);
 foreach($summary as $sum) {
 	$line = explode(",", $sum);
 	if(count($line) != 2) {
@@ -47,10 +48,10 @@ foreach($summary as $sum) {
 	$esql .= "(?, ?, ?, ?),";
 	
 	echo "User id is";
-	echo hexdec($line[0]);
+	echo intval($line[0]);
 	echo "\n";
-	
-	$eprep[] = hexdec($line[0]);
+
+	$eprep[] = intval($line[0]);
 	$eprep[] = NOW();
 	$eprep[] = $cycle['cycleID'];
 	$eprep[] = $text;
