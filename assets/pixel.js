@@ -260,6 +260,23 @@ function updateUser(user, next) {
 	status(next);
 }
 
+var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function formatDate(date) {
+	var hours = date.getHours();
+	var ampm = "am";
+
+	if(hours > 12) {
+		hours -= 12;
+		ampm = "pm";
+	}
+
+	return [
+		hours + ampm,
+		date.getDate(),
+		MONTHS[date.getMonth()]
+	].join(" ");
+}
+
 function updateEvents(data) {
     //loop over all events and create html
     var i = 0, len = data.length;
@@ -270,7 +287,7 @@ function updateEvents(data) {
 
     	var date = new Date(data[i].eventDate);    	
 
-    	html += "<td title='" + date + "'>" + $.timeago(date) + "</td>";
+    	html += "<td title='" + date + "'>" + formatDate(date) + "</td>";
 		
 		if(data[i].cycleID !== "0") {
 			html += "<td>" + data[i].cycleID + "</td>";

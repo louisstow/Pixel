@@ -7,7 +7,6 @@
 	
 
 	<script src="assets/jquery.min.js" type="text/javascript"></script>
-	<script src="assets/jquery.timeago.js" type="text/javascript"></script>
 	<script src="assets/controls.js" type="text/javascript"></script>
 	<script src="assets/canvas.js" type="text/javascript"></script>
 	<script src="assets/pixel.js" type="text/javascript"></script>
