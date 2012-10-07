@@ -19,13 +19,24 @@ $summary = explode("|", $owners);
 1,0,2|5,1,3|
 */
 
+mail(
+	"saul+backup@pixenomics.com",
+	time(),
+	file_get_contents("/var/www/html/board.js")
+);
+
 //generate event SQL
 $esql = "INSERT INTO events VALUES ";
 $eprep = array();
 
 foreach($summary as $sum) {
 	$line = explode(",", $sum);
-	if(count($line) != 2) continue;
+	if(count($line) != 2) {
+		echo "Skip cause count";
+		echo count($line);
+		echo "\n";
+		continue;
+	}
 
 	if(intval($line[1]) >= 0) {
 		$text = "You gained {$line[1]} pixels";
@@ -34,6 +45,10 @@ foreach($summary as $sum) {
 	}
 	
 	$esql .= "(?, ?, ?, ?),";
+	
+	echo "User id is";
+	echo hexdec($line[0]);
+	echo "\n";
 	
 	$eprep[] = hexdec($line[0]);
 	$eprep[] = NOW();
