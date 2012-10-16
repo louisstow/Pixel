@@ -154,8 +154,14 @@ function initControls () {
 			
 			//as long as none of the above
 			count++;
-			if(count > 29) break;
+			if(count > 49) break;
 		}
+
+                if(list.length === 0) {
+                    $("a.select").click();
+                    disableButton(this, true);
+                    return showError("Please select your free pixels by clicking the board");
+                }
 		
 		data.pixel = list.length ? list : "";
 		

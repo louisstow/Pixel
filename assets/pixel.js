@@ -329,17 +329,26 @@ function translateGlobal(x, y) {
 	}
 }
 
+var timer;
 function showError(msg) {
+        //if a timer is still running, clear it
+        if(typeof timer === "number") {
+            clearTimeout(timer);
+            timer = null;
+        }
+
 	var $d = $("#dialog");
 	$d.css({"left": ($(window).width() - 1200) / 2, "bottom": -50})
 		.stop(true, true)
 		.show()
 		.text(msg)
-		.animate({bottom: 0}, 150)
-		.delay(msg.length * 100)
-		.animate({bottom: -50}, 150, function() {
+		.animate({bottom: 0}, 150);
+
+        timer = setTimeout(function() {
+		$d.animate({bottom: -50}, 150, function() {
 			$(this).hide().html("");
 		});
+        }, msg.length * 100);
 }
 
 function api(action, data, callback, showErrorFlag) {
